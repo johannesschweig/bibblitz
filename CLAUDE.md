@@ -45,7 +45,7 @@ How to read the "Umami indicator" column: **event** = custom event (Events tab, 
 
 | Feature | Introduced | Umami indicator | Usage (90d) | Notes |
 |---|---|---|---|---|
-| Text search | 15.06. | event `search-started` (tracked since 03.07.) | 497 | core, keep |
+| Text search | 15.06. | event `search-started` (tracked since 03.07.; since 09.10. fires after the response with `results` count and `error: 1` on failure) | 497 raw, ~300-350 real | core, keep. Use `results: 0` to find dead-end searches |
 | Quick-search chips | 07.07. | event `search-quick` | 18 | ~4% of searches |
 | Media-type filter | 22.07. (aggregation 20.08.) | event `click-media-filter` | 29 | ~6% of searches |
 | "Weitere Treffer laden" (pagination) | 09.09. | event `search-next-page` (with `page`) | 8 (+2 `search-load-more`, old name) | too new, re-check |
@@ -67,7 +67,8 @@ How to read the "Umami indicator" column: **event** = custom event (Events tab, 
 |---|---|---|---|---|
 | Detail page with branch availability | 15.06. | URL `/media/*` | 120 visitors / 611 views (~32% of visitors) | core, keep. 91% arrive from bibblitz.de, so almost no direct/SEO traffic |
 | Branch sorting by distance, due-days / overdue labels, hide far branches | 16.06. / 28.06. / 03.07. | none (part of detail page) | n/a | |
-| "↗ VÖBB" link button | 03.07. | none | n/a | |
+| "↗ VÖBB" link button | 03.07. (tracking 09.10.) | event `voebb-click` (`available_now`, `zip_default`) | n/a, new | the closest thing to a conversion: BibBlitz cannot reserve, so this is where the user acts on the result |
+| Detail outcome | 09.10. | event `detail-view` (`status` ok/empty/error, `branches`, `available_now`, `nearest_available_km`, `zip_default` 0/1) | n/a, new | measurement only: shows detail fetch failures, how often nothing is available nearby, and how many viewers still use the default ZIP 10178 |
 | Author click (search by author) | 09.07. | event `author-click` | 2 | **deletion candidate** (decide at 06.11. re-check, do not delete before) |
 | Branch click → library page | 10.07. | none (see library URL) | n/a | |
 
@@ -98,5 +99,6 @@ How to read the "Umami indicator" column: **event** = custom event (Events tab, 
 Caveats when re-reading the numbers:
 - Test clicks fired by Claude before `umami.disabled` was set (3 and 9 Sep) inflate `showcase-click`, `search-load-more` and probably one `search-next-page`.
 - Traffic is low (~370 visitors/90 days), so single-digit counts say little. Compare against visitors who reached the relevant page, not total events.
+- **Search events before 09.10.2026 are inflated ~60%**: `handleSearch` called `router.replace`, the `route.query.q` watcher in `app/pages/index.vue` saw `mediaStore.lastQuery` still unset (it is only set after the `/api/search` response) and ran the search again (second scrape too). Export 29.06.–09.10.: 580 search events, ~364 real searches (duplicates arrive 0 s apart), and quick-chip clicks were also logged as `search-started`. Fixed 09.10. with an in-flight guard; compare only counts from after the deploy.
 - Events started 03.07., so the 90-day window (from 11.07.) misses the first week of `search-started` and `toggle-faq`.
 - Showcase (IDs hardcoded in `app/components/Showcase.vue`) and load-more are the September experiments: question to answer is whether they get used by real visitors; if not, remove the feature, not just the event.

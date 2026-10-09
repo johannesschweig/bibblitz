@@ -5,7 +5,7 @@ import { useItemCacheStore } from '@/stores/itemCacheStore'
 import { getPermanentUrlFromId } from '../../../utils/index.ts'
 import { sortBranchesByDistance } from '../../../utils/availability'
 import { useUserStore } from '~/stores/userStore.js'
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import ZipCode from '~/components/ZipCode.vue'
 
 const { track } = useUmami()
@@ -46,6 +46,27 @@ const sortedBranches = computed(() => {
   return sortBranchesByDistance(data.value.data.availability, userStore.userCoords)
 })
 
+// Misst einmal pro Seitenaufruf, was der Nutzer auf der Detailseite sieht (Fehler, Verfügbarkeit, PLZ-Default)
+let detailTracked = false
+function trackDetailView() {
+  if (detailTracked || pending.value || !import.meta.client) return
+  detailTracked = true
+  const branches = sortedBranches.value
+  const status = error.value || !data.value?.success ? 'error' : branches.length === 0 ? 'empty' : 'ok'
+  const free = branches.filter(b => b.daysToWait === -999)
+  const nearestFree = free.map(b => b.distance).filter((d): d is number => d !== undefined)
+  track('detail-view', {
+    status,
+    branches: branches.length,
+    available_now: free.length,
+    ...(nearestFree.length && { nearest_available_km: Math.min(...nearestFree) }),
+    zip_default: userStore.userZipDefault ? 1 : 0
+  })
+}
+watch(pending, trackDetailView)
+// nextTick: app.vue lädt die gespeicherte PLZ erst in seinem eigenen onMounted, nach dem der Seite
+onMounted(() => nextTick(trackDetailView))
+
 function getStatusClass(status: string) {
   const s = status.toLowerCase()
   if (s.includes('verfügbar')) {
@@ -55,6 +76,13 @@ function getStatusClass(status: string) {
     return 'bg-amber-100 text-amber-800'
   }
   return 'bg-gray-100 text-gray-800'
+}
+
+function voebbClicked() {
+  track('voebb-click', {
+    available_now: sortedBranches.value.filter(b => b.daysToWait === -999).length,
+    zip_default: userStore.userZipDefault ? 1 : 0
+  })
 }
 
 function authorClicked() {
@@ -96,7 +124,8 @@ function authorClicked() {
         </div>
         <!-- Buttons -->
         <div class="flex gap-2">
-          <a :href="getPermanentUrlFromId(data.data.id)" target="_blank" class="btn btn-sm btn-secondary">
+          <a :href="getPermanentUrlFromId(data.data.id)" target="_blank" class="btn btn-sm btn-secondary"
+            @click="voebbClicked()">
             ↗ VÖBB
           </a>
         </div>

@@ -98,26 +98,36 @@ function handleQuickSearch(query: string) {
   handleSearch(query, 'quick')
 }
 
+// router.replace löst den route.query.q-Watcher aus, bevor mediaStore.lastQuery gesetzt ist.
+// Ohne diesen Marker würde dieselbe Suche (und derselbe VÖBB-Scrape) doppelt laufen.
+let inFlightQuery = ''
+
 async function handleSearch(queryText: string, source: 'user' | 'quick') {
   const cleanQuery = queryText.trim()
   if (!cleanQuery) return
+  if (cleanQuery === inFlightQuery) return
+  inFlightQuery = cleanQuery
   loading.value = true
   hasSearched.value = false
   selectedMediaType.value = null
   lastQuery.value = cleanQuery
   router.replace({ query: { q: cleanQuery } })
-  track(
-    source === 'user' ? 'search-started' : 'search-quick',
-    { query: cleanQuery }
-  )
+  let failed = false
   try {
     await mediaStore.executeSearch(cleanQuery)
   } catch (error) {
+    failed = true
     console.error('Fehler bei der VÖBB-Suche:', error)
   } finally {
+    if (inFlightQuery === cleanQuery) inFlightQuery = ''
     loading.value = false
     hasSearched.value = true
   }
+  // Tracking erst nach der Antwort, damit Trefferzahl und Fehler mitgeschickt werden können
+  track(
+    source === 'user' ? 'search-started' : 'search-quick',
+    { query: cleanQuery, results: mediaStore.searchIds.length, ...(failed && { error: 1 }) }
+  )
 }
 
 async function handleLoadMore() {
