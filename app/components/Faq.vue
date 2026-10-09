@@ -29,17 +29,14 @@ const faqs = [
     id: 'app-store',
     question: 'Gibt es eine App für den App Store?',
     answer: 'Nein, aber du kannst BibBlitz im Browser über das „Teilen“-Menü einfach zum Startbildschirm hinzufügen. Es verhält sich dann genau wie eine native App.'
-  },
-  {
-    id: 'i-have-question',
-    question: 'Ich habe eine Frage/Anregung/Wunsch...',
-    answer: 'Schreib mir gerne eine Mail an <a href="mailto:info@bibblitz.de" class="link">info@bibblitz.de</a>. Ich freue mich auf dein Feedback.'
   }
 ]
 
 const toggleFaq = (index: number) => {
   openIndex.value = openIndex.value === index ? null : index
-  track('toggle-faq', { query: faqs[index]?.id ?? '' })
+  if (openIndex.value === index) {
+    track('toggle-faq', { query: faqs[index]?.id ?? '' })
+  }
 }
 </script>
 

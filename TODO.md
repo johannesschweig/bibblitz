@@ -5,6 +5,8 @@
 - sort
     - nach erscheinungsdatum
     - add year (Veröffentlichung)
+- iban search
+- wildcard search with * (not sure if voebb supports it)
 - seltenes fundstück / meistausgeliehene medien für artikel in der zeitung
 - filter
   - filter by language (nebenan request)

@@ -7,7 +7,6 @@ import { sortBranchesByDistance } from '../../../utils/availability'
 import { useUserStore } from '~/stores/userStore.js'
 import { ref, computed } from 'vue'
 import ZipCode from '~/components/ZipCode.vue'
-import ShareIcon from '~/assets/share.svg'
 
 const { track } = useUmami()
 const route = useRoute()
@@ -61,27 +60,6 @@ function getStatusClass(status: string) {
 function authorClicked() {
   track('author-click', { query: data.value?.data.author ?? '' })
 }
-
-const shareMedia = async () => {
-  const item = data.value?.data || { id: -1, title: 'Unbekannt' }
-  if (navigator.share) {
-    try {
-      await navigator.share({
-        title: `${item.title} - Verfügbarkeit`,
-        text: `Hey, "${item.title}" gibt es bei den Berliner Bibliotheken! Hab's gerade über BibBlitz gecheckt:`,
-        url: window.location.href,
-      })
-      window.umami?.track('share-media', { id: item.id, type: 'mobile'})
-    } catch (err) {
-      console.log('Teilen abgebrochen', err)
-    }
-  } else {
-    // Fallback: Link in die Zwischenablage kopieren + Toast-Anzeige
-    window.umami?.track('share-media', { id: item.id, type: 'fallback' })
-    navigator.clipboard.writeText(window.location.href)
-    alert('Link wurde in die Zwischenablage kopiert!')
-  }
-}
 </script>
 
 <template>
@@ -118,10 +96,6 @@ const shareMedia = async () => {
         </div>
         <!-- Buttons -->
         <div class="flex gap-2">
-          <button class="btn btn-sm btn-secondary" @click="shareMedia()">
-            <ShareIcon class="w-3! h-3! text-gray-800" />
-            <span>Teilen</span>
-          </button>
           <a :href="getPermanentUrlFromId(data.data.id)" target="_blank" class="btn btn-sm btn-secondary">
             ↗ VÖBB
           </a>
@@ -178,7 +152,3 @@ const shareMedia = async () => {
     </div>
   </div>
 </template>
-
-http://localhost:3000/media/00306745
-Hey, das Medium "Catan : das Spiel ; Siedeln, Handeln, Bauen / Autor: Klaus Teuber ; Illustration: Michael Menzel" ist
-gerade in einer Berliner Bibliothek frei! Hab's gerade über BibBlitz gecheckt:
