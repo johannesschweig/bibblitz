@@ -16,18 +16,20 @@ export const useUserStore = defineStore('user', {
       if (savedZip) this.saveLocation(savedZip)
     },
 
-    async saveLocation(zipCode: string) {
+    // Returns whether the ZIP was saved (only Berlin ZIPs from berlinZipCodes.json)
+    saveLocation(zipCode: string): boolean {
       const cleanZip = zipCode.trim()
-      if (!cleanZip) return
+      if (!cleanZip) return false
 
       const lookup = berlinZips as Record<string, { lat: number; lon: number }>
-      if (!lookup[cleanZip]) return
+      if (!lookup[cleanZip]) return false
 
       this.userZip = cleanZip
       this.userCoords = { lat: lookup[cleanZip].lat, lon: lookup[cleanZip].lon }
       this.userZipDefault = false
 
       localStorage.setItem(LOCAL_ZIP_KEY, cleanZip)
+      return true
     },
   }
 })

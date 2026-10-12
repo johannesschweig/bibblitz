@@ -24,12 +24,14 @@ watch(() => userStore.userZip, (newZip) => {
 }, { immediate: true })
 
 function saveLocation() {
+  // Enter bypasses the disabled button, so check again here
+  if (!canSave.value) return
   showSuccess.value = true
   setTimeout(() => {
     showSuccess.value = false
-    userStore.saveLocation(localZipInput.value)
+    const saved = userStore.saveLocation(localZipInput.value)
     editing.value = false
-    track('zip-save', { query: localZipInput.value.substring(0, 4) + 'X' })
+    if (saved) track('zip-save', { query: localZipInput.value.substring(0, 4) + 'X' })
   }, 2000)
 }
 </script>
