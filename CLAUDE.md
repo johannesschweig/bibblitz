@@ -109,7 +109,6 @@ Caveats when re-reading the numbers:
 From a design review on 12.10.2026. Goal: the UI currently reads as stock Tailwind / AI-generated and shows raw catalog data. Ordered from small and self-contained to bigger decisions; do them roughly in this order (content and consistency first, brand later). Tick off by deleting the line and noting it in `TODO.md` → DONE.
 
 **Quick wins**
-1. **One status pill** used in both the result list (`AvailabilityBadge.vue`, labels in `utils/availability.ts`) and the detail page (`getStatusClass`): today they differ in fill, border, emoji and green/emerald/yellow/amber tones. Colored dot + text instead of 🟢🟡🔴🟠.
 2. **Clean catalog titles and authors** in the scraper: split ISBD notation (`Titel : Untertitel / Autor ; Übersetzer [Übersetzer/in]`) into title/subtitle, strip role tags like `[Verfasser/in]`, show the first author not the translator, drop the "Unbekannter Autor" placeholder, map `mediaType` on the detail page too ("Band" vs "Buch"). Fix "Str. 37,12247" missing space in `libraries.json`. (Same as "clean up title and authors" in `TODO.md`.)
 3. **Replace emoji with one icon set** (e.g. Lucide via `@nuxt/icon`): nav 🔍, intro ⚡🕒📱, library page 📍⏳🙋🏃‍♂️, quick-search chips, ⚡ favicon. Today three icon styles are mixed (emoji, own SVGs in `app/assets/`, VÖBB's grey media icons).
 4. **One content width and nav**: header is `max-w-7xl`, search `max-w-2xl`, home cards `max-w-md`. Drop the single-tab "🔍 Suche" nav; on subpages put a compact search field in the header.

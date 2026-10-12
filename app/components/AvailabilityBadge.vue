@@ -45,9 +45,7 @@ const statusInfo = computed(() => calculateStatusInfo(itemData.value?.availabili
     </div>
 
     <div v-else-if="itemData?.availability" class="flex items-center gap-2">
-      <span :class="['px-2.5 py-0.5 text-xs font-bold rounded-full border', statusInfo.color]">
-        {{ statusInfo.label }}
-      </span>
+      <StatusPill :tone="statusInfo.tone" :label="statusInfo.label" />
     </div>
   </div>
 </template>

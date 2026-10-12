@@ -3,11 +3,12 @@
 import { useRoute } from 'vue-router'
 import { useItemCacheStore } from '@/stores/itemCacheStore'
 import { getPermanentUrlFromId } from '../../../utils/index.ts'
-import { sortBranchesByDistance } from '../../../utils/availability'
+import { sortBranchesByDistance, calculateBranchStatus } from '../../../utils/availability'
 import { formatDistance } from '../../../utils/distance'
 import { useUserStore } from '~/stores/userStore.js'
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import ZipCode from '~/components/ZipCode.vue'
+import StatusPill from '~/components/StatusPill.vue'
 
 const { track } = useUmami()
 const route = useRoute()
@@ -67,17 +68,6 @@ function trackDetailView() {
 watch(pending, trackDetailView)
 // nextTick: app.vue loads the saved ZIP in its own onMounted, which runs after the page's
 onMounted(() => nextTick(trackDetailView))
-
-function getStatusClass(status: string) {
-  const s = status.toLowerCase()
-  if (s.includes('verfügbar')) {
-    return 'bg-green-100 text-green-800'
-  }
-  if (s.includes('ausgeliehen')) {
-    return 'bg-amber-100 text-amber-800'
-  }
-  return 'bg-gray-100 text-gray-800'
-}
 
 function voebbClicked() {
   track('voebb-click', {
@@ -159,16 +149,7 @@ function authorClicked() {
               </p>
             </div>
 
-            <!-- Status Badge -->
-            <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold self-start sm:self-center"
-              :class="getStatusClass(item.status)">
-              {{
-                item.daysToWait === 0 ? 'Rückgabe heute fällig' :
-                  (item.daysToWait !== -999 && item.daysToWait < 0) ? 'Rückgabe überfällig' : item.daysToWait === 1
-                    ? '⏳ 1 Tag' : item.daysToWait > 1 && item.daysToWait !== 999 ? `⏳ ${item.daysToWait} Tage` :
-                      item.status
-              }}
-            </span>
+            <StatusPill class="self-start sm:self-center" v-bind="calculateBranchStatus(item, userStore.userZipDefault)" />
           </NuxtLink>
           <button v-if="hiddenBranchesCount > 0" @click="showAllBranches = true" class="btn btn-md btn-secondary">
             {{ hiddenBranchesCount }} entferntere

@@ -4,10 +4,17 @@ import { calculateHaversineDistance } from './distance'
 import type { AvailabilityInfo } from '../types/types'
 
 // Interfaces
+// near = available close by (strongest green), good = available further away,
+// wait = on loan, hard = hard to get, bad = not in stock, neutral = unknown
+export type StatusTone = 'near' | 'good' | 'wait' | 'hard' | 'bad' | 'neutral'
+
 export interface StatusBadgeConfig {
   label: string;
-  color: string;
+  tone: StatusTone;
 }
+
+// Branches closer than this count as "in deiner Nähe"
+export const NEAR_KM = 3
 
 /**
  * Private helper: cleans up the scraped library name
@@ -75,8 +82,30 @@ function calculateDaysToWait(status: string): number {
   return 999 // Unknown / lost / not on the shelf
 }
 
+function formatDays(days: number): string {
+  return days === 0 ? 'heute fällig' : days === 1 ? '1 Tag' : `${days} Tage`
+}
+
 /**
- * Calculates the status badge config for the result cards/detail pages
+ * Status pill for a single branch on the detail page
+ */
+export function calculateBranchStatus(
+  branch: AvailabilityInfo,
+  userZipDefault: boolean
+): StatusBadgeConfig {
+  const days = branch.daysToWait
+
+  if (days === -999) {
+    const isNear = !userZipDefault && branch.distance !== undefined && branch.distance < NEAR_KM
+    return { label: branch.status, tone: isNear ? 'near' : 'good' }
+  }
+  if (days === undefined || days === 999) return { label: branch.status, tone: 'neutral' }
+  if (days < 0) return { label: 'Rückgabe überfällig', tone: 'wait' }
+  return { label: days === 0 ? 'Rückgabe heute fällig' : formatDays(days), tone: 'wait' }
+}
+
+/**
+ * Calculates the status pill config for the result cards
  */
 export function calculateStatusInfo(
   availability: AvailabilityInfo[] | undefined,
@@ -93,25 +122,18 @@ export function calculateStatusInfo(
 
   // Fallback: no valid branches left
   if (validBranches.length === 0) {
-    return {
-      label: '🔴 Nicht im Bestand',
-      color: 'text-red-800 border-red-100'
-    }
+    return { label: 'Nicht im Bestand', tone: 'bad' }
   }
 
-  // const closeAndAvailable = validBranches.filter(item => (item.distance || 99) < 3 ).filter(item => item.daysToWait === -999)
   if (userZipDefault) {
     const avail = validBranches.filter(item => item.daysToWait === -999).length
     if (avail > 0) {
       return {
-        label: avail === 1 ? '🟢 Verfügbar' : `🟢 Verfügbar (${avail}x) `,
-        color: 'text-green-700 border-green-200'
+        label: avail === 1 ? 'Verfügbar' : `Verfügbar (${avail}x)`,
+        tone: 'good'
       }
     } else {
-      return {
-        label: '🟡 Aktuell ausgeliehen',
-        color: 'text-yellow-800 border-yellow-300'
-      }
+      return { label: 'Aktuell ausgeliehen', tone: 'wait' }
     }
   } else {
     // Helper for safe distances
@@ -119,66 +141,57 @@ export function calculateStatusInfo(
 
     // 1. Filter the data up front
     const available = validBranches.filter(b => b.daysToWait === -999)
-    const borrowed = validBranches.filter(b => (b.daysToWait || 999) > 0 && b.daysToWait !== 999)
+    // daysToWait 0 = due back today, still counts as on loan
+    const borrowed = validBranches.filter(b => b.daysToWait !== undefined && b.daysToWait >= 0 && b.daysToWait !== 999)
+    const minDays = (branches: AvailabilityInfo[]) => Math.min(...branches.map(b => b.daysToWait as number))
 
     // -------------------------------------------------------------
-    // PRIO 1: available & close (< 3 km)
+    // PRIO 1: available & close (< NEAR_KM)
     // -------------------------------------------------------------
-    const closeAvailable = available.filter(b => getDist(b) < 3)
+    const closeAvailable = available.filter(b => getDist(b) < NEAR_KM)
     if (closeAvailable.length > 0) {
       return {
         label: closeAvailable.length === 1
-          ? '🟢 Verfügbar in deiner Nähe'
-          : `🟢 Verfügbar in deiner Nähe (${closeAvailable.length}x)`,
-        color: 'text-emerald-800 bg-emerald-50 border-emerald-200'
+          ? 'Verfügbar in deiner Nähe'
+          : `Verfügbar in deiner Nähe (${closeAvailable.length}x)`,
+        tone: 'near'
       }
     }
 
     // -------------------------------------------------------------
-    // PRIO 2: available & further away (3 to < 7 km)
+    // PRIO 2: available & further away (NEAR_KM to < 7 km)
     // -------------------------------------------------------------
-    const farAvailable = available.filter(b => getDist(b) >= 3 && getDist(b) < 7)
+    const farAvailable = available.filter(b => getDist(b) >= NEAR_KM && getDist(b) < 7)
     if (farAvailable.length > 0) {
       const closestDistance = Math.ceil(Math.min(...farAvailable.map(getDist)))
       return {
         label: farAvailable.length === 1
-          ? `🟢 Verfügbar (${closestDistance} km)`
-          : `🟢 Verfügbar (${closestDistance} km, ${farAvailable.length}x)`,
-        color: 'text-emerald-700 border-emerald-200'
+          ? `Verfügbar (${closestDistance} km)`
+          : `Verfügbar (${closestDistance} km, ${farAvailable.length}x)`,
+        tone: 'good'
       }
     }
 
     // -------------------------------------------------------------
-    // PRIO 3: on loan & close (< 3 km)
+    // PRIO 3: on loan & close (< NEAR_KM)
     // -------------------------------------------------------------
-    const closeBorrowed = borrowed.filter(b => getDist(b) < 3)
+    const closeBorrowed = borrowed.filter(b => getDist(b) < NEAR_KM)
     if (closeBorrowed.length > 0) {
-      const minDays = Math.min(...closeBorrowed.map(b => b.daysToWait || 999))
-      return {
-        label: `⏳ Ausgeliehen (${minDays} Tage)`,
-        color: 'text-yellow-800 border-yellow-300'
-      }
+      return { label: `Ausgeliehen (${formatDays(minDays(closeBorrowed))})`, tone: 'wait' }
     }
 
     // -------------------------------------------------------------
-    // PRIO 4: on loan & further away (3 to < 7 km)
+    // PRIO 4: on loan & further away (NEAR_KM to < 7 km)
     // -------------------------------------------------------------
-    const farBorrowed = borrowed.filter(b => getDist(b) >= 3 && getDist(b) < 7)
+    const farBorrowed = borrowed.filter(b => getDist(b) >= NEAR_KM && getDist(b) < 7)
     if (farBorrowed.length > 0) {
-      const minDays = Math.min(...farBorrowed.map(b => b.daysToWait || 999))
-      return {
-        label: `⏳ Ausgeliehen (${minDays} Tage)`,
-        color: 'text-yellow-800 border-yellow-300'
-      }
+      return { label: `Ausgeliehen (${formatDays(minDays(farBorrowed))})`, tone: 'wait' }
     }
 
     // -------------------------------------------------------------
     // FALLBACK: nothing matches (or everything is more than 7 km away)
     // -------------------------------------------------------------
-    return {
-      label: '🟠 Schwer zu bekommen',
-      color: 'text-orange-700 border-orange-200'
-    }
+    return { label: 'Schwer zu bekommen', tone: 'hard' }
   }
 
 }

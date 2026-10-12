@@ -29,6 +29,7 @@
 - merging of different versions of the same book/game (what to do with the id?)
 
 # DONE
+- one status pill (`StatusPill.vue`, tones near/good/wait/hard/bad/neutral) in list and detail page (design backlog, 12.10.)
 - detail page: distance per branch, heading without wrap (design backlog, 12.10.)
 - 2nd page search
 - showcase: popular books/games/tonies
