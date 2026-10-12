@@ -34,7 +34,7 @@ BibBlitz (bibblitz.de) — a Nuxt 4 / Vue 3 / Tailwind 4 front end for the Berli
 
 **Icons** — Lucide via `@nuxt/icon` (`<Icon name="lucide:search" />`), bundled into the client (`clientBundle.scan`, `fallbackToApi: false`), so no requests to the Iconify API (GDPR). Favicon is `public/favicon.svg` (Lucide zap).
 
-**Analytics** — Umami loaded via script in `nuxt.config.ts`; use the `useUmami().track(event, data)` composable. For browser testing on localhost/bibblitz.de set `localStorage['umami.disabled']='1'` first.
+**Analytics** — Umami loaded via script in `nuxt.config.ts`; use the `useUmami().track(event, data)` composable. The script has `data-domains="bibblitz.de,www.bibblitz.de"`, so localhost and preview deployments never send data. Only for browser testing on the live bibblitz.de set `localStorage['umami.disabled']='1'` first (or use `/dev`).
 
 `TODO.md` is the product backlog/ideas log (known scraping edge cases are listed there).
 

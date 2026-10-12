@@ -11,6 +11,8 @@ export default defineNuxtConfig({
         {
           src: 'https://cloud.umami.is/script.js',
           'data-website-id': '67a667ea-94a2-4aa6-a4d6-edcee1bbb7ca',
+          // Umami only tracks on these hostnames, so localhost and preview deployments never send data
+          'data-domains': 'bibblitz.de,www.bibblitz.de',
           defer: true
         }
       ]
