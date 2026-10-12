@@ -5,12 +5,7 @@ export default defineNuxtConfig({
     head: {
       title: 'BibBlitz - Suchen. Finden. Ausleihen.',
       link: [
-        {
-          rel: 'icon',
-          type: 'image/svg+xml',
-          // %E2%9A%A1 is the code for the ⚡ emoji
-          href: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%E2%9A%A1</text></svg>'
-        }
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }
       ],
       script: [
         {
@@ -28,7 +23,12 @@ export default defineNuxtConfig({
       cartoApiKey: process.env.CARTO_API_KEY
     }
   },
-  modules: ['@pinia/nuxt', 'nuxt-svgo'],
+  modules: ['@pinia/nuxt', '@nuxt/icon'],
+  // icons are bundled into the client and never fetched from the Iconify API (GDPR)
+  icon: {
+    clientBundle: { scan: true },
+    fallbackToApi: false
+  },
   nitro: {
     externals: {
       inline: ['axios', 'tough-cookie', 'axios-cookiejar-support', 'http-cookie-agent']

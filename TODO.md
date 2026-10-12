@@ -28,6 +28,7 @@
 - merging of different versions of the same book/game (what to do with the id?)
 
 # DONE
+- one icon set (Lucide via @nuxt/icon) instead of emoji in nav, intro, library page, quick-search chips, ZIP box and favicon (design backlog, 12.10.)
 - clean titles and authors: author + year from the search row, format notes stripped, platform shown, no more "Unbekannter Autor"; library addresses get a space before the ZIP (design backlog, 12.10.)
 - one status pill (`StatusPill.vue`, tones near/good/wait/hard/bad/neutral) in list and detail page (design backlog, 12.10.)
 - detail page: distance per branch, heading without wrap (design backlog, 12.10.)

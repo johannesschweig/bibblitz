@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { useUserStore } from '~/stores/userStore'
 import berlinZips from '~/assets/berlinZipCodes.json'
-import LocationIcon from '~/assets/location.svg?component'
-import ExpandLessIcon from '~/assets/expandLess.svg?component'
-import CheckIcon from '~/assets/check.svg?component'
 
 const { track } = useUmami()
 const userStore = useUserStore()
@@ -40,7 +37,7 @@ function saveLocation() {
   <div class="border  p-2 rounded-lg flex items-center transition-all duration-300" :class="showSuccess ? 'bg-emerald-50 border-emerald-300': 'bg-white border-gray-200'">
     <div v-if="showSuccess"
       class="w-full flex items-center gap-1 text-emerald-700  text-sm py-1 min-h-12">
-      <CheckIcon class="w-6 h-6" />
+      <Icon name="lucide:check" class="size-6" />
       <span class="font-bold">{{ localZipInput}}</span>
       <span>{{ (berlinZips as any)[localZipInput]?.district }} gespeichert.</span>
     </div>
@@ -48,7 +45,7 @@ function saveLocation() {
     <div v-else class="w-full">
       <div class="grid grid-cols-[auto_1fr_auto] gap-x-3 items-center w-full p-1">
         <div class="p-2.5 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
-          <LocationIcon class="w-5 h-5 text-blue-800" />
+          <Icon name="lucide:locate-fixed" class="size-5 text-blue-800" />
         </div>
 
         <div class="flex flex-col min-w-0 justify-center">
@@ -65,7 +62,7 @@ function saveLocation() {
         </div>
 
         <button @click="editing = !editing" class="btn btn-sm btn-secondary">
-          <ExpandLessIcon v-if="editing" class="w-4 h-4" />
+          <Icon v-if="editing" name="lucide:chevron-up" class="size-4" />
           <span v-else>Ändern</span>
         </button>
       </div>

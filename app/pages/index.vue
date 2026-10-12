@@ -27,9 +27,9 @@ const lastQuery = ref('')
 const selectedMediaType = ref<string | null>(null)
 
 const quickSearches = [
-  { label: '📖 Dune', query: 'Dune Wüstenplanet' },
-  { label: '🧩 Catan', query: 'Siedler von Catan' },
-  { label: '🎧 Tonie Eiskönigin', query: 'Tonie Eiskönigin' }
+  { icon: 'lucide:book-open', label: 'Dune', query: 'Dune Wüstenplanet' },
+  { icon: 'lucide:puzzle', label: 'Catan', query: 'Siedler von Catan' },
+  { icon: 'lucide:headphones', label: 'Tonie Eiskönigin', query: 'Tonie Eiskönigin' }
 ]
 
 // 1. Overview of all media types in the results, with counts
@@ -164,7 +164,8 @@ async function handleLoadMore() {
 
           <button v-for="item in quickSearches" :key="item.query" type="button" @click="handleQuickSearch(item.query)"
             :disabled="loading"
-            class="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+            class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+            <Icon :name="item.icon" class="size-3.5" />
             {{ item.label }}
           </button>
         </div>

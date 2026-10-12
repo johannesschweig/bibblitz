@@ -15,7 +15,7 @@
       
       <div class="flex items-start gap-3">
         <div class="shrink-0 w-8 h-8 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center text-sm border border-amber-100">
-          ⚡
+          <Icon name="lucide:zap" class="size-4" />
         </div>
         <div>
           <h3 class="text-sm font-bold text-slate-900 leading-tight">Sofort-Check</h3>
@@ -25,7 +25,7 @@
 
       <div class="flex items-start gap-3">
         <div class="shrink-0 w-8 h-8 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center text-sm border border-blue-100">
-          🕒
+          <Icon name="lucide:clock" class="size-4" />
         </div>
         <div>
           <h3 class="text-sm font-bold text-slate-900 leading-tight">Keine Zeitverschwendung</h3>
@@ -35,7 +35,7 @@
 
       <div class="flex items-start gap-3">
         <div class="shrink-0 w-8 h-8 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-sm border border-emerald-100">
-          📱
+          <Icon name="lucide:smartphone" class="size-4" />
         </div>
         <div>
           <h3 class="text-sm font-bold text-slate-900 leading-tight">Fürs Handy gemacht</h3>

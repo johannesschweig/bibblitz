@@ -32,6 +32,8 @@ BibBlitz (bibblitz.de) — a Nuxt 4 / Vue 3 / Tailwind 4 front end for the Berli
 
 **Pages** — `index` (search + showcase), `media/[id]` (detail/availability), `library/[id]` (library pages, SEO), `imprint`, `data-privacy`, `dev` (toggle to disable Umami tracking on this device).
 
+**Icons** — Lucide via `@nuxt/icon` (`<Icon name="lucide:search" />`), bundled into the client (`clientBundle.scan`, `fallbackToApi: false`), so no requests to the Iconify API (GDPR). Favicon is `public/favicon.svg` (Lucide zap).
+
 **Analytics** — Umami loaded via script in `nuxt.config.ts`; use the `useUmami().track(event, data)` composable. For browser testing on localhost/bibblitz.de set `localStorage['umami.disabled']='1'` first.
 
 `TODO.md` is the product backlog/ideas log (known scraping edge cases are listed there).
@@ -109,7 +111,6 @@ Caveats when re-reading the numbers:
 From a design review on 12.10.2026. Goal: the UI currently reads as stock Tailwind / AI-generated and shows raw catalog data. Ordered from small and self-contained to bigger decisions; do them roughly in this order (content and consistency first, brand later). Tick off by deleting the line and noting it in `TODO.md` → DONE.
 
 **Quick wins**
-3. **Replace emoji with one icon set** (e.g. Lucide via `@nuxt/icon`): nav 🔍, intro ⚡🕒📱, library page 📍⏳🙋🏃‍♂️, quick-search chips, ⚡ favicon. Today three icon styles are mixed (emoji, own SVGs in `app/assets/`, VÖBB's grey media icons).
 4. **One content width and nav**: header is `max-w-7xl`, search `max-w-2xl`, home cards `max-w-md`. Drop the single-tab "🔍 Suche" nav; on subpages put a compact search field in the header.
 5. **Loading and empty states**: skeletons that match the result rows instead of pulsing grey text and a "…" button; result cards without a badge leave an empty gap (`min-h-6`). Make the "↗ VÖBB" button (our conversion, event `voebb-click`) a clear labelled action.
 

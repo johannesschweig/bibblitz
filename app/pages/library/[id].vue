@@ -100,7 +100,7 @@ const distanceText = computed(() => {
         <div v-if="!userStore.userZipDefault && distanceText"
           class="flex items-start gap-3 bg-blue-50/50 border border-blue-100/60 p-3 rounded-xl">
           <div class="p-1.5 bg-blue-100 text-blue-600 rounded-lg text-xs shrink-0 mt-0.5">
-            🏃‍♂️
+            <Icon name="lucide:footprints" class="size-4 block" />
           </div>
           <div>
             <h3 class="text-xs font-bold text-blue-400 uppercase tracking-wide">Entfernung</h3>
@@ -111,7 +111,7 @@ const distanceText = computed(() => {
         </div>
         <div class="flex items-start gap-3">
           <div class="p-2 bg-gray-100 text-gray-600 rounded-lg mt-0.5 shrink-0">
-            📍
+            <Icon name="lucide:map-pin" class="size-4 block" />
           </div>
           <div>
             <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wide">Adresse</h3>
@@ -126,7 +126,7 @@ const distanceText = computed(() => {
 
         <div class="flex items-start gap-3">
           <div class="p-2 bg-gray-100 text-gray-600 rounded-lg mt-0.5 shrink-0">
-            ⏳
+            <Icon name="lucide:clock" class="size-4 block" />
           </div>
           <div class="w-full">
             <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">
@@ -150,7 +150,7 @@ const distanceText = computed(() => {
 
         <div v-if="library.service_hours" class="flex items-start gap-3">
           <div class="p-2 bg-gray-100 text-gray-600 rounded-lg mt-0.5 shrink-0">
-            🙋
+            <Icon name="lucide:concierge-bell" class="size-4 block" />
           </div>
           <div class="w-full">
             <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">
