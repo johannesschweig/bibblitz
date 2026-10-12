@@ -15,6 +15,7 @@ export const MEDIA_TYPE_MAP: Record<string, MediaTypeConfig> = {
   // Spiele
   'spiel': { label: 'Spiel', icon: `${ICON_BASE}brettspiel.svg` },
   'konventionelles spiel': { label: 'Spiel', icon: `${ICON_BASE}brettspiel.svg` },
+  'konsolenspiel': { label: 'Konsolenspiel', icon: `${ICON_BASE}konsolenspiel.svg` },
   // Film
   'dvd': { label: 'DVD', icon: `${ICON_BASE}dvd.svg` },
   'dvd-rom': { label: 'DVD', icon: `${ICON_BASE}dvd.svg` },
