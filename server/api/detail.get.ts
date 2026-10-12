@@ -1,6 +1,7 @@
 import { defineEventHandler, getQuery, createError } from 'h3';
 import * as cheerio from 'cheerio';
 import { filterAndEnrichBranches } from '../../utils/availability';
+import { cleanTitle, cleanAuthor, cleanContributors, parseYear } from '../../utils/catalogText';
 import type { MediaItem, AvailabilityInfo } from '../../types/types';
 
 export default defineEventHandler(async (event) => {
@@ -43,6 +44,7 @@ export default defineEventHandler(async (event) => {
     let mediaType: string | undefined = undefined;
     let author: string | undefined = undefined;
     let isbn: string | undefined = undefined;
+    let year: string | undefined = undefined;
 
     $('#R06 table.gi tr').each((_, el) => {
       const th = $(el).find('th');
@@ -57,6 +59,9 @@ export default defineEventHandler(async (event) => {
       else if (leftText.includes('Verfasser') || leftText.includes('Person')) {
         author = rightText;
       }
+      else if (leftText === 'Veröffentlichung') {
+        year = parseYear(rightText, { last: true });
+      }
       else if (leftText.includes('ISBN')) {
         const isbnMatch = rightText.match(/[0-9Xx-]+/);
         if (isbnMatch) {
@@ -70,6 +75,10 @@ export default defineEventHandler(async (event) => {
       titleText = $('#results h2, h1').first().text().replace(/Aktuelle Seite:\s*/gi, '').trim();
     }
     titleText = titleText.replace(/[\n\t\r]+/g, ' ').replace(/\s+/g, ' ') || 'Unknown Title';
+
+    // The detail title ends in "/ Autor ; Übersetzer", which is more reliable than the contributor
+    // list (that one can start with the translator)
+    const { title: cleanedTitle, platform, responsibility } = cleanTitle(titleText, { withResponsibility: true });
 
     // https://www.voebb.de/aDISWeb/app/prod00?sp=SAK<id>
     const permanentUrl = $('.aDISListe a:contains("Kopierlink"), a.permalink-unclicked').first().attr('href') || targetUrl;
@@ -102,9 +111,11 @@ export default defineEventHandler(async (event) => {
       success: true,
       data: {
         id: mediaId,
-        title: titleText,
+        title: cleanedTitle,
+        platform,
         mediaType,
-        author,
+        author: cleanAuthor(responsibility) ?? cleanContributors(author),
+        year,
         isbn,
         availability: processedAvailability
       } as MediaItem

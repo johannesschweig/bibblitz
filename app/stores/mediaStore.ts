@@ -27,7 +27,9 @@ export const useMediaStore = defineStore('media', {
           itemCache.setBasicData({
             id: item.id,
             title: item.title,
-            author: item.author || 'Unbekannter Autor',
+            author: item.author,
+            year: item.year,
+            platform: item.platform,
             mediaType: item.mediaType || 'Unbekannt',
           });
         });
@@ -52,7 +54,9 @@ export const useMediaStore = defineStore('media', {
             itemCache.setBasicData({
               id: item.id,
               title: item.title,
-              author: item.author || 'Unbekannter Autor',
+              author: item.author,
+              year: item.year,
+              platform: item.platform,
               mediaType: item.mediaType || 'Unbekannt',
             });
           });

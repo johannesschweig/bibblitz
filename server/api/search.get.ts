@@ -4,6 +4,7 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { wrapper } from 'axios-cookiejar-support';
 import { CookieJar } from 'tough-cookie';
+import { cleanTitle, cleanAuthor, parseYear } from '../../utils/catalogText';
 
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36';
 
@@ -48,9 +49,16 @@ function parseResultsPage($: cheerio.CheerioAPI, responseUrl: string) {
 
     const mediaType = rawMediaType.trim();
 
+    // Each result row also carries the statement of responsibility and the year
+    const clean = (text: string) => text.replace(/[\s\u00a0]+/g, ' ').trim();
+    const { title, platform } = cleanTitle(clean(titleText));
+
     searchResults.push({
       id,
-      title: titleText.trim().replace(/\s+/g, ' '),
+      title,
+      platform,
+      author: cleanAuthor(clean(rowContainer.find('.rList_name').text())),
+      year: parseYear(rowContainer.find('.rList_jahr').text()),
       mediaType
     });
   });

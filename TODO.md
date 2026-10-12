@@ -13,7 +13,6 @@
 - instant notifications when available: in app (native) or via email or in telegram
   - bell functionality: add a bell to a exemplar. if you load the page all bells are loaded. you get a popup with the bells that are green.
   - bell for a search?
-- clean up title and authors somehow
 - open graph im head für link previews
 - if /detail fails: we need a refetch button or something
 - covers for books, e.g. https://www.voebb.de/vlb/cover/<isbn-wo-dashes>/m 200ms or open library https://covers.openlibrary.org/b/isbn/0385472579-M.jpg 600ms
@@ -29,6 +28,7 @@
 - merging of different versions of the same book/game (what to do with the id?)
 
 # DONE
+- clean titles and authors: author + year from the search row, format notes stripped, platform shown, no more "Unbekannter Autor"; library addresses get a space before the ZIP (design backlog, 12.10.)
 - one status pill (`StatusPill.vue`, tones near/good/wait/hard/bad/neutral) in list and detail page (design backlog, 12.10.)
 - detail page: distance per branch, heading without wrap (design backlog, 12.10.)
 - 2nd page search

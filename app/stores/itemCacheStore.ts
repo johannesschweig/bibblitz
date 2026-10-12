@@ -35,8 +35,16 @@ export const useItemCacheStore = defineStore('itemCache', {
       this.fetching[id] = $fetch('/api/detail', { query: { id } })
         .then((response: any) => {
           if (response.success && response.data) {
-            // Merge the data into the cache
-            this.items[id] = { ...this.items[id], ...response.data };
+            // Merge the data into the cache. The search result's author and year win: the detail
+            // page only knows the author from the title and has no year.
+            const known = this.items[id]
+            this.items[id] = {
+              ...known,
+              ...response.data,
+              author: known?.author ?? response.data.author,
+              year: known?.year ?? response.data.year,
+              platform: known?.platform ?? response.data.platform
+            };
           }
         })
         .finally(() => {

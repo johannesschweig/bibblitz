@@ -9,6 +9,8 @@ import { useUserStore } from '~/stores/userStore.js'
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import ZipCode from '~/components/ZipCode.vue'
 import StatusPill from '~/components/StatusPill.vue'
+import MediaTitle from '~/components/MediaTitle.vue'
+import { getMediaTypeConfig } from '../../../utils/mediaTypeMapping'
 
 const { track } = useUmami()
 const route = useRoute()
@@ -69,6 +71,14 @@ watch(pending, trackDetailView)
 // nextTick: app.vue loads the saved ZIP in its own onMounted, which runs after the page's
 onMounted(() => nextTick(trackDetailView))
 
+// "Buch · PlayStation 4 · 2025", with the same media label as in the result list
+const metaLine = computed(() => {
+  const item = data.value?.data
+  if (!item) return ''
+  const type = item.mediaType ? getMediaTypeConfig(item.mediaType).label : undefined
+  return [type, item.platform, item.year].filter(Boolean).join(' · ')
+})
+
 function voebbClicked() {
   track('voebb-click', {
     available_now: sortedBranches.value.filter(b => b.daysToWait === -999).length,
@@ -106,12 +116,12 @@ function authorClicked() {
       <!-- Title & metadata -->
       <header class="mb-6 border-b border-gray-200 pb-6">
         <h1 class="text-xl md:text-2xl font-bold leading-tight text-gray-900 mb-2">
-          {{ data.data.title }}
+          <MediaTitle :title="data.data.title" />
         </h1>
         <div class="flex flex-col gap-2 text-sm text-gray-600 mb-2">
           <div v-if="data.data.author" class="" @click="authorClicked()"> {{
             data.data.author }}</div>
-          <div v-if="data.data.mediaType" class="">{{ data.data.mediaType }}</div>
+          <div v-if="metaLine">{{ metaLine }}</div>
         </div>
         <!-- Buttons -->
         <div class="flex gap-2">

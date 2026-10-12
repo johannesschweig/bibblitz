@@ -10,7 +10,9 @@ export interface AvailabilityInfo {
 export interface MediaItem {
   id: string;
   title: string;
-  author: string;
+  author?: string;
+  year?: string;
+  platform?: string;
   isbn?: string;
   mediaType: string;
   availability?: AvailabilityInfo[];
