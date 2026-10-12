@@ -3,19 +3,19 @@ import { ref, onMounted } from 'vue'
 
 const isTrackingDisabled = ref(false)
 
-// Prüfen, wie der aktuelle Status auf diesem Gerät ist
+// Check the current status on this device
 onMounted(() => {
   isTrackingDisabled.value = localStorage.getItem('umami.disabled') === '1'
 })
 
 function toggleTracking() {
   if (isTrackingDisabled.value) {
-    // Tracking wieder aktivieren
+    // Re-enable tracking
     localStorage.removeItem('umami.disabled')
     isTrackingDisabled.value = false
     alert('Umami Tracking ist für dieses Gerät wieder AKTIVIERT.')
   } else {
-    // Tracking deaktivieren
+    // Disable tracking
     localStorage.setItem('umami.disabled', '1')
     isTrackingDisabled.value = true
     alert('Umami Tracking ist für dieses Gerät jetzt DEAKTIVIERT.')

@@ -22,7 +22,7 @@ function decodeToken(token: string): SearchToken {
   return JSON.parse(Buffer.from(token, 'base64url').toString('utf-8'));
 }
 
-// Parst die Trefferliste sowie die Infos, die für die nächste Seite (Pagination) nötig sind
+// Parses the result list and the info needed to load the next page (pagination)
 function parseResultsPage($: cheerio.CheerioAPI, responseUrl: string) {
   const searchResults: any[] = [];
 
@@ -36,7 +36,7 @@ function parseResultsPage($: cheerio.CheerioAPI, responseUrl: string) {
 
     const rowContainer = $(el).closest('.rList_grid_wrapper');
 
-    // Filter gegen E-Ressourcen (z. B. "siehe Vollanzeige")
+    // Filter out e-resources (e.g. "siehe Vollanzeige")
     if (rowContainer.length > 0) {
       const altText = rowContainer.find('.rList_availability img').attr('alt') || '';
       if (altText.toLowerCase().includes('siehe vollanzeige')) return;
@@ -55,7 +55,7 @@ function parseResultsPage($: cheerio.CheerioAPI, responseUrl: string) {
     });
   });
 
-  // "nächster"-Button in der Toolbar zeigt an, ob es eine weitere Seite gibt
+  // The "nächster" toolbar button indicates whether there is another page
   const nextButton = $('input[name="$Toolbar_3"]');
   const hasMore = nextButton.length > 0 && !nextButton.is('[disabled]') && !nextButton.hasClass('toolbar_img_dis');
 
@@ -75,7 +75,7 @@ export default defineEventHandler(async (event) => {
     let responseUrl: string;
 
     if (token && typeof token === 'string') {
-      // Weitere Seite laden: bestehende Session fortsetzen und "nächster"-Button "klicken"
+      // Load next page: resume the existing session and "click" the "nächster" button
       const decoded = decodeToken(token);
       const restoredJar = CookieJar.deserializeSync(decoded.cookies as any);
       const restoredClient = wrapper(axios.create({ jar: restoredJar }));
@@ -122,7 +122,7 @@ export default defineEventHandler(async (event) => {
     const jar = new CookieJar();
     const client = wrapper(axios.create({ jar }));
 
-    // PHASE 1: Session & Anti-CSRF-Token holen
+    // PHASE 1: get session & anti-CSRF token
     const initialRes = await client.get('https://www.voebb.de/aDISWeb/app/prod00');
     const $home = cheerio.load(initialRes.data);
 
@@ -135,7 +135,7 @@ export default defineEventHandler(async (event) => {
 
     const postUrl = new URL(formAction, 'https://www.voebb.de/aDISWeb/app/prod00').href;
 
-    // PHASE 2: Suchanfrage abschicken
+    // PHASE 2: submit the search request
     const params = new URLSearchParams();
     params.append('identity', identity as string);
     params.append('keyCode', '82');
@@ -157,7 +157,7 @@ export default defineEventHandler(async (event) => {
     html = searchRes.data;
     responseUrl = searchRes.request.res.responseUrl;
 
-    // PHASE 3: HTML der Ergebnisseite parsen
+    // PHASE 3: parse the results page HTML
     const $ = cheerio.load(html);
     const { searchResults, hasMore, identity: nextIdentity, requestCount, actionUrl } = parseResultsPage($, responseUrl);
 

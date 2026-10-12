@@ -22,7 +22,7 @@ export const useMediaStore = defineStore('media', {
       const data: any = await $fetch('/api/search', { query: { q: query } });
 
       if (data.success) {
-        // 1. Basis-Daten sofort in den zentralen Cache pushen
+        // 1. Push basic data into the central cache right away
         data.results.forEach((item: any) => {
           itemCache.setBasicData({
             id: item.id,
@@ -32,7 +32,7 @@ export const useMediaStore = defineStore('media', {
           });
         });
 
-        // 2. Im eigenen Store nur die IDs abspeichern
+        // 2. Only store the IDs in this store
         this.searchIds = data.results.map((item: any) => item.id);
         this.lastQuery = query
         this.nextPageToken = data.token ?? null;
@@ -57,7 +57,7 @@ export const useMediaStore = defineStore('media', {
             });
           });
 
-          // Bereits vorhandene IDs (z. B. Duplikate über Seitengrenzen) nicht doppelt anhängen
+          // Don't append IDs that are already present (e.g. duplicates across pages)
           const newIds = data.results.map((item: any) => item.id).filter((id: string) => !this.searchIds.includes(id));
           this.searchIds = [...this.searchIds, ...newIds];
           this.nextPageToken = data.token ?? null;

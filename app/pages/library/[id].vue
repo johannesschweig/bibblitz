@@ -63,7 +63,7 @@ const distanceText = computed(() => {
   if (!lat && !lon) return null
 
 
-  // Berechne Distanz in Kilometern
+  // Calculate distance in kilometers
   const km = calculateHaversineDistance(
     userCoords.lat,
     userCoords.lon,

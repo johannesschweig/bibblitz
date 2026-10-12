@@ -10,15 +10,15 @@ export interface StatusBadgeConfig {
 }
 
 /**
- * Private Hilfsfunktion: Bereinigt den gescrapten Bibliotheksnamen 
- * und sucht den passenden Eintrag in der libraries.json
+ * Private helper: cleans up the scraped library name
+ * and finds the matching entry in libraries.json
  */
 function findMatchingLibrary(branch: string) {
   const parts = branch.split(':')
   const rawBranchName = parts.length > 1 ? parts[1] : parts[0]
 
   const cleanScrapedName = (rawBranchName || '')
-    .split(' - ')[0] // Schneidet Schließungshinweise ab
+    .split(' - ')[0] // Cuts off closure notices
     .replace(/[\s\u00a0]+/g, ' ')
     .trim()
     .toLowerCase()
@@ -30,12 +30,12 @@ function findMatchingLibrary(branch: string) {
 }
 
 /**
- * Private Hilfsfunktion: Berechnet die verbleibenden Tage aus dem VÖBB-Status (Jahr: 2026)
+ * Private helper: calculates the remaining days from the VÖBB status (year: 2026)
  */
 function calculateDaysToWait(status: string): number {
   const cleanStatus = status.toLowerCase().trim()
 
-  // Fall 1: Sofort verfügbar
+  // Case 1: available now
   if (
     cleanStatus.includes('verfügbar') ||
     cleanStatus.includes('am regal') ||
@@ -44,12 +44,12 @@ function calculateDaysToWait(status: string): number {
     return -999
   }
 
-  // Fall 2: Konkretes Rückgabedatum geparst (z.B. "Fällig am: 14.08.2026" oder "Fällig am: 05.11.")
+  // Case 2: specific due date parsed (e.g. "Fällig am: 14.08.2026" or "Fällig am: 05.11.")
   const dateMatch = status.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})?/)
   if (dateMatch) {
     const day = parseInt(dateMatch[1], 10)
-    const month = parseInt(dateMatch[2], 10) - 1 // JS-Monate sind 0-basiert
-    const year = dateMatch[3] ? parseInt(dateMatch[3], 10) : 2026 // Fallback auf das aktuelle Jahr 2026
+    const month = parseInt(dateMatch[2], 10) - 1 // JS months are 0-based
+    const year = dateMatch[3] ? parseInt(dateMatch[3], 10) : 2026 // Fall back to the current year 2026
 
     const returnDate = new Date(year, month, day)
     const today = new Date()
@@ -63,20 +63,20 @@ function calculateDaysToWait(status: string): number {
     return diffDays
   }
 
-  // Fall 3: Vorbestellt / Bestellt ohne konkretes Datum
+  // Case 3: reserved / on order without a specific date
   if (
     cleanStatus.includes('vorbestellt') ||
     cleanStatus.includes('entleihen') ||
     cleanStatus.includes('reserviert')
   ) {
-    return 14 // Pauschaler Schätzwert
+    return 14 // Flat estimate
   }
 
-  return 999 // Unbekannt / Verlust / Nicht im Regal
+  return 999 // Unknown / lost / not on the shelf
 }
 
 /**
- * Berechnet die Konfiguration des Status-Badges für die Übersichtkarten/Detailseiten
+ * Calculates the status badge config for the result cards/detail pages
  */
 export function calculateStatusInfo(
   availability: AvailabilityInfo[] | undefined,
@@ -85,13 +85,13 @@ export function calculateStatusInfo(
 ): StatusBadgeConfig {
 
   const sortedAvailability = sortBranchesByDistance(availability, userCoords)
-  // 1. Ungültige/Verlorene Exemplare herausfiltern
+  // 1. Filter out invalid/lost copies
   const validBranches = sortedAvailability?.filter(item => {
     const lower = item.status.toLowerCase()
     return !lower.includes('nicht im regal') && !lower.includes('verloren') && !lower.includes('vermisst')
   }) || []
 
-  // Fallback: Keine gültigen Standorte übrig
+  // Fallback: no valid branches left
   if (validBranches.length === 0) {
     return {
       label: '🔴 Nicht im Bestand',
@@ -114,15 +114,15 @@ export function calculateStatusInfo(
       }
     }
   } else {
-    // Hilfsfunktion für sichere Distanzen
+    // Helper for safe distances
     const getDist = (b: any) => b.distance ?? 99
 
-    // 1. Daten vorab sauber filtern
+    // 1. Filter the data up front
     const available = validBranches.filter(b => b.daysToWait === -999)
     const borrowed = validBranches.filter(b => (b.daysToWait || 999) > 0 && b.daysToWait !== 999)
 
     // -------------------------------------------------------------
-    // PRIO 1: Verfügbar & Nah (< 3 km)
+    // PRIO 1: available & close (< 3 km)
     // -------------------------------------------------------------
     const closeAvailable = available.filter(b => getDist(b) < 3)
     if (closeAvailable.length > 0) {
@@ -135,7 +135,7 @@ export function calculateStatusInfo(
     }
 
     // -------------------------------------------------------------
-    // PRIO 2: Verfügbar & Weiter weg (3 bis < 7 km)
+    // PRIO 2: available & further away (3 to < 7 km)
     // -------------------------------------------------------------
     const farAvailable = available.filter(b => getDist(b) >= 3 && getDist(b) < 7)
     if (farAvailable.length > 0) {
@@ -149,7 +149,7 @@ export function calculateStatusInfo(
     }
 
     // -------------------------------------------------------------
-    // PRIO 3: Ausgeliehen & Nah (< 3 km)
+    // PRIO 3: on loan & close (< 3 km)
     // -------------------------------------------------------------
     const closeBorrowed = borrowed.filter(b => getDist(b) < 3)
     if (closeBorrowed.length > 0) {
@@ -161,7 +161,7 @@ export function calculateStatusInfo(
     }
 
     // -------------------------------------------------------------
-    // PRIO 4: Ausgeliehen & Weiter weg (3 bis < 7 km)
+    // PRIO 4: on loan & further away (3 to < 7 km)
     // -------------------------------------------------------------
     const farBorrowed = borrowed.filter(b => getDist(b) >= 3 && getDist(b) < 7)
     if (farBorrowed.length > 0) {
@@ -173,7 +173,7 @@ export function calculateStatusInfo(
     }
 
     // -------------------------------------------------------------
-    // FALLBACK: Wenn gar nichts matcht (oder alles über 7km weg ist)
+    // FALLBACK: nothing matches (or everything is more than 7 km away)
     // -------------------------------------------------------------
     return {
       label: '🟠 Schwer zu bekommen',
@@ -184,8 +184,8 @@ export function calculateStatusInfo(
 }
 
 /**
- * Filtert ungültige Einträge, reichert mit Geo-Daten & berechneter Wartezeit an 
- * und sortiert die Bibliotheken nach JSON-Reihenfolge (Entfernung)
+ * Filters out invalid entries, enriches them with geo data & calculated wait time
+ * and sorts the libraries by distance
  */
 export function filterAndEnrichBranches(rawAvailability: AvailabilityInfo[]): AvailabilityInfo[] {
   return rawAvailability
@@ -201,9 +201,9 @@ export function filterAndEnrichBranches(rawAvailability: AvailabilityInfo[]): Av
         sortIndex
       }
     })
-    // Nur zuordenbare Bibliotheken behalten
+    // Keep only libraries that could be matched
     .filter(item => item.sortIndex !== -1)
-    // Das temporäre Hilfsfeld 'sortIndex' löschen
+    // Remove the temporary helper field 'sortIndex'
     .map(({ sortIndex, ...cleanItem }) => cleanItem)
 }
 
@@ -230,6 +230,6 @@ export function sortBranchesByDistance(availability: AvailabilityInfo[], userCoo
     const distA = a.distance ?? 999;
     const distB = b.distance ?? 999;
 
-    return distA - distB; // Die kürzeste Distanz steht ganz oben
+    return distA - distB; // Shortest distance first
   });
 }

@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
   const targetUrl = `https://www.voebb.de/aDISWeb/app?service=direct/0/Home/$DirectLink&sp=SPROD00&sp=SAK${id}`;
 
   try {
-    // 🟢 Nativer Nuxt $fetch Call — läuft zu 100% stabil als ESM auf Vercel
+    // Native Nuxt $fetch call, runs reliably as ESM on Vercel
     const htmlContent = await $fetch<string>(targetUrl, {
       method: 'GET',
       headers: {
@@ -25,10 +25,10 @@ export default defineEventHandler(async (event) => {
         'Accept-Language': 'de-DE,de;q=0.9,en-US;q=0.8',
         'Cache-Control': 'no-cache',
       },
-      // Nuxt übernimmt das automatische Retry-Handling ressourcenschonend im Hintergrund
+      // Nuxt handles retries automatically in the background
       retry: 1,
       retryDelay: 300,
-      timeout: 4500 // Bleibt sicher unter dem harten 10-Sekunden-Limit von Vercel
+      timeout: 4500 // Stays safely below Vercel's hard 10-second limit
     });
 
     if (!htmlContent || !htmlContent.includes('aDISWeb')) {
@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // ==========================================
-    // AB HIER BLEIBT DEIN PARSING-CODE UNVERÄNDERT
+    // PARSING
     // ==========================================
     const $ = cheerio.load(htmlContent);
 

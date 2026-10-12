@@ -7,12 +7,12 @@ export interface MediaTypeConfig {
 const ICON_BASE = 'https://www.voebb.de/aDISWeb_kopac86/img/medien/'
 
 export const MEDIA_TYPE_MAP: Record<string, MediaTypeConfig> = {
-  // Bücher
+  // Books
   'buch': { label: 'Buch', icon: `${ICON_BASE}buch.svg` },
   'band': { label: 'Buch', icon: `${ICON_BASE}buch.svg` },
   'hochschulschrift': { label: 'Buch', icon: `${ICON_BASE}buch.svg` },
   'noten': { label: 'Noten', icon: `${ICON_BASE}noten.svg` },
-  // Spiele
+  // Games
   'spiel': { label: 'Spiel', icon: `${ICON_BASE}brettspiel.svg` },
   'konventionelles spiel': { label: 'Spiel', icon: `${ICON_BASE}brettspiel.svg` },
   'konsolenspiel': { label: 'Konsolenspiel', icon: `${ICON_BASE}konsolenspiel.svg` },
@@ -24,13 +24,13 @@ export const MEDIA_TYPE_MAP: Record<string, MediaTypeConfig> = {
   'ultra hd': { label: 'Blu-ray', icon: `${ICON_BASE}bluray.svg` },
   'ultra hd blu-ray': { label: 'Blu-ray', icon: `${ICON_BASE}bluray.svg` },
   'video': { label: 'Video', icon: `${ICON_BASE}video.svg` },
-  // Musik
+  // Music
   'cd': { label: 'CD', icon: `${ICON_BASE}cd.svg` },
   'schallplatte': { label: 'Schallplatte', icon: `${ICON_BASE}lp.svg` },
   'mp3': { label: 'MP3', icon: `${ICON_BASE}mp3.svg` },
   // Digital
   'e-ressource': { label: 'E-Ressource', icon: `${ICON_BASE}eressource.svg` },
-  // Weiteres
+  // Other
   'medienkombination': { label: 'Medienpaket', icon: `${ICON_BASE}medienkombination.svg` },
   'medienpaket': { label: 'Medienpaket', icon: `${ICON_BASE}medienkombination.svg` },
   'karte/plan': { label: 'Karte', icon: `${ICON_BASE}karte.svg` },

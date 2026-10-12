@@ -4,7 +4,7 @@ import { onMounted, ref, computed } from 'vue'
 import { useItemCacheStore } from '~/stores/itemCacheStore'
 import MediaItem from '~/components/MediaItem.vue'
 
-// Handverlesene, gelegentlich aktualisierte Auswahl beliebter Medien für die Startseite
+// Hand-picked, occasionally updated selection of popular media for the home page
 const showcase = {
   ids: [
     '34112359',
@@ -24,13 +24,13 @@ const INITIAL_COUNT = 3
 const expanded = ref(false)
 const visibleIds = computed(() => expanded.value ? showcase.ids : showcase.ids.slice(0, INITIAL_COUNT))
 
-// Nacheinander laden statt gleichzeitig – die VÖBB-Quelle antwortet
-// bei vielen parallelen Anfragen unzuverlässig (Timeouts/Rate-Limiting).
+// Load sequentially instead of in parallel – VÖBB responds unreliably
+// to many concurrent requests (timeouts/rate limiting).
 async function loadShowcase() {
   for (const id of showcase.ids) {
     await itemCacheStore.fetchDetails(id)
   }
-  // Fehlgeschlagene Abfragen einmal erneut versuchen
+  // Retry failed requests once
   const missing = showcase.ids.filter(id => !itemCacheStore.items[id]?.title)
   for (const id of missing) {
     await itemCacheStore.fetchDetails(id)

@@ -23,7 +23,7 @@ const loading = ref(false)
 const hasSearched = ref(false)
 const lastQuery = ref('')
 
-// Aktuell gewählter Filter (null = alle)
+// Currently selected filter (null = all)
 const selectedMediaType = ref<string | null>(null)
 
 const quickSearches = [
@@ -32,13 +32,13 @@ const quickSearches = [
   { label: '🎧 Tonie Eiskönigin', query: 'Tonie Eiskönigin' }
 ]
 
-// 1. Übersicht aller vorkommenden Medientypen inklusive Häufigkeit
+// 1. Overview of all media types in the results, with counts
 const mediaTypes = computed(() => {
   const counts: Record<string, number> = {}
 
   for (const id of mediaStore.searchIds) {
     const rawType = itemCacheStore.items[id]?.mediaType || 'unbekannt'
-    const label = getMediaTypeConfig(rawType).label  // ← normalisiert
+    const label = getMediaTypeConfig(rawType).label  // ← normalized
     counts[label] = (counts[label] || 0) + 1
   }
 
@@ -47,7 +47,7 @@ const mediaTypes = computed(() => {
     .map(([type, count]) => ({ type, count }))
 })
 
-// 2. Gefilterte IDs basierend auf ausgewähltem Tag
+// 2. Filtered IDs based on the selected tag
 const filteredSearchIds = computed(() => {
   if (!selectedMediaType.value) return mediaStore.searchIds
 
@@ -57,9 +57,9 @@ const filteredSearchIds = computed(() => {
   })
 })
 
-// router.replace löst den route.query.q-Watcher aus, bevor mediaStore.lastQuery gesetzt ist.
-// Ohne diesen Marker würde dieselbe Suche (und derselbe VÖBB-Scrape) doppelt laufen.
-// Muss vor dem Watcher stehen: der läuft mit `immediate` sofort und ruft handleSearch auf.
+// router.replace triggers the route.query.q watcher before mediaStore.lastQuery is set.
+// Without this marker the same search (and the same VÖBB scrape) would run twice.
+// Must be declared before the watcher: it runs immediately (`immediate`) and calls handleSearch.
 let inFlightQuery = ''
 
 watch(
@@ -124,7 +124,7 @@ async function handleSearch(queryText: string, source: 'user' | 'quick') {
     loading.value = false
     hasSearched.value = true
   }
-  // Tracking erst nach der Antwort, damit Trefferzahl und Fehler mitgeschickt werden können
+  // Track only after the response so the result count and errors can be sent along
   track(
     source === 'user' ? 'search-started' : 'search-quick',
     { query: cleanQuery, results: mediaStore.searchIds.length, ...(failed && { error: 1 }) }
@@ -145,7 +145,7 @@ async function handleLoadMore() {
   <div class="min-h-screen">
     <div class="max-w-2xl mx-auto md:py-12">
 
-      <!-- Suchformular -->
+      <!-- Search form -->
       <div class="mb-6">
         <form @submit.prevent="handleSearch(searchQuery, 'user')" class="flex gap-2 mb-3">
           <input v-model="searchQuery" type="search" placeholder="Titel, Autor, Spiel …" @search="handleInputClear"
@@ -157,7 +157,7 @@ async function handleLoadMore() {
           </button>
         </form>
 
-        <!-- Vorschläge (Nur im Start-Zustand) -->
+        <!-- Suggestions (initial state only) -->
         <div v-if="mediaStore.searchIds.length === 0 && !loading"
           class="flex flex-wrap gap-2 items-center text-xs text-gray-500 px-1">
           <span class="mr-1 hidden sm:inline">Vorschläge:</span>
@@ -169,24 +169,24 @@ async function handleLoadMore() {
           </button>
         </div>
 
-        <!-- Filter-Tags direkt unter der Suche (Sobald Ergebnisse da sind) -->
+        <!-- Filter tags right below the search (once there are results) -->
         <div v-if="mediaStore.searchIds.length > 0 && !loading">
           <MediaTypeFilter v-model="selectedMediaType" :types="mediaTypes" :total-count="mediaStore.searchIds.length" />
         </div>
       </div>
 
-      <!-- Lade-Zustand -->
+      <!-- Loading state -->
       <div v-if="loading" class="text-center py-16 text-gray-400 text-sm animate-pulse">
         Frage VÖBB-Katalog ab …
       </div>
 
-      <!-- Ergebnisse -->
+      <!-- Results -->
       <div v-else-if="mediaStore.searchIds.length > 0">
         <p class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-4">
           {{ filteredSearchIds.length }} von {{ mediaStore.searchIds.length }} Treffern
         </p>
 
-        <!-- Liste nutzt nun filteredSearchIds -->
+        <!-- List uses filteredSearchIds -->
         <ul v-if="filteredSearchIds.length > 0" class="space-y-2">
           <MediaItem v-for="id in filteredSearchIds" :key="id" :mediaId="id" />
         </ul>
@@ -202,7 +202,7 @@ async function handleLoadMore() {
         </div>
       </div>
 
-      <!-- Leer-Zustand nach Suche -->
+      <!-- Empty state after a search -->
       <div v-else-if="hasSearched" class="text-center py-16 text-gray-400 text-sm">
         Keine Treffer für „{{ lastQuery }}“ gefunden.
       </div>

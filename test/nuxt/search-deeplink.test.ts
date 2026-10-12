@@ -1,6 +1,6 @@
-// Ein geteilter Link wie /?q=Dune muss beim Öffnen sofort suchen.
-// Regression: 61a4426 hat `inFlightQuery` unter dem `immediate`-Watcher deklariert,
-// der Watcher lief beim Mounten in die TDZ und die Suche startete nie.
+// A shared link like /?q=Dune must search right away when opened.
+// Regression: 61a4426 declared `inFlightQuery` below the `immediate` watcher,
+// the watcher hit the TDZ on mount and the search never started.
 import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { mountSuspended, registerEndpoint } from '@nuxt/test-utils/runtime'
 import { flushPromises } from '@vue/test-utils'
@@ -17,15 +17,15 @@ registerEndpoint('/api/search', searchHandler)
 registerEndpoint('/api/detail', () => ({}))
 
 beforeAll(() => {
-  // happy-dom kennt keinen IntersectionObserver (AvailabilityBadge)
+  // happy-dom has no IntersectionObserver (AvailabilityBadge)
   vi.stubGlobal('IntersectionObserver', class {
     observe() {}
     disconnect() {}
   })
 })
 
-describe('Suche per Deep-Link', () => {
-  it('startet die Suche aus ?q= und zeigt die Treffer', async () => {
+describe('Search via deep link', () => {
+  it('starts the search from ?q= and shows the results', async () => {
     const wrapper = await mountSuspended(IndexPage, { route: '/?q=Dune' })
     await flushPromises()
     await vi.waitFor(() => expect(wrapper.text()).toContain('Dune / Frank Herbert'))

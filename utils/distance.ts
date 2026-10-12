@@ -12,7 +12,7 @@ export function calculateHaversineDistance(lat1: number, lon1: number, lat2: num
   return R * c; // Distance in km
 }
 
-// Unter 1 km in Metern, darüber in km mit einer Nachkommastelle und deutschem Komma
+// Below 1 km in meters, above in km with one decimal and a German decimal comma
 export function formatDistance(km: number): string {
   if (km < 1) {
     return `${Math.round(km * 1000)} m`

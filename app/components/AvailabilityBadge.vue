@@ -21,13 +21,13 @@ onMounted(() => {
   observer = new IntersectionObserver(([entry]) => {
     if (entry.isIntersecting && !itemData.value?.availability) {
       isPending.value = true
-      // Den zentralen Cache-Store anfunken
+      // Ask the central cache store
       itemCacheStore.fetchDetails(props.mediaId).finally(() => {
         isPending.value = false
       })
       observer.disconnect()
     }
-  }, { rootMargin: '50px' }) // 50px früher laden, damit es flüssiger wirkt
+  }, { rootMargin: '50px' }) // Load 50px early so it feels smoother
 
   if (targetElement.value) observer.observe(targetElement.value)
 })

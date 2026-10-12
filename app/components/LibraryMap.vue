@@ -30,14 +30,14 @@ onMounted(async () => {
     zoomControl: true,
   })
 
-  // CartoDB Positron – clean, minimal, grau/weiß
+  // CartoDB Positron – clean, minimal, grey/white
   L.tileLayer(`https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=${config.public.cartoApiKey}`, {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
     subdomains: 'abcd',
     maxZoom: 19
   }).addTo(map)
 
-  // Nutzer-Standort
+  // User location
   const userIcon = L.divIcon({
     html: `<div style="
       width: 14px; height: 14px;
@@ -56,7 +56,7 @@ onMounted(async () => {
       .bindPopup(`<b>Dein Standort (${userStore.userZip})</b>`)
   }
 
-  // Bibliotheks-Marker
+  // Library markers
   addLibraryMarkers(L)
 
   const selectedLibrary = libraryData.find(lib => lib.id === props.libraryId)
@@ -69,7 +69,7 @@ onMounted(async () => {
 })
 
 function addLibraryMarkers(L: any) {
-  // Alte Marker entfernen
+  // Remove old markers
   markers.forEach(m => m.remove())
   markers = []
 
@@ -115,7 +115,7 @@ function addLibraryMarkers(L: any) {
   })
 }
 
-// Libraries neu rendern wenn sie sich ändern
+// Re-render libraries when they change
 watch(() => libraryData, async () => {
   if (!map) return
   const L = (await import('leaflet')).default
