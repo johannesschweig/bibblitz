@@ -29,6 +29,7 @@
 - merging of different versions of the same book/game (what to do with the id?)
 
 # DONE
+- detail page: distance per branch, heading without wrap (design backlog, 12.10.)
 - 2nd page search
 - showcase: popular books/games/tonies
   - july: 34112359 01392424 07235286 34971091 35168840 00224031 06115009

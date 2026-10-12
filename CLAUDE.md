@@ -13,6 +13,7 @@ BibBlitz (bibblitz.de) — a Nuxt 4 / Vue 3 / Tailwind 4 front end for the Berli
 - `npm test` — Vitest with `@nuxt/test-utils` (`environment: 'nuxt'`), tests in `test/`. Page tests use `mountSuspended` and fake `/api/*` with `registerEndpoint`, so they never hit voebb.de. No linter or formatter is configured.
 - `CARTO_API_KEY` env var (in `.env`, gitignored) is exposed as `runtimeConfig.public.cartoApiKey` for the Leaflet/CARTO map tiles.
 - Deployed on Vercel; server routes must stay within its ~10s function limit (detail fetch uses a 4.5s timeout for this reason).
+- Commit messages: one short lowercase subject line, no body unless the why isn't obvious from the diff (then max 2–3 lines).
 
 ## Architecture
 
@@ -102,3 +103,21 @@ Caveats when re-reading the numbers:
 - **Search events before 09.10.2026 are inflated ~60%**: `handleSearch` called `router.replace`, the `route.query.q` watcher in `app/pages/index.vue` saw `mediaStore.lastQuery` still unset (it is only set after the `/api/search` response) and ran the search again (second scrape too). Export 29.06.–09.10.: 580 search events, ~364 real searches (duplicates arrive 0 s apart), and quick-chip clicks were also logged as `search-started`. Fixed 09.10. with an in-flight guard; compare only counts from after the deploy.
 - Events started 03.07., so the 90-day window (from 11.07.) misses the first week of `search-started` and `toggle-faq`.
 - Showcase (IDs hardcoded in `app/components/Showcase.vue`) and load-more are the September experiments: question to answer is whether they get used by real visitors; if not, remove the feature, not just the event.
+
+## Design backlog
+
+From a design review on 12.10.2026. Goal: the UI currently reads as stock Tailwind / AI-generated and shows raw catalog data. Ordered from small and self-contained to bigger decisions; do them roughly in this order (content and consistency first, brand later). Tick off by deleting the line and noting it in `TODO.md` → DONE.
+
+**Quick wins**
+1. **One status pill** used in both the result list (`AvailabilityBadge.vue`, labels in `utils/availability.ts`) and the detail page (`getStatusClass`): today they differ in fill, border, emoji and green/emerald/yellow/amber tones. Colored dot + text instead of 🟢🟡🔴🟠.
+2. **Clean catalog titles and authors** in the scraper: split ISBD notation (`Titel : Untertitel / Autor ; Übersetzer [Übersetzer/in]`) into title/subtitle, strip role tags like `[Verfasser/in]`, show the first author not the translator, drop the "Unbekannter Autor" placeholder, map `mediaType` on the detail page too ("Band" vs "Buch"). Fix "Str. 37,12247" missing space in `libraries.json`. (Same as "clean up title and authors" in `TODO.md`.)
+3. **Replace emoji with one icon set** (e.g. Lucide via `@nuxt/icon`): nav 🔍, intro ⚡🕒📱, library page 📍⏳🙋🏃‍♂️, quick-search chips, ⚡ favicon. Today three icon styles are mixed (emoji, own SVGs in `app/assets/`, VÖBB's grey media icons).
+4. **One content width and nav**: header is `max-w-7xl`, search `max-w-2xl`, home cards `max-w-md`. Drop the single-tab "🔍 Suche" nav; on subpages put a compact search field in the header.
+5. **Loading and empty states**: skeletons that match the result rows instead of pulsing grey text and a "…" button; result cards without a badge leave an empty gap (`min-h-6`). Make the "↗ VÖBB" button (our conversion, event `voebb-click`) a clear labelled action.
+
+**Needs decisions**
+6. **Design tokens** in `@theme` in `app/assets/style.css`: one typeface (consider a serif for titles), one non-Tailwind-blue accent, two radii, shadows only on hover. Remove one-offs (`#5b8dee` gradient in `About.vue`, emerald heading on library pages, black `.btn-primary` vs blue search button).
+7. **Results as a list, not cards**: dividers instead of `rounded-xl border shadow-sm` per item.
+8. **Replace the AI illustration** `public/search-borrow.png` (619 px, `opacity-90`, generic generated look) with a real screenshot/GIF of the availability view, an own photo of a Berlin library, or nothing. Rewrite `AppIntro.vue` from three generic emoji bullets into one concrete sentence.
+9. **Covers via ISBN** (see `TODO.md` for sources and the referrer problem): biggest visual lever, but GDPR (proxy through our server), Vercel timeout budget and missing covers for games/Tonies need a fallback.
+10. **Wordmark and favicon** instead of plain `font-black` text and the ⚡ emoji.

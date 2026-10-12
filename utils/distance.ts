@@ -11,3 +11,11 @@ export function calculateHaversineDistance(lat1: number, lon1: number, lat2: num
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c; // Distance in km
 }
+
+// Unter 1 km in Metern, darüber in km mit einer Nachkommastelle und deutschem Komma
+export function formatDistance(km: number): string {
+  if (km < 1) {
+    return `${Math.round(km * 1000)} m`
+  }
+  return `${km.toFixed(1).replace('.', ',')} km`
+}

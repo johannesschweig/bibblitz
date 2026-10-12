@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { useItemCacheStore } from '@/stores/itemCacheStore'
 import { getPermanentUrlFromId } from '../../../utils/index.ts'
 import { sortBranchesByDistance } from '../../../utils/availability'
+import { formatDistance } from '../../../utils/distance'
 import { useUserStore } from '~/stores/userStore.js'
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import ZipCode from '~/components/ZipCode.vue'
@@ -133,10 +134,7 @@ function authorClicked() {
 
       <!-- Verfügbarkeitsliste -->
       <section>
-        <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
-          📍 Standorte <span class="text-sm font-normal text-gray-500">(Sortiert nach Entfernung zu <span
-              class="font-medium"> {{ userStore.userZip }} </span>)</span>
-        </h2>
+        <h2 class="text-lg font-bold mb-4">Standorte</h2>
 
         <div v-if="data.data.availability.length === 0" class="text-gray-500 p-4 text-center">
           Keine Exemplare gefunden.
@@ -146,16 +144,18 @@ function authorClicked() {
 
           <ZipCode v-model="userStore.userZip" />
           <NuxtLink v-for="(item, index) in displayedBranches" :key="index" :to="`/library/${item.libraryId}`"
-            class="border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 hover:bg-blue-50 group hover:border-blue-50 active:bg-blue-50 active:border-blue-50"
-            :class="item.distance < 3 ? 'bg-white' : 'bg-gray-50'">
+            class="bg-white border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 hover:bg-blue-50 group hover:border-blue-50 active:bg-blue-50 active:border-blue-50">
             <div>
               <h3 class="font-medium text-gray-900 group-hover:text-blue-900 group-active:text-blue-900">{{
                 item.libraryName }}</h3>
-              <p v-if="item.shelfmark" class="text-xs text-gray-500 mt-0.5">
-                Signatur: <span class="font-mono bg-gray-50 px-1 py-0.5 border border-gray-300 rounded text-gray-700">{{
-                  item.shelfmark
-                }}</span>
-                <!-- {{ item.daysToWait}} -->
+              <p v-if="item.distance !== undefined || item.shelfmark" class="text-xs text-gray-500 mt-0.5">
+                <span v-if="item.distance !== undefined" class="font-semibold text-gray-700">{{ formatDistance(item.distance) }}</span>
+                <span v-if="item.distance !== undefined && item.shelfmark"> · </span>
+                <template v-if="item.shelfmark">
+                  Signatur: <span class="font-mono bg-gray-50 px-1 py-0.5 border border-gray-300 rounded text-gray-700">{{
+                    item.shelfmark
+                  }}</span>
+                </template>
               </p>
             </div>
 

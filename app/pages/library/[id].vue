@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import libraryData from '~/assets/libraries.json'
-import { calculateHaversineDistance } from '~~/utils/distance'
+import { calculateHaversineDistance, formatDistance } from '~~/utils/distance'
 import LibraryMap from '~/components/LibraryMap.vue'
 
 const route = useRoute()
@@ -71,11 +71,7 @@ const distanceText = computed(() => {
     lon
   )
 
-  // Schöne Formatierung: Unter 1km in Metern, darüber in km mit einer Nachkommastelle
-  if (km < 1) {
-    return `${Math.round(km * 1000)} m von dir entfernt`
-  }
-  return `${km.toFixed(1).replace('.', ',')} km von dir entfernt`
+  return `${formatDistance(km)} von dir entfernt`
 })
 </script>
 
