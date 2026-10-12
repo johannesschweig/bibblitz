@@ -57,6 +57,11 @@ const filteredSearchIds = computed(() => {
   })
 })
 
+// router.replace löst den route.query.q-Watcher aus, bevor mediaStore.lastQuery gesetzt ist.
+// Ohne diesen Marker würde dieselbe Suche (und derselbe VÖBB-Scrape) doppelt laufen.
+// Muss vor dem Watcher stehen: der läuft mit `immediate` sofort und ruft handleSearch auf.
+let inFlightQuery = ''
+
 watch(
   () => route.query.q,
   (newQuery) => {
@@ -97,10 +102,6 @@ function handleQuickSearch(query: string) {
   searchQuery.value = query
   handleSearch(query, 'quick')
 }
-
-// router.replace löst den route.query.q-Watcher aus, bevor mediaStore.lastQuery gesetzt ist.
-// Ohne diesen Marker würde dieselbe Suche (und derselbe VÖBB-Scrape) doppelt laufen.
-let inFlightQuery = ''
 
 async function handleSearch(queryText: string, source: 'user' | 'quick') {
   const cleanQuery = queryText.trim()

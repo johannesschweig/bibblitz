@@ -10,7 +10,7 @@ BibBlitz (bibblitz.de) — a Nuxt 4 / Vue 3 / Tailwind 4 front end for the Berli
 
 - `npm run dev` — runs `vercel dev` (needs Vercel CLI auth/link). For a plain Nuxt dev server use `npx nuxt dev --port 3210` (this is what `.claude/launch.json` uses).
 - `npm run build` / `npm run generate` / `npm run preview` — standard Nuxt.
-- No test runner, linter, or formatter is configured.
+- `npm test` — Vitest with `@nuxt/test-utils` (`environment: 'nuxt'`), tests in `test/`. Page tests use `mountSuspended` and fake `/api/*` with `registerEndpoint`, so they never hit voebb.de. No linter or formatter is configured.
 - `CARTO_API_KEY` env var (in `.env`, gitignored) is exposed as `runtimeConfig.public.cartoApiKey` for the Leaflet/CARTO map tiles.
 - Deployed on Vercel; server routes must stay within its ~10s function limit (detail fetch uses a 4.5s timeout for this reason).
 
