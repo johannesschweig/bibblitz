@@ -65,6 +65,10 @@ let inFlightQuery = ''
 watch(
   () => route.query.q,
   (newQuery) => {
+    // This page is kept alive (see app.vue), so the watcher keeps firing on /media and /library.
+    // Without this guard the else branch below would router.replace the q param onto those pages.
+    if (route.path !== '/') return
+
     if (newQuery) {
       const queryStr = String(newQuery)
       searchQuery.value = queryStr
