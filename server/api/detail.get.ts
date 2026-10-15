@@ -2,6 +2,7 @@ import { defineEventHandler, getQuery, createError } from 'h3';
 import * as cheerio from 'cheerio';
 import { filterAndEnrichBranches } from '../../utils/availability';
 import { cleanTitle, cleanAuthor, cleanContributors, parseYear } from '../../utils/catalogText';
+import { parseIsbn } from '../../utils/isbn';
 import type { MediaItem, AvailabilityInfo } from '../../types/types';
 
 export default defineEventHandler(async (event) => {
@@ -63,10 +64,7 @@ export default defineEventHandler(async (event) => {
         year = parseYear(rightText, { last: true });
       }
       else if (leftText.includes('ISBN')) {
-        const isbnMatch = rightText.match(/[0-9Xx-]+/);
-        if (isbnMatch) {
-          isbn = isbnMatch[0].replace(/-/g, '');
-        }
+        isbn = parseIsbn(rightText);
       }
     });
 

@@ -86,6 +86,12 @@ function voebbClicked() {
   })
 }
 
+// Measures whether people click the (plain, unstyled) ISBN on their own. If they do, link it to an
+// ISBN search (that also finds duplicate records of the same edition with their own copies)
+function isbnClicked() {
+  track('isbn-click')
+}
+
 function authorClicked() {
   track('author-click', { query: data.value?.data.author ?? '' })
 }
@@ -122,6 +128,7 @@ function authorClicked() {
           <div v-if="data.data.author" class="" @click="authorClicked()"> {{
             data.data.author }}</div>
           <div v-if="metaLine">{{ metaLine }}</div>
+          <div v-if="data.data.isbn">ISBN <span @click="isbnClicked()">{{ data.data.isbn }}</span></div>
         </div>
         <!-- Buttons -->
         <div class="flex gap-2">

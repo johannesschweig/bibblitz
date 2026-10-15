@@ -5,6 +5,7 @@ import * as cheerio from 'cheerio';
 import { wrapper } from 'axios-cookiejar-support';
 import { CookieJar } from 'tough-cookie';
 import { cleanTitle, cleanAuthor, parseYear } from '../../utils/catalogText';
+import { normalizeIsbn, toIsbn13 } from '../../utils/isbn';
 
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36';
 
@@ -127,6 +128,11 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 400, statusMessage: 'Query required' });
     }
 
+    // VÖBB's "Überall suchen" finds ISBNs, but not with an "ISBN" prefix, and an ISBN-10 does not
+    // find records catalogued with the ISBN-13 (the other way round works)
+    const isbn = normalizeIsbn(q);
+    const searchTerm = isbn ? toIsbn13(isbn) : q;
+
     const jar = new CookieJar();
     const client = wrapper(axios.create({ jar }));
 
@@ -150,7 +156,7 @@ export default defineEventHandler(async (event) => {
     params.append('focus', '$$GFBO_1');
     params.append('requestCount', '1');
     params.append('scriptEnabled', 'true');
-    params.append('$Autosuggest', q);
+    params.append('$Autosuggest', searchTerm);
     params.append('$Select', 'Überall suchen');
     params.append('$Button', 'pressed');
 

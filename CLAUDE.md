@@ -49,6 +49,7 @@ How to read the "Umami indicator" column: **event** = custom event (Events tab, 
 | Feature | Introduced | Umami indicator | Usage (90d) | Notes |
 |---|---|---|---|---|
 | Text search | 15.06. | event `search-started` (tracked since 03.07.; since 09.10. fires after the response with `results` count and `error: 1` on failure) | 497 raw, ~300-350 real | core, keep. Use `results: 0` to find dead-end searches |
+| ISBN search (ISBN-10/13, hyphens, "ISBN" prefix; normalized to ISBN-13 in `search.get.ts`) | 15.10. | event `search-started` with `isbn: 1` | n/a, new | before 15.10. plain ISBNs already worked, but not ISBN-10 for records catalogued with ISBN-13 or a prefixed "ISBN" |
 | Quick-search chips | 07.07. | event `search-quick` | 18 | ~4% of searches |
 | Media-type filter | 22.07. (aggregation 20.08.) | event `click-media-filter` | 29 | ~6% of searches |
 | "Weitere Treffer laden" (pagination) | 09.09. | event `search-next-page` (with `page`) | 8 (+2 `search-load-more`, old name) | too new, re-check |
@@ -72,6 +73,7 @@ How to read the "Umami indicator" column: **event** = custom event (Events tab, 
 | Branch sorting by distance, due-days / overdue labels, hide far branches | 16.06. / 28.06. / 03.07. | none (part of detail page) | n/a | |
 | "↗ VÖBB" link button | 03.07. (tracking 09.10.) | event `voebb-click` (`available_now`, `zip_default`) | n/a, new | the closest thing to a conversion: BibBlitz cannot reserve, so this is where the user acts on the result |
 | Detail outcome | 09.10. | event `detail-view` (`status` ok/empty/error, `branches`, `available_now`, `nearest_available_km`, `zip_default` 0/1) | n/a, new | measurement only: shows detail fetch failures, how often nothing is available nearby, and how many viewers still use the default ZIP 10178 |
+| ISBN on detail page (plain text, not styled as a link; click does nothing yet) | 15.10. | event `isbn-click` | n/a, new | if people click it, link it to an ISBN search (also finds duplicate records of the same edition, with their own copies and availability) |
 | Author click (search by author) | 09.07. | event `author-click` | 2 | **deletion candidate** (decide at 06.11. re-check, do not delete before) |
 | Branch click → library page | 10.07. | none (see library URL) | n/a | |
 

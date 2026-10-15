@@ -11,6 +11,7 @@ import About from '~/components/About.vue'
 import Showcase from '~/components/Showcase.vue'
 import MediaTypeFilter from '~/components/MediaTypeFilter.vue'
 import { getMediaTypeConfig } from '../../utils/mediaTypeMapping'
+import { normalizeIsbn } from '../../utils/isbn'
 
 const { track } = useUmami()
 const route = useRoute()
@@ -131,7 +132,12 @@ async function handleSearch(queryText: string, source: 'user' | 'quick') {
   // Track only after the response so the result count and errors can be sent along
   track(
     source === 'user' ? 'search-started' : 'search-quick',
-    { query: cleanQuery, results: mediaStore.searchIds.length, ...(failed && { error: 1 }) }
+    {
+      query: cleanQuery,
+      results: mediaStore.searchIds.length,
+      ...(normalizeIsbn(cleanQuery) && { isbn: 1 }),
+      ...(failed && { error: 1 })
+    }
   )
 }
 
@@ -152,7 +158,7 @@ async function handleLoadMore() {
       <!-- Search form -->
       <div class="mb-6">
         <form @submit.prevent="handleSearch(searchQuery, 'user')" class="flex gap-2 mb-3">
-          <input v-model="searchQuery" type="search" placeholder="Titel, Autor, Spiel …" @search="handleInputClear"
+          <input v-model="searchQuery" type="search" placeholder="Titel, Autor, Spiel, ISBN …" @search="handleInputClear"
             @input="handleInputClear"
             class="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400"
             :disabled="loading" />

@@ -5,7 +5,6 @@
 - sort
     - nach erscheinungsdatum
     - add year (Veröffentlichung)
-- iban search
 - wildcard search with * (not sure if voebb supports it)
 - seltenes fundstück / meistausgeliehene medien für artikel in der zeitung
 - filter
@@ -28,6 +27,7 @@
 - merging of different versions of the same book/game (what to do with the id?)
 
 # DONE
+- ISBN search (ISBN-10/13, normalized server-side) and ISBN on the detail page (plain text, clicks tracked to decide on a search by ISBN)
 - one icon set (Lucide via @nuxt/icon) instead of emoji in nav, intro, library page, quick-search chips, ZIP box and favicon (design backlog, 12.10.)
 - clean titles and authors: author + year from the search row, format notes stripped, platform shown, no more "Unbekannter Autor"; library addresses get a space before the ZIP (design backlog, 12.10.)
 - one status pill (`StatusPill.vue`, tones near/good/wait/hard/bad/neutral) in list and detail page (design backlog, 12.10.)
