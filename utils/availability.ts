@@ -37,10 +37,32 @@ function findMatchingLibrary(branch: string) {
 }
 
 /**
+ * Splits a VÖBB branch status like "Ausgeliehen - Fällig am: 27.10.2026 - Das Beiheft ist ..."
+ * into the actual state, the due date and free-text notes. Only the state and the due date
+ * may decide availability: notes can contain words like "ausleihbar" that mean something else.
+ */
+export function parseStatus(status: string): { state: string, due?: string, notes: string[] } {
+  const [state = '', ...rest] = status.split(/\s+-\s+/).map(part => part.trim()).filter(Boolean)
+  const due = rest.find(part => /^fällig am/i.test(part))
+  return { state, due, notes: rest.filter(part => part !== due) }
+}
+
+/**
+ * Splits the scraped library name "Mitte: Bezirkszentralbibliothek Philipp Schaeffer" into
+ * district and name, so long names stay readable.
+ */
+export function splitLibraryName(libraryName: string): { district?: string, name: string } {
+  const idx = libraryName.indexOf(': ')
+  if (idx <= 0) return { name: libraryName }
+  return { district: libraryName.slice(0, idx).trim(), name: libraryName.slice(idx + 2).trim() }
+}
+
+/**
  * Private helper: calculates the remaining days from the VÖBB status (year: 2026)
  */
 function calculateDaysToWait(status: string): number {
-  const cleanStatus = status.toLowerCase().trim()
+  const { state, due } = parseStatus(status)
+  const cleanStatus = state.toLowerCase()
 
   // Case 1: available now
   if (
@@ -52,7 +74,7 @@ function calculateDaysToWait(status: string): number {
   }
 
   // Case 2: specific due date parsed (e.g. "Fällig am: 14.08.2026" or "Fällig am: 05.11.")
-  const dateMatch = status.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})?/)
+  const dateMatch = `${state} ${due ?? ''}`.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})?/)
   if (dateMatch) {
     const day = parseInt(dateMatch[1], 10)
     const month = parseInt(dateMatch[2], 10) - 1 // JS months are 0-based
@@ -65,7 +87,8 @@ function calculateDaysToWait(status: string): number {
     today.setHours(0, 0, 0, 0)
 
     const diffTime = returnDate.getTime() - today.getTime()
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    // round, not ceil: a DST change between today and the due date adds an hour
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24))
 
     return diffDays
   }
@@ -97,9 +120,9 @@ export function calculateBranchStatus(
 
   if (days === -999) {
     const isNear = !userZipDefault && branch.distance !== undefined && branch.distance < NEAR_KM
-    return { label: branch.status, tone: isNear ? 'near' : 'good' }
+    return { label: parseStatus(branch.status).state, tone: isNear ? 'near' : 'good' }
   }
-  if (days === undefined || days === 999) return { label: branch.status, tone: 'neutral' }
+  if (days === undefined || days === 999) return { label: parseStatus(branch.status).state, tone: 'neutral' }
   if (days < 0) return { label: 'Rückgabe überfällig', tone: 'wait' }
   return { label: days === 0 ? 'Rückgabe heute fällig' : formatDays(days), tone: 'wait' }
 }

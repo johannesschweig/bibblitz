@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { calculateStatusInfo, calculateBranchStatus } from '../../utils/availability'
+import { calculateStatusInfo, calculateBranchStatus, filterAndEnrichBranches, parseStatus, splitLibraryName } from '../../utils/availability'
 import type { AvailabilityInfo } from '../../types/types'
 
 // Real library ids from libraries.json so the distance lookup works
@@ -56,5 +56,58 @@ describe('calculateStatusInfo', () => {
   it('does not use distances with the default ZIP', () => {
     expect(calculateStatusInfo([branch({}), branch({})], CENTER, true)).toEqual({ label: 'Verfügbar (2x)', tone: 'good' })
     expect(calculateStatusInfo([branch({ daysToWait: 5 })], CENTER, true).tone).toBe('wait')
+  })
+})
+
+
+describe('parseStatus', () => {
+  it('splits state, due date and notes', () => {
+    expect(parseStatus('Ausgeliehen - Fällig am: 27.10.2026 - Das Beiheft ist unter derselben Grundsignatur getrennt ausleihbar.')).toEqual({
+      state: 'Ausgeliehen',
+      due: 'Fällig am: 27.10.2026',
+      notes: ['Das Beiheft ist unter derselben Grundsignatur getrennt ausleihbar.']
+    })
+    expect(parseStatus('Verfügbar - Beschädigt / Beschmutzt')).toEqual({ state: 'Verfügbar', due: undefined, notes: ['Beschädigt / Beschmutzt'] })
+    expect(parseStatus('Verfügbar')).toEqual({ state: 'Verfügbar', due: undefined, notes: [] })
+  })
+
+  it('does not treat a note that says "ausleihbar" as available', () => {
+    const [item] = filterAndEnrichBranches([{
+      libraryName: 'ZLB: Amerika-Gedenkbibliothek (AGB)',
+      status: 'Ausgeliehen - Fällig am: 27.10.2026 - Das Beiheft ist getrennt ausleihbar.'
+    } as AvailabilityInfo])
+    expect(item.daysToWait).not.toBe(-999)
+    expect(calculateBranchStatus(item, false).tone).toBe('wait')
+  })
+
+  it('shows only the state in the pill, the notes are shown separately', () => {
+    const label = calculateBranchStatus(branch({ status: 'Verfügbar - Beschädigt / Beschmutzt' }), false).label
+    expect(label).toBe('Verfügbar')
+  })
+})
+
+describe('splitLibraryName', () => {
+  it('splits the district prefix from the name', () => {
+    expect(splitLibraryName('Mitte: Bezirkszentralbibliothek Philipp Schaeffer')).toEqual({ district: 'Mitte', name: 'Bezirkszentralbibliothek Philipp Schaeffer' })
+    expect(splitLibraryName('Friedrichshain-Kreuzberg: Mittelpunktbibliothek Wilhelm Liebknecht / Namik Kemal').district).toBe('Friedrichshain-Kreuzberg')
+    expect(splitLibraryName('Fahrbibliothek')).toEqual({ name: 'Fahrbibliothek' })
+  })
+})
+
+describe('due date across a DST change', () => {
+  it('counts whole days even when the clocks change in between', () => {
+    const RealDate = Date
+    // 16.10.2026 12:00 local, the clocks go back on 25.10.2026
+    const fixed = new RealDate(2026, 9, 16, 12, 0, 0).getTime()
+    globalThis.Date = class extends RealDate {
+      constructor(...args: any[]) { super(...(args.length ? args as [any] : [fixed])) }
+      static now() { return fixed }
+    } as DateConstructor
+    try {
+      const [item] = filterAndEnrichBranches([{ libraryName: 'ZLB: Amerika-Gedenkbibliothek (AGB)', status: 'Ausgeliehen - Fällig am: 27.10.2026' } as AvailabilityInfo])
+      expect(item.daysToWait).toBe(11)
+    } finally {
+      globalThis.Date = RealDate
+    }
   })
 })

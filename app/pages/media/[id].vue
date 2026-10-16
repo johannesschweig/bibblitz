@@ -3,7 +3,7 @@
 import { useRoute } from 'vue-router'
 import { useItemCacheStore } from '@/stores/itemCacheStore'
 import { getPermanentUrlFromId } from '../../../utils/index.ts'
-import { sortBranchesByDistance, calculateBranchStatus } from '../../../utils/availability'
+import { sortBranchesByDistance, calculateBranchStatus, parseStatus, splitLibraryName } from '../../../utils/availability'
 import { formatDistance } from '../../../utils/distance'
 import { useUserStore } from '~/stores/userStore.js'
 import { useVoebbStatusStore } from '~/stores/voebbStatusStore'
@@ -129,28 +129,24 @@ function authorClicked() {
 
     <!-- Data display -->
     <div v-else-if="data?.data">
-      <!-- Title & metadata: same icon + text grid as a result row, larger -->
-      <header class="mb-8 border-b border-gray-200 pb-6">
-        <div class="grid grid-cols-[56px_1fr] sm:grid-cols-[72px_1fr] gap-4">
-          <img :src="mediaConfig.icon" :alt="mediaConfig.label" class="w-14 sm:w-[72px] p-1.5 sm:p-2">
-          <div class="min-w-0">
-            <p v-if="metaLine" class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">{{ metaLine }}</p>
-            <h1 class="text-2xl md:text-3xl font-bold leading-tight text-gray-900 text-balance">
-              <MediaTitle :title="data.data.title" />
-            </h1>
-            <p v-if="data.data.author" class="mt-2 text-base text-gray-700" @click="authorClicked()">{{ data.data.author }}</p>
-            <p v-if="data.data.isbn" class="mt-1 text-xs text-gray-500">ISBN <span @click="isbnClicked()">{{ data.data.isbn }}</span></p>
-          </div>
-        </div>
-        <a :href="getPermanentUrlFromId(data.data.id)" target="_blank" class="btn btn-md btn-secondary mt-5"
+      <!-- Title & metadata: text only, no icon -->
+      <header class="mb-10">
+        <p v-if="metaLine" class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">{{ metaLine }}</p>
+        <h1 class="text-3xl md:text-4xl font-bold leading-tight tracking-tight text-gray-900 text-pretty break-words">
+          <MediaTitle :title="data.data.title" stacked />
+        </h1>
+        <p v-if="data.data.author" class="mt-3 text-xl text-gray-800" @click="authorClicked()">{{ data.data.author }}</p>
+        <p v-if="data.data.isbn" class="mt-2 text-sm text-gray-500">ISBN <span @click="isbnClicked()">{{ data.data.isbn }}</span></p>
+        <a :href="getPermanentUrlFromId(data.data.id)" target="_blank" class="btn btn-md btn-secondary mt-6"
           @click="voebbClicked()">
-          ↗ VÖBB
+          VÖBB
+          <Icon name="lucide:arrow-up-right" class="size-4" />
         </a>
       </header>
 
       <!-- Availability list -->
       <section>
-        <h2 class="text-lg font-bold mb-4">Standorte</h2>
+        <h2 class="text-xl font-bold mb-4">Standorte</h2>
 
         <div v-if="!data.data.availability" class="text-gray-500 p-4 text-center">
           {{ voebbStatus.maintenance ? 'Standorte sind während der VÖBB-Wartung nicht abrufbar.' : 'Standorte konnten nicht geladen werden.' }}
@@ -160,28 +156,33 @@ function authorClicked() {
           Keine Exemplare gefunden.
         </div>
 
-        <div v-else class="space-y-3">
-
-          <ZipCode v-model="userStore.userZip" />
-          <NuxtLink v-for="(item, index) in displayedBranches" :key="index" :to="`/library/${item.libraryId}`"
-            class="bg-white border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 hover:bg-blue-50 group hover:border-blue-50 active:bg-blue-50 active:border-blue-50">
-            <div>
-              <h3 class="font-medium text-gray-900 group-hover:text-blue-900 group-active:text-blue-900">{{
-                item.libraryName }}</h3>
-              <p v-if="item.distance !== undefined || item.shelfmark" class="text-xs text-gray-500 mt-0.5">
-                <span v-if="item.distance !== undefined" class="font-semibold text-gray-700">{{ formatDistance(item.distance) }}</span>
-                <span v-if="item.distance !== undefined && item.shelfmark"> · </span>
-                <template v-if="item.shelfmark">
-                  Signatur: <span class="font-mono bg-gray-50 px-1 py-0.5 border border-gray-300 rounded text-gray-700">{{
-                    item.shelfmark
-                  }}</span>
-                </template>
-              </p>
-            </div>
-
-            <StatusPill class="self-start sm:self-center" v-bind="calculateBranchStatus(item, userStore.userZipDefault)" />
-          </NuxtLink>
-          <button v-if="hiddenBranchesCount > 0" @click="showAllBranches = true" class="btn btn-md btn-secondary">
+        <div v-else>
+          <ZipCode v-model="userStore.userZip" class="mb-2" />
+          <ul class="divide-y divide-gray-200 border-b border-gray-200">
+            <li v-for="(item, index) in displayedBranches" :key="index">
+              <NuxtLink :to="`/library/${item.libraryId}`"
+                class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto] items-center gap-x-3 gap-y-2 py-4 hover:bg-gray-50 active:bg-gray-50">
+                <div class="min-w-0 col-start-1 row-start-1">
+                  <h3 class="font-medium text-gray-900 wrap-anywhere">{{ splitLibraryName(item.libraryName).name }}</h3>
+                  <!-- Mobile: distance on one line, shelf mark on the next. Wider: all on one line -->
+                  <div class="mt-1 text-sm text-gray-600 sm:flex sm:flex-wrap sm:gap-x-1.5">
+                    <!-- Distances are meaningless while the default ZIP is in use -->
+                    <p v-if="item.distance !== undefined && !userStore.userZipDefault">{{ formatDistance(item.distance) }}</p>
+                    <p v-if="item.shelfmark" class="sm:before:mr-1.5 sm:before:content-['·'] sm:first:before:content-none">
+                      Signatur: <span class="font-mono text-[13px] text-gray-700">{{ item.shelfmark }}</span>
+                    </p>
+                  </div>
+                  <p v-if="parseStatus(item.status).notes.length" class="mt-1.5 flex items-start gap-1.5 text-sm text-gray-600">
+                    <Icon name="lucide:info" class="mt-0.5 size-4 shrink-0 text-gray-500" />
+                    <span>{{ parseStatus(item.status).notes.join(' · ') }}</span>
+                  </p>
+                </div>
+                <StatusPill class="col-start-1 row-start-2 justify-self-start sm:col-start-2 sm:row-start-1 sm:justify-self-end" v-bind="calculateBranchStatus(item, userStore.userZipDefault)" />
+                <Icon name="lucide:chevron-right" class="size-4 text-gray-500 col-start-2 row-start-1 row-span-2 sm:col-start-3 sm:row-span-1" />
+              </NuxtLink>
+            </li>
+          </ul>
+          <button v-if="hiddenBranchesCount > 0" @click="showAllBranches = true" class="btn btn-md btn-secondary mt-6 w-full">
             {{ hiddenBranchesCount }} entferntere
             {{ hiddenBranchesCount === 1 ? 'Bibliothek' : 'Bibliotheken' }} anzeigen
           </button>

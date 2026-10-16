@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
   app: {
     head: {
+      htmlAttrs: { lang: 'de' },
       title: 'BibBlitz - Suchen. Finden. Ausleihen.',
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }

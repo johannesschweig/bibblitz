@@ -16,7 +16,7 @@ const styles: Record<StatusTone, { pill: string, dot: string }> = {
 </script>
 
 <template>
-  <span :class="['inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full', styles[tone].pill]">
+  <span :class="['inline-flex max-w-full items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full', styles[tone].pill]">
     <span :class="['size-1.5 rounded-full shrink-0', styles[tone].dot]"></span>
     {{ label }}
   </span>
