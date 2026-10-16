@@ -113,7 +113,6 @@ Caveats when re-reading the numbers:
 From a design review on 12.10.2026. Goal: the UI currently reads as stock Tailwind / AI-generated and shows raw catalog data. Ordered from small and self-contained to bigger decisions; do them roughly in this order (content and consistency first, brand later). Tick off by deleting the line and noting it in `TODO.md` → DONE.
 
 **Quick wins**
-4. **One content width and nav**: header is `max-w-7xl`, search `max-w-2xl`, home cards `max-w-md`. Drop the single-tab "🔍 Suche" nav; on subpages put a compact search field in the header.
 5. **Loading and empty states**: skeletons that match the result rows instead of pulsing grey text and a "…" button; result cards without a badge leave an empty gap (`min-h-6`). Make the "↗ VÖBB" button (our conversion, event `voebb-click`) a clear labelled action.
 
 **Needs decisions**

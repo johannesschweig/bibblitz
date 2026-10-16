@@ -76,7 +76,7 @@ const distanceText = computed(() => {
 </script>
 
 <template>
-  <div class="max-w-md mx-auto">
+  <div>
 
     <NuxtLink class="btn btn-text btn-md mb-2 pl-0" @click="$router.go(-1)">
       ← Zurück

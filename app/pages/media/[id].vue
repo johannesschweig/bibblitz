@@ -98,7 +98,7 @@ function authorClicked() {
 </script>
 
 <template>
-  <div class="max-w-2xl mx-auto font-sans text-gray-800">
+  <div class="font-sans text-gray-800">
     <!-- Back button -->
     <div class="mb-2">
       <NuxtLink class="btn btn-text btn-md mb-2 pl-0" @click="$router.go(-1)">

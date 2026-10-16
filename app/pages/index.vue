@@ -153,7 +153,7 @@ async function handleLoadMore() {
 
 <template>
   <div class="min-h-screen">
-    <div class="max-w-2xl mx-auto md:py-12">
+    <div class="md:py-12">
 
       <!-- Search form -->
       <div class="mb-6">

@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-md mx-auto mt-6 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+  <div class="mt-6 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
     <div class="h-1 w-full bg-linear-to-r from-[#5b8dee] to-blue-400" />
     <div class="p-5 flex gap-4 items-start">
       <img

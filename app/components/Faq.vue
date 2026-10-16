@@ -41,7 +41,7 @@ const toggleFaq = (index: number) => {
 </script>
 
 <template>
-  <section class="w-full max-w-md mx-auto font-sans">
+  <section class="w-full font-sans">
     <h2 class="text-xl font-bold text-gray-900 mb-5">Häufige Fragen</h2>
 
     <div class="space-y-3">

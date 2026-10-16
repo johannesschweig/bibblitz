@@ -27,6 +27,7 @@
 - merging of different versions of the same book/game (what to do with the id?)
 
 # DONE
+- one content width (`max-w-2xl` in layout and header, pages no longer set their own), single-tab "Suche" nav removed; no header search field (design backlog, 16.10.)
 - ISBN search (ISBN-10/13, normalized server-side) and ISBN on the detail page (plain text, clicks tracked to decide on a search by ISBN)
 - one icon set (Lucide via @nuxt/icon) instead of emoji in nav, intro, library page, quick-search chips, ZIP box and favicon (design backlog, 12.10.)
 - clean titles and authors: author + year from the search row, format notes stripped, platform shown, no more "Unbekannter Autor"; library addresses get a space before the ZIP (design backlog, 12.10.)

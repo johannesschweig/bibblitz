@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-md mx-auto mt-4 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+  <div class="mt-4 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
     
     <div class="bg-slate-50 border-b border-slate-100 flex justify-center">
       <img 
