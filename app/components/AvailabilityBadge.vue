@@ -15,16 +15,22 @@ let observer = null
 
 // Reaktiv an den zentralen Cache binden
 const itemData = computed(() => itemCacheStore.items[props.mediaId])
-const isPending = ref(false)
+const failed = ref(false)
+
+function load() {
+  failed.value = false
+  // Ask the central cache store
+  itemCacheStore.fetchDetails(props.mediaId)
+    .catch(() => {})
+    .finally(() => {
+      failed.value = !itemData.value?.availability
+    })
+}
 
 onMounted(() => {
   observer = new IntersectionObserver(([entry]) => {
     if (entry.isIntersecting && !itemData.value?.availability) {
-      isPending.value = true
-      // Ask the central cache store
-      itemCacheStore.fetchDetails(props.mediaId).finally(() => {
-        isPending.value = false
-      })
+      load()
       observer.disconnect()
     }
   }, { rootMargin: '50px' }) // Load 50px early so it feels smoother
@@ -38,14 +44,19 @@ const statusInfo = computed(() => calculateStatusInfo(itemData.value?.availabili
 </script>
 
 <template>
-  <div ref="targetElement" class="flex items-center min-h-6">
-    <div v-if="isPending" class="flex items-center gap-2 animate-pulse">
-      <div class="h-5 w-36 bg-gray-200 rounded-full"></div>
-      <span class="text-xs text-gray-400">Prüfe Verfügbarkeit...</span>
-    </div>
-
-    <div v-else-if="itemData?.availability" class="flex items-center gap-2">
+  <div ref="targetElement" class="flex items-center">
+    <div v-if="itemData?.availability" class="flex items-center gap-2">
       <StatusPill :tone="statusInfo.tone" :label="statusInfo.label" />
     </div>
+
+    <!-- Details could not be loaded (e.g. VÖBB timeout): say so and offer a retry instead of leaving a gap -->
+    <button v-else-if="failed" type="button" class="inline-flex items-center gap-1.5 h-6 text-xs text-gray-500 hover:text-gray-900 cursor-pointer"
+      @click.prevent="load()">
+      <Icon name="lucide:circle-alert" class="size-3.5" />
+      Verfügbarkeit nicht abrufbar · Erneut versuchen
+    </button>
+
+    <!-- Not fetched yet or in flight: same height as the pill, so the row does not jump -->
+    <div v-else class="h-6 w-36 rounded-full bg-gray-100 animate-pulse"></div>
   </div>
 </template>

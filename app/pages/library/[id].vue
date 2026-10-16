@@ -88,7 +88,7 @@ const distanceText = computed(() => {
 
       <div class="p-5 border-b border-gray-100 bg-linear-to-br from-slate-50 to-white">
         <span
-          class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
+          class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full">
           {{ library.district }}
         </span>
         <h1 class="text-xl font-extrabold text-emerald-950 mt-2.5 leading-tight">
@@ -103,7 +103,7 @@ const distanceText = computed(() => {
             <Icon name="lucide:footprints" class="size-4 block" />
           </div>
           <div>
-            <h3 class="text-xs font-bold text-blue-400 uppercase tracking-wide">Entfernung</h3>
+            <h3 class="text-xs font-bold text-blue-700 uppercase tracking-wide">Entfernung</h3>
             <p class="text-sm text-blue-900 font-bold mt-0.5">
               {{ distanceText }}
             </p>
@@ -114,7 +114,7 @@ const distanceText = computed(() => {
             <Icon name="lucide:map-pin" class="size-4 block" />
           </div>
           <div>
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wide">Adresse</h3>
+            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide">Adresse</h3>
             <p class="text-sm text-gray-700 font-medium mt-0.5">{{ library.address }}</p>
             <a :href="library.mapsLink" target="_blank"
               class="text-xs text-blue-600 font-semibold hover:underline block mt-1">
@@ -129,7 +129,7 @@ const distanceText = computed(() => {
             <Icon name="lucide:clock" class="size-4 block" />
           </div>
           <div class="w-full">
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">
+            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
               Öffnungszeiten
             </h3>
 
@@ -139,7 +139,7 @@ const distanceText = computed(() => {
                 <span class="text-gray-500 font-medium">{{ germanLabel }}</span>
 
                 <span class="text-gray-800 font-bold" :class="{
-                  'text-red-500 font-medium': !library.opening_hours?.[englishKey] || library.opening_hours?.[englishKey] === 'Geschlossen'
+                  'text-red-700 font-medium': !library.opening_hours?.[englishKey] || library.opening_hours?.[englishKey] === 'Geschlossen'
                 }">
                   {{ library.opening_hours?.[englishKey] || 'Geschlossen' }}
                 </span>
@@ -153,7 +153,7 @@ const distanceText = computed(() => {
             <Icon name="lucide:concierge-bell" class="size-4 block" />
           </div>
           <div class="w-full">
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">
+            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
               Service Zeiten
             </h3>
             <p class="text-sm text-gray-500">Ausleihe bei Mitarbeitern (z.B. Brettspiele, Konsolenspiele, tlw. Tonies)
@@ -180,7 +180,7 @@ const distanceText = computed(() => {
       <div class="p-4 bg-gray-50 border-t border-gray-100 flex">
         <a :href="library.website" target="_blank" class="w-full btn btn-secondary btn-md">
           <span>Bibliothekswebsite öffnen</span>
-          <span class="text-xs opacity-70">↗</span>
+          <span class="text-xs">↗</span>
         </a>
       </div>
 

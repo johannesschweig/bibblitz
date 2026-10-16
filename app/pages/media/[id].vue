@@ -71,6 +71,8 @@ watch(pending, trackDetailView)
 // nextTick: app.vue loads the saved ZIP in its own onMounted, which runs after the page's
 onMounted(() => nextTick(trackDetailView))
 
+const mediaConfig = computed(() => getMediaTypeConfig(data.value?.data?.mediaType ?? ''))
+
 // "Buch · PlayStation 4 · 2025", with the same media label as in the result list
 const metaLine = computed(() => {
   const item = data.value?.data
@@ -107,8 +109,9 @@ function authorClicked() {
     </div>
 
     <!-- Loading state -->
-    <div v-if="pending" class="text-center py-12 text-gray-500 animate-pulse">
-      <p class="text-lg font-semibold">Suche Medien-Details...</p>
+    <div v-if="pending">
+      <p role="status" class="sr-only">Suche Medien-Details …</p>
+      <DetailSkeleton />
     </div>
 
     <!-- Error state -->
@@ -119,24 +122,23 @@ function authorClicked() {
 
     <!-- Data display -->
     <div v-else-if="data?.data">
-      <!-- Title & metadata -->
-      <header class="mb-6 border-b border-gray-200 pb-6">
-        <h1 class="text-xl md:text-2xl font-bold leading-tight text-gray-900 mb-2">
-          <MediaTitle :title="data.data.title" />
-        </h1>
-        <div class="flex flex-col gap-2 text-sm text-gray-600 mb-2">
-          <div v-if="data.data.author" class="" @click="authorClicked()"> {{
-            data.data.author }}</div>
-          <div v-if="metaLine">{{ metaLine }}</div>
-          <div v-if="data.data.isbn">ISBN <span @click="isbnClicked()">{{ data.data.isbn }}</span></div>
+      <!-- Title & metadata: same icon + text grid as a result row, larger -->
+      <header class="mb-8 border-b border-gray-200 pb-6">
+        <div class="grid grid-cols-[56px_1fr] sm:grid-cols-[72px_1fr] gap-4">
+          <img :src="mediaConfig.icon" :alt="mediaConfig.label" class="w-14 sm:w-[72px] p-1.5 sm:p-2">
+          <div class="min-w-0">
+            <p v-if="metaLine" class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">{{ metaLine }}</p>
+            <h1 class="text-2xl md:text-3xl font-bold leading-tight text-gray-900 text-balance">
+              <MediaTitle :title="data.data.title" />
+            </h1>
+            <p v-if="data.data.author" class="mt-2 text-base text-gray-700" @click="authorClicked()">{{ data.data.author }}</p>
+            <p v-if="data.data.isbn" class="mt-1 text-xs text-gray-500">ISBN <span @click="isbnClicked()">{{ data.data.isbn }}</span></p>
+          </div>
         </div>
-        <!-- Buttons -->
-        <div class="flex gap-2">
-          <a :href="getPermanentUrlFromId(data.data.id)" target="_blank" class="btn btn-sm btn-secondary"
-            @click="voebbClicked()">
-            ↗ VÖBB
-          </a>
-        </div>
+        <a :href="getPermanentUrlFromId(data.data.id)" target="_blank" class="btn btn-md btn-secondary mt-5"
+          @click="voebbClicked()">
+          ↗ VÖBB
+        </a>
       </header>
 
       <!-- Availability list -->

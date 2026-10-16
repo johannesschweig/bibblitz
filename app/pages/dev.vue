@@ -32,7 +32,7 @@ function toggleTracking() {
     <main class="max-w-md my-auto space-y-6">
       <div class="text-xs text-neutral-600 uppercase tracking-wider space-y-1">
         <p>-> gerät lokal ausschließen</p>
-        <p>-> status: <span :class="isTrackingDisabled ? 'text-red-600 font-bold' : 'text-green-600 font-bold'">{{ isTrackingDisabled ? '[MUTED]' : '[TRACKING]' }}</span></p>
+        <p>-> status: <span :class="isTrackingDisabled ? 'text-red-700 font-bold' : 'text-green-700 font-bold'">{{ isTrackingDisabled ? '[MUTED]' : '[TRACKING]' }}</span></p>
       </div>
 
       <button 

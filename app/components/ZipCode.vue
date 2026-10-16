@@ -49,7 +49,7 @@ function saveLocation() {
         </div>
 
         <div class="flex flex-col min-w-0 justify-center">
-          <span class="font-bold text-gray-400 text-[10px] uppercase tracking-wider mb-0.5">
+          <span class="font-bold text-gray-500 text-[10px] uppercase tracking-wider mb-0.5">
             Dein Stammbezirk
           </span>
           <p class="text-sm md:text-base truncate">
@@ -73,7 +73,7 @@ function saveLocation() {
           <div class="flex items-center gap-2">
             <input v-model="localZipInput" type="text" placeholder="z.B. 10559" @keyup.enter="saveLocation"
               inputmode="numeric" maxlength="5"
-              class="w-28 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-center font-bold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all" />
+              class="w-28 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-center font-bold placeholder:text-gray-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all" />
             <span v-if="isValidZip" class="text-sm text-gray-600 font-medium">
               {{ (berlinZips as any)[localZipInput.trim()]?.district }}
             </span>

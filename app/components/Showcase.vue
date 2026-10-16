@@ -48,7 +48,7 @@ function trackClick(id: string) {
 
 <template>
   <section>
-    <p class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-4">
+    <p class="text-xs font-medium text-gray-500 uppercase tracking-widest mb-4">
       Beliebt bei BibBlitz
     </p>
     <ul class="space-y-2">

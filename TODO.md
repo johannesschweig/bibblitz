@@ -27,6 +27,8 @@
 - merging of different versions of the same book/game (what to do with the id?)
 
 # DONE
+- text contrast to WCAG AA on all pages and states (gray-400 → gray-500, coloured text to -700/-800, placeholders), audit script in `scripts/contrast-audit.js` (16.10.)
+- loading and empty states: result and detail skeletons, badge placeholder instead of a gap, "Verfügbarkeit nicht abrufbar" with retry when a detail fetch fails (design backlog, 16.10.; the labelled VÖBB button was tried and reverted)
 - one content width (`max-w-2xl` in layout and header, pages no longer set their own), single-tab "Suche" nav removed; no header search field (design backlog, 16.10.)
 - ISBN search (ISBN-10/13, normalized server-side) and ISBN on the detail page (plain text, clicks tracked to decide on a search by ISBN)
 - one icon set (Lucide via @nuxt/icon) instead of emoji in nav, intro, library page, quick-search chips, ZIP box and favicon (design backlog, 12.10.)

@@ -160,10 +160,11 @@ async function handleLoadMore() {
         <form @submit.prevent="handleSearch(searchQuery, 'user')" class="flex gap-2 mb-3">
           <input v-model="searchQuery" type="search" placeholder="Titel, Autor, Spiel, ISBN …" @search="handleInputClear"
             @input="handleInputClear"
-            class="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400"
+            class="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-500"
             :disabled="loading" />
           <button type="submit" class="btn btn-md btn-accent" :disabled="loading || !searchQuery.trim()">
-            {{ loading ? '…' : 'Suchen' }}
+            <Icon v-if="loading" name="lucide:loader-circle" class="size-4 animate-spin" />
+            Suchen
           </button>
         </form>
 
@@ -187,13 +188,14 @@ async function handleLoadMore() {
       </div>
 
       <!-- Loading state -->
-      <div v-if="loading" class="text-center py-16 text-gray-400 text-sm animate-pulse">
-        Frage VÖBB-Katalog ab …
+      <div v-if="loading">
+        <p role="status" class="sr-only">Frage VÖBB-Katalog ab …</p>
+        <ResultSkeleton />
       </div>
 
       <!-- Results -->
       <div v-else-if="mediaStore.searchIds.length > 0">
-        <p class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-4">
+        <p class="text-xs font-medium text-gray-500 uppercase tracking-widest mb-4">
           {{ filteredSearchIds.length }} von {{ mediaStore.searchIds.length }} Treffern
         </p>
 
@@ -201,7 +203,7 @@ async function handleLoadMore() {
         <ul v-if="filteredSearchIds.length > 0" class="space-y-2">
           <MediaItem v-for="id in filteredSearchIds" :key="id" :mediaId="id" />
         </ul>
-        <div v-else class="text-center py-12 text-gray-400 text-sm">
+        <div v-else class="text-center py-12 text-gray-500 text-sm">
           Keine Treffer für den gewählten Filter.
         </div>
 
@@ -214,7 +216,7 @@ async function handleLoadMore() {
       </div>
 
       <!-- Empty state after a search -->
-      <div v-else-if="hasSearched" class="text-center py-16 text-gray-400 text-sm">
+      <div v-else-if="hasSearched" class="text-center py-16 text-gray-500 text-sm">
         Keine Treffer für „{{ lastQuery }}“ gefunden.
       </div>
       <div v-else class="flex flex-col gap-8">
@@ -225,8 +227,8 @@ async function handleLoadMore() {
       </div>
 
       <div class="mt-12 flex gap-3 text-xs">
-        <NuxtLink to="/imprint" class="text-gray-400 hover:text-gray-600">Impressum</NuxtLink>
-        <NuxtLink to="/data-privacy" class="text-gray-400 hover:text-gray-600">Datenschutz</NuxtLink>
+        <NuxtLink to="/imprint" class="text-gray-500 hover:text-gray-700">Impressum</NuxtLink>
+        <NuxtLink to="/data-privacy" class="text-gray-500 hover:text-gray-700">Datenschutz</NuxtLink>
       </div>
     </div>
   </div>
