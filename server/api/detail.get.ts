@@ -3,6 +3,7 @@ import * as cheerio from 'cheerio';
 import { filterAndEnrichBranches } from '../../utils/availability';
 import { cleanTitle, cleanAuthor, cleanContributors, parseYear } from '../../utils/catalogText';
 import { parseIsbn } from '../../utils/isbn';
+import { isMaintenancePage, parseMaintenanceUntil } from '../../utils/maintenance';
 import type { MediaItem, AvailabilityInfo } from '../../types/types';
 
 export default defineEventHandler(async (event) => {
@@ -32,6 +33,10 @@ export default defineEventHandler(async (event) => {
       retryDelay: 300,
       timeout: 4500 // Stays safely below Vercel's hard 10-second limit
     });
+
+    if (isMaintenancePage(htmlContent)) {
+      return { success: false, maintenance: true, until: parseMaintenanceUntil(htmlContent) };
+    }
 
     if (!htmlContent || !htmlContent.includes('aDISWeb')) {
       return { success: false, error: 'Unexpected page structure from VÖBB.' };

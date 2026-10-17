@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { useItemCacheStore } from './itemCacheStore';
+import { useVoebbStatusStore } from './voebbStatusStore';
 
 export const useMediaStore = defineStore('media', {
   state: () => ({
@@ -20,8 +21,12 @@ export const useMediaStore = defineStore('media', {
       const itemCache = useItemCacheStore();
 
       const data: any = await $fetch('/api/search', { query: { q: query } });
+      const status = useVoebbStatusStore();
 
-      if (data.success) {
+      if (data.maintenance) {
+        status.report(data.until);
+      } else if (data.success) {
+        status.clear();
         // 1. Push basic data into the central cache right away
         data.results.forEach((item: any) => {
           itemCache.setBasicData({
@@ -49,7 +54,10 @@ export const useMediaStore = defineStore('media', {
       try {
         const data: any = await $fetch('/api/search', { query: { token: this.nextPageToken } });
 
-        if (data.success) {
+        if (data.maintenance) {
+          useVoebbStatusStore().report(data.until);
+          this.hasMore = false;
+        } else if (data.success) {
           data.results.forEach((item: any) => {
             itemCache.setBasicData({
               id: item.id,

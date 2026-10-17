@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useItemCacheStore } from '~/stores/itemCacheStore'
 import { useUserStore } from '~/stores/userStore'
+import { useVoebbStatusStore } from '~/stores/voebbStatusStore'
 import { calculateStatusInfo } from '../../utils/availability'
 
 const props = defineProps({
@@ -10,6 +11,7 @@ const props = defineProps({
 
 const itemCacheStore = useItemCacheStore()
 const userStore = useUserStore()
+const voebbStatus = useVoebbStatusStore()
 const targetElement = ref(null)
 let observer = null
 
@@ -48,6 +50,12 @@ const statusInfo = computed(() => calculateStatusInfo(itemData.value?.availabili
     <div v-if="itemData?.availability" class="flex items-center gap-2">
       <StatusPill :tone="statusInfo.tone" :label="statusInfo.label" />
     </div>
+
+    <!-- VÖBB is switched off: a retry cannot work, the banner on the page says until when -->
+    <span v-else-if="failed && voebbStatus.maintenance" class="inline-flex items-center gap-1.5 h-6 text-xs text-gray-500">
+      <Icon name="lucide:wrench" class="size-3.5" />
+      Verfügbarkeit während der VÖBB-Wartung nicht abrufbar
+    </span>
 
     <!-- Details could not be loaded (e.g. VÖBB timeout): say so and offer a retry instead of leaving a gap -->
     <button v-else-if="failed" type="button" class="inline-flex items-center gap-1.5 h-6 text-xs text-gray-500 hover:text-gray-900 cursor-pointer"

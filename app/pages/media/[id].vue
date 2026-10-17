@@ -6,6 +6,7 @@ import { getPermanentUrlFromId } from '../../../utils/index.ts'
 import { sortBranchesByDistance, calculateBranchStatus } from '../../../utils/availability'
 import { formatDistance } from '../../../utils/distance'
 import { useUserStore } from '~/stores/userStore.js'
+import { useVoebbStatusStore } from '~/stores/voebbStatusStore'
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import ZipCode from '~/components/ZipCode.vue'
 import StatusPill from '~/components/StatusPill.vue'
@@ -17,6 +18,7 @@ const route = useRoute()
 const mediaId = route.params.id
 const itemCacheStore = useItemCacheStore()
 const userStore = useUserStore()
+const voebbStatus = useVoebbStatusStore()
 const showAllBranches = ref(false)
 
 const { data, pending, error } = useAsyncData(`detail-${mediaId}`, async () => {
@@ -114,6 +116,11 @@ function authorClicked() {
       <DetailSkeleton />
     </div>
 
+    <!-- Direct visit during maintenance: there is no title to show, the banner above explains why -->
+    <p v-else-if="voebbStatus.maintenance && !data?.data" class="text-gray-500 text-sm py-8 text-center">
+      Dieser Eintrag kann gerade nicht geladen werden.
+    </p>
+
     <!-- Error state -->
     <div v-else-if="error || !data?.success" class="bg-red-50 text-red-700 p-4 rounded-lg mb-6 border border-red-200">
       <p class="font-semibold">Fehler beim Laden der Daten</p>
@@ -145,7 +152,11 @@ function authorClicked() {
       <section>
         <h2 class="text-lg font-bold mb-4">Standorte</h2>
 
-        <div v-if="data.data.availability.length === 0" class="text-gray-500 p-4 text-center">
+        <div v-if="!data.data.availability" class="text-gray-500 p-4 text-center">
+          {{ voebbStatus.maintenance ? 'Standorte sind während der VÖBB-Wartung nicht abrufbar.' : 'Standorte konnten nicht geladen werden.' }}
+        </div>
+
+        <div v-else-if="data.data.availability.length === 0" class="text-gray-500 p-4 text-center">
           Keine Exemplare gefunden.
         </div>
 

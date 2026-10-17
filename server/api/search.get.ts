@@ -6,6 +6,7 @@ import { wrapper } from 'axios-cookiejar-support';
 import { CookieJar } from 'tough-cookie';
 import { cleanTitle, cleanAuthor, parseYear } from '../../utils/catalogText';
 import { normalizeIsbn, toIsbn13 } from '../../utils/isbn';
+import { isMaintenancePage, parseMaintenanceUntil } from '../../utils/maintenance';
 
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36';
 
@@ -113,6 +114,10 @@ export default defineEventHandler(async (event) => {
       html = nextRes.data;
       responseUrl = nextRes.request.res.responseUrl;
 
+      if (isMaintenancePage(html, responseUrl)) {
+        return { success: false, maintenance: true, until: parseMaintenanceUntil(html) };
+      }
+
       const $ = cheerio.load(html);
       const { searchResults, hasMore, identity, requestCount, actionUrl } = parseResultsPage($, responseUrl);
 
@@ -138,6 +143,9 @@ export default defineEventHandler(async (event) => {
 
     // PHASE 1: get session & anti-CSRF token
     const initialRes = await client.get('https://www.voebb.de/aDISWeb/app/prod00');
+    if (isMaintenancePage(initialRes.data, initialRes.request.res.responseUrl)) {
+      return { success: false, maintenance: true, until: parseMaintenanceUntil(initialRes.data) };
+    }
     const $home = cheerio.load(initialRes.data);
 
     const identity = $home('input[name="identity"]').val();

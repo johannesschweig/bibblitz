@@ -1,6 +1,7 @@
 // stores/itemCacheStore.ts
 import { defineStore } from 'pinia';
 import type { MediaItem } from '../../types/types';
+import { useVoebbStatusStore } from './voebbStatusStore';
 
 export const useItemCacheStore = defineStore('itemCache', {
   state: () => ({
@@ -34,7 +35,10 @@ export const useItemCacheStore = defineStore('itemCache', {
       // 3. Cache miss: fetch data from the API
       this.fetching[id] = $fetch('/api/detail', { query: { id } })
         .then((response: any) => {
-          if (response.success && response.data) {
+          if (response.maintenance) {
+            useVoebbStatusStore().report(response.until);
+          } else if (response.success && response.data) {
+            useVoebbStatusStore().clear();
             // Merge the data into the cache. The search result's author and year win: the detail
             // page only knows the author from the title and has no year.
             const known = this.items[id]

@@ -3,6 +3,7 @@
 import { ref, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useMediaStore } from '~/stores/mediaStore'
+import { useVoebbStatusStore } from '~/stores/voebbStatusStore'
 import { useItemCacheStore } from '#imports'
 import AppIntro from '~/components/AppIntro.vue'
 import Faq from '~/components/Faq.vue'
@@ -18,10 +19,12 @@ const route = useRoute()
 const router = useRouter()
 const mediaStore = useMediaStore()
 const itemCacheStore = useItemCacheStore()
+const voebbStatus = useVoebbStatusStore()
 
 const searchQuery = ref('')
 const loading = ref(false)
 const hasSearched = ref(false)
+const searchFailed = ref(false)
 const lastQuery = ref('')
 
 // Currently selected filter (null = all)
@@ -115,6 +118,7 @@ async function handleSearch(queryText: string, source: 'user' | 'quick') {
   inFlightQuery = cleanQuery
   loading.value = true
   hasSearched.value = false
+  searchFailed.value = false
   selectedMediaType.value = null
   lastQuery.value = cleanQuery
   router.replace({ query: { q: cleanQuery } })
@@ -123,6 +127,7 @@ async function handleSearch(queryText: string, source: 'user' | 'quick') {
     await mediaStore.executeSearch(cleanQuery)
   } catch (error) {
     failed = true
+    searchFailed.value = true
     console.error('Fehler bei der VÖBB-Suche:', error)
   } finally {
     if (inFlightQuery === cleanQuery) inFlightQuery = ''
@@ -215,6 +220,13 @@ async function handleLoadMore() {
         </div>
       </div>
 
+      <!-- The banner in the layout explains the maintenance, this only says what it means for the search -->
+      <div v-else-if="hasSearched && voebbStatus.maintenance" class="text-center py-16 text-gray-500 text-sm">
+        Die Suche ist gerade nicht möglich.
+      </div>
+      <div v-else-if="hasSearched && searchFailed" class="text-center py-16 text-gray-500 text-sm">
+        Die Suche hat nicht geklappt. Bitte versuche es gleich noch einmal.
+      </div>
       <!-- Empty state after a search -->
       <div v-else-if="hasSearched" class="text-center py-16 text-gray-500 text-sm">
         Keine Treffer für „{{ lastQuery }}“ gefunden.

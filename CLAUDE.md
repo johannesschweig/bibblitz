@@ -20,6 +20,7 @@ BibBlitz (bibblitz.de) — a Nuxt 4 / Vue 3 / Tailwind 4 front end for the Berli
 **Scraping layer (`server/api/`)**
 - `search.get.ts` — emulates a browser session against aDISWeb: GET home page for `identity` token → POST search form → parse results (`parseResultsPage`). Pagination ("load more") is stateless on our side: the response includes a base64url `token` encoding the VÖBB `identity`, `requestCount`, form action URL and the serialized tough-cookie jar; passing `?token=` replays the session and "clicks" the next-page toolbar button. `?q=` starts a new search.
 - `detail.get.ts` — fetches one record by numeric ID (`SAK<id>` direct link) and parses metadata (media type, author, ISBN) and per-branch availability, then runs it through `utils/availability.ts`.
+- Maintenance: while VÖBB is switched off, every aDISWeb URL redirects to a static `/wartung/` page. `utils/maintenance.ts` detects it (and reads the end of the window); `search`/`detail` then return `{ success: false, maintenance: true, until }` and `status.get.ts` (cached 60 s) lets `voebbStatusStore` show a banner (`MaintenanceNotice.vue`) before anyone searches. Any new scraper route must check `isMaintenancePage` first.
 - `server/routes/sitemap.xml.ts`, `robots.txt.ts` — SEO routes; sitemap is generated from `app/assets/libraries.json`.
 - axios + cookiejar packages are force-inlined in `nuxt.config.ts` (`nitro.externals.inline`) so they bundle correctly on Vercel — keep this when touching those deps.
 
