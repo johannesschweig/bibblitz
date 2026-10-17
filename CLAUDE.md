@@ -95,6 +95,7 @@ How to read the "Umami indicator" column: **event** = custom event (Events tab, 
 | Feature | Introduced | Umami indicator | Usage (90d) | Notes |
 |---|---|---|---|---|
 | Library page (address, opening/service hours, website) | 10.07. | URL `/library/*` | 51 visitors / 146 views (~14% of visitors), 5 from google.com | SEO play via sitemap (23.07.); top pages: AGB 11, Hansabibliothek 5 |
+| "In Google Maps öffnen" / "Bibliothekswebsite öffnen" | 10.07. (tracking 17.10.) | events `library-maps-click`, `library-website-click` (`id`, `zip_default`) | n/a, new | the library-page counterpart of `voebb-click`: shows whether the (SEO) page leads anywhere |
 | Library map (Leaflet / CARTO) | 11.07. | none (part of library page) | n/a | needs `CARTO_API_KEY` |
 | Sitemap / robots routes | 23.07. | none | n/a | 5 google visitors on library pages is the only SEO signal so far |
 

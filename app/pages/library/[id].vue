@@ -5,6 +5,7 @@ import libraryData from '~/assets/libraries.json'
 import { calculateHaversineDistance, formatDistance } from '~~/utils/distance'
 import LibraryMap from '~/components/LibraryMap.vue'
 
+const { track } = useUmami()
 const route = useRoute()
 const userStore = useUserStore()
 
@@ -73,6 +74,11 @@ const distanceText = computed(() => {
 
   return `${formatDistance(km)} von dir entfernt`
 })
+
+// The two ways off the library page: planning the way there and the library's own site
+function outboundClicked(event: 'library-maps-click' | 'library-website-click') {
+  track(event, { id: libraryId.value ?? '', zip_default: userStore.userZipDefault ? 1 : 0 })
+}
 </script>
 
 <template>
@@ -116,7 +122,7 @@ const distanceText = computed(() => {
           <div>
             <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide">Adresse</h3>
             <p class="text-sm text-gray-700 font-medium mt-0.5">{{ library.address }}</p>
-            <a :href="library.mapsLink" target="_blank"
+            <a :href="library.mapsLink" target="_blank" @click="outboundClicked('library-maps-click')"
               class="text-xs text-blue-600 font-semibold hover:underline block mt-1">
               In Google Maps öffnen ↗
             </a>
@@ -178,7 +184,8 @@ const distanceText = computed(() => {
       </div>
 
       <div class="p-4 bg-gray-50 border-t border-gray-100 flex">
-        <a :href="library.website" target="_blank" class="w-full btn btn-secondary btn-md">
+        <a :href="library.website" target="_blank" class="w-full btn btn-secondary btn-md"
+          @click="outboundClicked('library-website-click')">
           <span>Bibliothekswebsite öffnen</span>
           <span class="text-xs">↗</span>
         </a>
