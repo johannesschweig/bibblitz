@@ -16,6 +16,9 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  // Dev only: fixtures instead of scraping, for when voebb.de is down (see CLAUDE.md)
+  if (import.meta.dev && process.env.MOCK_VOEBB === '1') return getMockDetail(id);
+
   const targetUrl = `https://www.voebb.de/aDISWeb/app?service=direct/0/Home/$DirectLink&sp=SPROD00&sp=SAK${id}`;
 
   try {

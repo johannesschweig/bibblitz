@@ -8,9 +8,10 @@ BibBlitz (bibblitz.de) — a Nuxt 4 / Vue 3 / Tailwind 4 front end for the Berli
 
 ## Commands
 
-- `npm run dev` — runs `vercel dev` (needs Vercel CLI auth/link). For a plain Nuxt dev server use `npx nuxt dev --port 3210` (this is what `.claude/launch.json` uses).
+- `npm run dev` — runs `nuxt dev` (the server routes work without Vercel). Do not point it back at `vercel dev`: the Vercel project's Development Command calls `npm run dev`, so `vercel dev` would recurse (`DEV_RECURSIVE_INVOCATION`). `.claude/launch.json` uses `npx nuxt dev --port 3210`.
 - `npm run build` / `npm run generate` / `npm run preview` — standard Nuxt.
 - `npm test` — Vitest with `@nuxt/test-utils` (`environment: 'nuxt'`), tests in `test/`. Page tests use `mountSuspended` and fake `/api/*` with `registerEndpoint`, so they never hit voebb.de. No linter or formatter is configured.
+- `MOCK_VOEBB=1` in `.env` (dev only, restart the dev server): `/api/detail` returns fixtures from `server/utils/mockDetail.ts` instead of scraping voebb.de, for working on the detail page during VÖBB maintenance. Any `/media/<id>` works; `00000001` has no copies, `00000002` has a very long title and no author/ISBN, `34758158` has a long note. Has no effect in production builds. Search is not mocked, so open `/media/<id>` directly.
 - `CARTO_API_KEY` env var (in `.env`, gitignored) is exposed as `runtimeConfig.public.cartoApiKey` for the Leaflet/CARTO map tiles.
 - Deployed on Vercel; server routes must stay within its ~10s function limit (detail fetch uses a 4.5s timeout for this reason).
 - Commit messages: one short lowercase subject line, no body unless the why isn't obvious from the diff (then max 2–3 lines).
