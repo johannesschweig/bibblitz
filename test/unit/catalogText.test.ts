@@ -43,8 +43,10 @@ describe('cleanTitle', () => {
     expect(cleanTitle('Hauteville House : [Comic]. - 1. Zelda').title).toBe('Hauteville House : Comic. - 1. Zelda')
   })
 
-  it('leaves a bracketed series prefix alone, also with a slash inside', () => {
-    expect(cleanTitle('[Der Spiegel / Register] Der Spiegel : [Zeitschrift]', { withResponsibility: true }).title).toBe('[Der Spiegel / Register] Der Spiegel')
+  it('turns a bracketed prefix into a subtitle-style prefix, also with a slash inside', () => {
+    expect(cleanTitle('[Der Spiegel / Register] Der Spiegel : [Zeitschrift]', { withResponsibility: true }).title).toBe('Der Spiegel / Register : Der Spiegel')
+    expect(cleanTitle('[Duden] Alle meine Sinne').title).toBe('Duden : Alle meine Sinne')
+    expect(cleanTitle('[Nintendo Switch Lite Konsole] Nintendo Switch Lite').title).toBe('Nintendo Switch Lite Konsole : Nintendo Switch Lite')
   })
 
   it('cuts the statement of responsibility off detail titles', () => {
@@ -100,7 +102,22 @@ describe('cleanAuthor', () => {
     // games and devices: the publisher
     ['Nintendo', 'Nintendo'],
     ['Heidelberger Spieleverlag [Herausgeber/in]. - Heidelberger Spieleverlag', 'Heidelberger Spieleverlag'],
-    ['Boxine Sales DAB', 'Boxine Sales DAB']
+    ['Boxine Sales DAB', 'Boxine Sales DAB'],
+    ['Nintendo Co., Ltd.', 'Nintendo Co., Ltd.'],
+    // English and abbreviated secondary credits (scraped 19.10.2026)
+    ['by Goethe. From the German by John Anster. - Tauchnitz', 'Goethe'],
+    ['Author: J. W. Goethe ; Translator: A. R. Badawi. - Third Edition. - Al Mada', 'J. W. Goethe'],
+    ['Joanne K. Rowling. Aus d. Engl. von Klaus Fritz. - 16. Aufl.. - Carlsen', 'Joanne K. Rowling'],
+    // the surname is missing in the catalogue, do not show the dangling particle
+    ['Johann Wolfgang von. - Kristall', 'Johann Wolfgang'],
+    // retellings: the one who retold it, not the illustrator of the retelling
+    ['mit Bildern von Christiane Mitzkus. Nacherzählt von Barbara Kindermann. - 1. Aufl.. - Kindermann-Verl.', 'Barbara Kindermann'],
+    ['Neu erz. von Barbara Kindermann. Mit Bildern von Klaus Ensikat. - 4.Aufl.. - Kindermann', 'Barbara Kindermann'],
+    // the whole statement of responsibility is in brackets (cataloguer's addition)
+    ['[Verf.: Frauke Burian. Ill.: Vera Solymosi-Thurzó. Kt. u. Pl.: Eberhart von Harsdorf]. - 21. Aufl., 1991/92. - Polyglott-Verl.', 'Frauke Burian'],
+    ['[red. Leitung: Ulrich Kilian ...]. - 8., überarb. und erg. Aufl.. - Dudenverl.', 'Ulrich Kilian'],
+    ['[Red.: Christine Berger]. - Companions', 'Christine Berger'],
+    ['[Lycée de Garçons de Luxembourg]. - Lycée de Garçons de Luxembourg', 'Lycée de Garçons de Luxembourg']
   ])('%s', (raw, expected) => {
     expect(cleanAuthor(raw)).toBe(expected)
   })
@@ -109,6 +126,12 @@ describe('cleanAuthor', () => {
     expect(cleanAuthor('')).toBeUndefined()
     expect(cleanAuthor(undefined)).toBeUndefined()
     expect(cleanAuthor('[Hrsg.]')).toBeUndefined()
+  })
+
+  it('does not present an illustrator or translator as the author', () => {
+    expect(cleanAuthor('Illustrationen: Katharina Bußhoff. - FISCHER Duden Kinderbuch')).toBeUndefined()
+    expect(cleanAuthor('Illustrationen: Katharina Bußhoff ; Text: Anna Meyer. - Verl.')).toBe('Anna Meyer')
+    expect(cleanAuthor('transl. by Anna Swanwick. With an introd. and bibliogr. by Karl Breul. - Bell')).toBeUndefined()
   })
 })
 
