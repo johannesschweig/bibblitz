@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { calculateStatusInfo, calculateBranchStatus, filterAndEnrichBranches, parseStatus, splitLibraryName } from '../../utils/availability'
 import type { AvailabilityInfo } from '../../types/types'
+import libraries from '../../app/assets/libraries.json'
 
 // Real library ids from libraries.json so the distance lookup works
 const CENTER = { lat: 52.52, lon: 13.405 } // ~5 km from the branch
@@ -108,6 +109,31 @@ describe('due date across a DST change', () => {
       expect(item.daysToWait).toBe(11)
     } finally {
       globalThis.Date = RealDate
+    }
+  })
+})
+
+describe('library matching', () => {
+  const match = (libraryName: string) =>
+    filterAndEnrichBranches([{ libraryName, status: 'Verfügbar' } as AvailabilityInfo])[0]?.libraryId
+
+  it('matches Reinickendorf-West to its own entry, not to Reinickendorf-Ost', () => {
+    expect(match('Reinickendorf: Bibliothek Reinickendorf - West')).toBe('bibl-reinickendorf-west')
+  })
+
+  it('still matches Reinickendorf-Ost', () => {
+    expect(match('Reinickendorf: Bibliothek am Schäfersee Stadtteilbibliothek Reinickendorf-Ost'))
+      .toBe('bibliothek-am-sch-fersee-stadtteilbibliothek-reinickendorf-ost')
+  })
+
+  it('cuts off closure notices after " - "', () => {
+    expect(match('Pankow: Kurt-Tucholsky-Bibliothek (Pankow) - wegen Renovierung geschlossen'))
+      .toBe('kurt-tucholsky-bibliothek-pankow')
+  })
+
+  it('maps every library in libraries.json to itself', () => {
+    for (const lib of libraries) {
+      expect(match(`${lib.district}: ${lib.name}`), lib.name).toBe(lib.id)
     }
   })
 })

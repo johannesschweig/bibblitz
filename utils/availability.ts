@@ -21,19 +21,32 @@ export const NEAR_KM = 3
  * and finds the matching entry in libraries.json
  */
 function findMatchingLibrary(branch: string) {
-  const parts = branch.split(':')
-  const rawBranchName = parts.length > 1 ? parts[1] : parts[0]
-
-  const cleanScrapedName = (rawBranchName || '')
-    .split(' - ')[0] // Cuts off closure notices
+  const normalize = (name: string) => name
     .replace(/[\s\u00a0]+/g, ' ')
     .trim()
     .toLowerCase()
+    .replace(/\bbibl\./g, 'bibliothek') // libraries.json abbreviates "Bibl. Reinickendorf - West"
 
-  return libraryData.find(lib => {
-    const cleanConfigName = lib.name.replace(/[\s\u00a0]+/g, ' ').trim().toLowerCase()
-    return cleanScrapedName.includes(cleanConfigName) || cleanConfigName.includes(cleanScrapedName)
-  })
+  const parts = branch.split(':')
+  const rawBranchName = normalize((parts.length > 1 ? parts[1] : parts[0]) || '')
+
+  // A " - " can start a closure notice, but also be part of the name ("Reinickendorf - West"),
+  // so try the full name first and only then the shortened one
+  const candidates = [...new Set([rawBranchName, rawBranchName.split(' - ')[0]!.trim()])].filter(Boolean)
+  const libraries = libraryData.map(lib => ({ lib, name: normalize(lib.name) }))
+
+  for (const candidate of candidates) {
+    const exact = libraries.find(l => l.name === candidate)
+    if (exact) return exact.lib
+  }
+  for (const candidate of candidates) {
+    // Several names can contain each other ("Reinickendorf"): the longest, most specific one wins
+    const fuzzy = libraries
+      .filter(l => candidate.includes(l.name) || l.name.includes(candidate))
+      .sort((a, b) => b.name.length - a.name.length)[0]
+    if (fuzzy) return fuzzy.lib
+  }
+  return undefined
 }
 
 /**
