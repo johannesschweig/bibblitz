@@ -3,8 +3,9 @@ import * as cheerio from 'cheerio';
 import { filterAndEnrichBranches } from '../../utils/availability';
 import { cleanTitle, cleanAuthor, cleanContributors, parseYear } from '../../utils/catalogText';
 import { parseIsbn } from '../../utils/isbn';
+import { parseAvailabilityTable } from '../../utils/shelfmark';
 import { isMaintenancePage, parseMaintenanceUntil } from '../../utils/maintenance';
-import type { MediaItem, AvailabilityInfo } from '../../types/types';
+import type { MediaItem } from '../../types/types';
 
 export default defineEventHandler(async (event) => {
   const { id } = getQuery(event);
@@ -90,26 +91,7 @@ export default defineEventHandler(async (event) => {
     const permanentUrl = $('.aDISListe a:contains("Kopierlink"), a.permalink-unclicked').first().attr('href') || targetUrl;
     const mediaId = permanentUrl.match(/sp=SAK(\d+)/)?.[1];
 
-    const availability: AvailabilityInfo[] = [];
-    const targetTable = $('.register-table table, .rTable_table, #resptable-1').first();
-
-    if (targetTable.length > 0) {
-      targetTable.find('tbody tr').each((_, el) => {
-        const cells = $(el).find('td');
-        if (cells.length < 4) return;
-        const branchText = cells.eq(0).text().trim().replace(/\s+/g, ' ');
-        const shelfmarkText = cells.eq(2).text().trim().replace(/\s+/g, ' ');
-        const statusText = cells.last().text().trim().replace(/\s+/g, ' ');
-        if (branchText.toLowerCase().includes('kopierlink') || branchText.toLowerCase().includes('[buch]')) return;
-        if (branchText && statusText) {
-          availability.push({
-            libraryName: branchText,
-            status: statusText,
-            shelfmark: shelfmarkText || undefined
-          });
-        }
-      });
-    }
+    const availability = parseAvailabilityTable($, $('.register-table table, .rTable_table, #resptable-1').first());
 
     const processedAvailability = filterAndEnrichBranches(availability);
 
