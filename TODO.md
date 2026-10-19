@@ -27,6 +27,7 @@
 - merging of different versions of the same book/game (what to do with the id?)
 
 # DONE
+- intro: AI illustration replaced by an own photo (phone at the library shelf, `public/hero-am-regal.webp`, 4:5, 106 KB, EXIF stripped, originals stay in gitignored `res/photos/`) and three icon bullets by the headline "Ist es gerade im Regal?" with one concrete sentence; "Über BibBlitz" portrait replaced by `public/johannes.webp` (design backlog, 19.10.)
 - detail page redesign: text-only header with stacked subtitle, flat branch list with dividers instead of cards (design backlog, 16.10.)
 - detail page: long status texts and library names no longer break the layout: status split into pill (state or days) + note, district split from the library name, pill under the text on mobile; a note containing "ausleihbar" no longer marks a loaned copy as available, due-date days correct across DST (16.10.)
 - text contrast to WCAG AA on all pages and states (gray-400 → gray-500, coloured text to -700/-800, placeholders), audit script in `scripts/contrast-audit.js` (16.10.)

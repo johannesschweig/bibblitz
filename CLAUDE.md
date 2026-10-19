@@ -42,7 +42,7 @@ BibBlitz (bibblitz.de) — a Nuxt 4 / Vue 3 / Tailwind 4 front end for the Berli
 
 ## Accessibility: text contrast
 
-All text must meet **WCAG 2.2 AA**: contrast of at least **4.5:1**, or **3:1** for large text (>= 24px, or >= 18.66px and bold). This includes input placeholders, eyebrow labels and the small 10–12px text. Disabled controls are exempt. Non-text graphics (icons, borders) should reach 3:1 when they carry meaning on their own; the decorative icons in `AppIntro.vue` are not audited and get replaced in design backlog #8.
+All text must meet **WCAG 2.2 AA**: contrast of at least **4.5:1**, or **3:1** for large text (>= 24px, or >= 18.66px and bold). This includes input placeholders, eyebrow labels and the small 10–12px text. Disabled controls are exempt. Non-text graphics (icons, borders) should reach 3:1 when they carry meaning on their own.
 
 Rules of thumb for Tailwind 4 colours (all measured, not guessed):
 - Muted text: `text-gray-500` is the lightest allowed on white and page background (about 4.8:1). On tinted backgrounds (`bg-gray-100`, `bg-*-50`) use `text-gray-600` or darker. `text-gray-400` (2.5:1) is never OK for text, placeholders included (`placeholder:text-gray-500`).
@@ -125,12 +125,11 @@ Caveats when re-reading the numbers:
 
 ## Design backlog
 
-From a design review on 12.10.2026. Goal: the UI currently reads as stock Tailwind / AI-generated and shows raw catalog data. Done so far (see `TODO.md` → DONE): Lucide icons, one `max-w-2xl` column without the single-tab nav, loading/empty states, text contrast, and the detail page redesign (16.10.).
+From a design review on 12.10.2026. Goal: the UI currently reads as stock Tailwind / AI-generated and shows raw catalog data. Done so far (see `TODO.md` → DONE): Lucide icons, the intro photo, one `max-w-2xl` column without the single-tab nav, loading/empty states, text contrast, and the detail page redesign (16.10.).
 
 **The detail page is now the reference for the rest of the app.** It has a text-only header (eyebrow `text-xs uppercase tracking-wider`, title `text-3xl md:text-4xl`, subtitle stacked on its own line via `MediaTitle stacked`, author `text-xl`, ISBN `text-sm`), a flat branch list (`divide-y`, `hover:bg-gray-50`, status pill plus a separate note line, no cards) and Lucide arrows/chevrons. The open items below should move the other pages toward it. Ordered roughly from small to big; tick off by deleting the line and noting it in `TODO.md` → DONE.
 
 6. **Design tokens** in `@theme` in `app/assets/style.css`: one typeface (consider a serif for titles; inspiration: https://literal.club/ for its serif, Libre Baskerville, and its minimalist design), one non-Tailwind-blue accent, two radii, shadows only on hover. Start from the type scale the detail page already uses. Remove one-offs (`#5b8dee` gradient in `About.vue`, emerald heading on library pages, black `.btn-primary` vs blue search button).
 7. **Bring the flat list style to the remaining cards.** Done: branch list on the detail page. Open: result rows (`MediaItem.vue`, also used by `Showcase.vue`: still `rounded-xl border shadow-sm` per item), the library page (one `rounded-2xl` card with a gradient header), `ZipCode.vue`, `AppIntro.vue` and `About.vue`. Decision: the detail header dropped the media-type icon, but result rows still show VÖBB's grey type icons. Drop them there too (text only, consistent) or keep them until covers (#9) replace them.
-8. **Replace the AI illustration** `public/search-borrow.png` (619 px, `opacity-90`, generic generated look) with a real screenshot/GIF of the availability view, an own photo of a Berlin library, or nothing. Rewrite `AppIntro.vue` from three generic icon bullets into one concrete sentence.
 9. **Covers via ISBN** (see `TODO.md` for sources and the referrer problem): biggest visual lever, but GDPR (proxy through our server), Vercel timeout budget and missing covers for games/Tonies need a fallback. The text-only detail header has no slot for a cover yet; decide placement (beside the title or above it) together with #7's icon decision.
 10. **Wordmark and favicon** instead of plain `font-black` text and the placeholder favicon (`public/favicon.svg`, a Lucide zap).

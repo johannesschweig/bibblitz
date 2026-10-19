@@ -3,7 +3,7 @@
     <div class="h-1 w-full bg-linear-to-r from-[#5b8dee] to-blue-400" />
     <div class="p-5 flex gap-4 items-start">
       <img
-        src="/johannes.jpeg"
+        src="/johannes.webp"
         alt="Johannes"
         class="w-16 h-16 rounded-full object-cover shrink-0 mt-0.5"
       />
