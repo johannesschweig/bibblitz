@@ -4,41 +4,39 @@ export interface MediaTypeConfig {
   icon: string
 }
 
-const ICON_BASE = 'https://www.voebb.de/aDISWeb_kopac86/img/medien/'
-
 export const MEDIA_TYPE_MAP: Record<string, MediaTypeConfig> = {
   // Books
-  'buch': { label: 'Buch', icon: `${ICON_BASE}buch.svg` },
-  'band': { label: 'Buch', icon: `${ICON_BASE}buch.svg` },
-  'hochschulschrift': { label: 'Buch', icon: `${ICON_BASE}buch.svg` },
-  'noten': { label: 'Noten', icon: `${ICON_BASE}noten.svg` },
+  'buch': { label: 'Buch', icon: 'lucide:book' },
+  'band': { label: 'Buch', icon: 'lucide:book' },
+  'hochschulschrift': { label: 'Buch', icon: 'lucide:book' },
+  'noten': { label: 'Noten', icon: 'lucide:music' },
   // Games
-  'spiel': { label: 'Spiel', icon: `${ICON_BASE}brettspiel.svg` },
-  'konventionelles spiel': { label: 'Spiel', icon: `${ICON_BASE}brettspiel.svg` },
-  'konsolenspiel': { label: 'Konsolenspiel', icon: `${ICON_BASE}konsolenspiel.svg` },
+  'spiel': { label: 'Spiel', icon: 'lucide:dices' },
+  'konventionelles spiel': { label: 'Spiel', icon: 'lucide:dices' },
+  'konsolenspiel': { label: 'Konsolenspiel', icon: 'lucide:gamepad-2' },
   // Film
-  'dvd': { label: 'DVD', icon: `${ICON_BASE}dvd.svg` },
-  'dvd-rom': { label: 'DVD', icon: `${ICON_BASE}dvd.svg` },
-  'blu-ray': { label: 'Blu-ray', icon: `${ICON_BASE}bluray.svg` },
-  'blu-ray disc': { label: 'Blu-ray', icon: `${ICON_BASE}bluray.svg` },
-  'ultra hd': { label: 'Blu-ray', icon: `${ICON_BASE}bluray.svg` },
-  'ultra hd blu-ray': { label: 'Blu-ray', icon: `${ICON_BASE}bluray.svg` },
-  'video': { label: 'Video', icon: `${ICON_BASE}video.svg` },
+  'dvd': { label: 'DVD', icon: 'lucide:clapperboard' },
+  'dvd-rom': { label: 'DVD', icon: 'lucide:clapperboard' },
+  'blu-ray': { label: 'Blu-ray', icon: 'lucide:clapperboard' },
+  'blu-ray disc': { label: 'Blu-ray', icon: 'lucide:clapperboard' },
+  'ultra hd': { label: 'Blu-ray', icon: 'lucide:clapperboard' },
+  'ultra hd blu-ray': { label: 'Blu-ray', icon: 'lucide:clapperboard' },
+  'video': { label: 'Video', icon: 'lucide:clapperboard' },
   // Music
-  'cd': { label: 'CD', icon: `${ICON_BASE}cd.svg` },
-  'schallplatte': { label: 'Schallplatte', icon: `${ICON_BASE}lp.svg` },
-  'mp3': { label: 'MP3', icon: `${ICON_BASE}mp3.svg` },
+  'cd': { label: 'CD', icon: 'lucide:disc-3' },
+  'schallplatte': { label: 'Schallplatte', icon: 'lucide:disc-album' },
+  'mp3': { label: 'MP3', icon: 'lucide:file-audio' },
   // Digital
-  'e-ressource': { label: 'E-Ressource', icon: `${ICON_BASE}eressource.svg` },
+  'e-ressource': { label: 'E-Ressource', icon: 'lucide:globe' },
   // Other
-  'medienkombination': { label: 'Medienpaket', icon: `${ICON_BASE}medienkombination.svg` },
-  'medienpaket': { label: 'Medienpaket', icon: `${ICON_BASE}medienkombination.svg` },
-  'karte/plan': { label: 'Karte', icon: `${ICON_BASE}karte.svg` },
-  'gerät': { label: 'Gerät', icon: `${ICON_BASE}datentraeger.svg` },
-  'plastik': { label: 'Objekt', icon: `${ICON_BASE}plastik.svg` },
+  'medienkombination': { label: 'Medienpaket', icon: 'lucide:package' },
+  'medienpaket': { label: 'Medienpaket', icon: 'lucide:package' },
+  'karte/plan': { label: 'Karte', icon: 'lucide:map' },
+  'gerät': { label: 'Gerät', icon: 'lucide:tablet-smartphone' },
+  'plastik': { label: 'Objekt', icon: 'lucide:box' },
 }
 
-const FALLBACK: MediaTypeConfig = { label: 'Sonstiges', icon: '' }
+const FALLBACK: MediaTypeConfig = { label: 'Sonstiges', icon: 'lucide:file-question-mark' }
 
 export function getMediaTypeConfig(raw: string): MediaTypeConfig {
   const key = raw.toLowerCase().trim()

@@ -17,9 +17,11 @@ const config = computed(() => getMediaTypeConfig(item.value?.mediaType ?? ''))
 <template>
   <li class="group bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md hover:border-gray-300 transition-all">
     <div class="p-2 md:p-3">
-      <NuxtLink :to="`/media/${props.mediaId}`" class="grid grid-cols-[52px_1fr] md:grid-cols-[72px_1fr] gap-3 min-w-0">
-        <img :src="config.icon" :alt="config.label" class="w-12 md:w-16 p-1 md:p-2">
+      <NuxtLink :to="`/media/${props.mediaId}`" class="block min-w-0">
         <div class="flex flex-col min-w-0">
+          <p class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">
+            <Icon :name="config.icon" class="size-3.5" />{{ config.label }}
+          </p>
           <h3 class="font-semibold text-gray-900 text-sm md:text-base leading-snug group-hover:text-blue-600 transition-colors line-clamp-2 mb-1">
             <MediaTitle v-if="item?.title" :title="item.title" />
             <template v-else>Lädt Titel...</template>
