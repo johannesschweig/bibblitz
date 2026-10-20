@@ -83,6 +83,16 @@ const metaLine = computed(() => {
   return [type, item.platform, item.year].filter(Boolean).join(' · ')
 })
 
+// Measures whether the default view (nearby branches only) is enough or people open the far ones too
+function expandBranches() {
+  track('branches-expand', {
+    hidden: hiddenBranchesCount.value,
+    available_now: displayedBranches.value.filter(b => b.daysToWait === -999).length,
+    zip_default: userStore.userZipDefault ? 1 : 0
+  })
+  showAllBranches.value = true
+}
+
 function voebbClicked() {
   track('voebb-click', {
     available_now: sortedBranches.value.filter(b => b.daysToWait === -999).length,
@@ -182,7 +192,7 @@ function authorClicked() {
               </NuxtLink>
             </li>
           </ul>
-          <button v-if="hiddenBranchesCount > 0" @click="showAllBranches = true" class="btn btn-md btn-secondary mt-6 w-full">
+          <button v-if="hiddenBranchesCount > 0" @click="expandBranches" class="btn btn-md btn-secondary mt-6 w-full">
             {{ hiddenBranchesCount }} entferntere
             {{ hiddenBranchesCount === 1 ? 'Bibliothek' : 'Bibliotheken' }} anzeigen
           </button>

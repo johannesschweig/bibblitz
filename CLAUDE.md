@@ -15,6 +15,7 @@ BibBlitz (bibblitz.de) — a Nuxt 4 / Vue 3 / Tailwind 4 front end for the Berli
 - `CARTO_API_KEY` env var (in `.env`, gitignored) is exposed as `runtimeConfig.public.cartoApiKey` for the Leaflet/CARTO map tiles.
 - Deployed on Vercel; server routes must stay within its ~10s function limit (detail fetch uses a 4.5s timeout for this reason).
 - Commit messages: one short lowercase subject line, no body unless the why isn't obvious from the diff (then max 2–3 lines).
+- Git workflow: work in regular branches in the main checkout (`git switch -c <name>`), never in git worktrees (no `EnterWorktree`, no sessions with `use_worktree: true`). Merge the branch into `main` when the work is done, then delete it.
 
 ## Architecture
 
@@ -85,6 +86,7 @@ How to read the "Umami indicator" column: **event** = custom event (Events tab, 
 |---|---|---|---|---|
 | Detail page with branch availability | 15.06. | URL `/media/*` | 120 visitors / 611 views (~32% of visitors) | core, keep. 91% arrive from bibblitz.de, so almost no direct/SEO traffic |
 | Branch sorting by distance, due-days / overdue labels, hide far branches | 16.06. / 28.06. / 03.07. | none (part of detail page) | n/a | |
+| "N entferntere Bibliotheken anzeigen" button (branches beyond 7 km are hidden when there are more than 3) | 03.07. (tracking 20.10.) | event `branches-expand` (`hidden`, `available_now` among the visible branches, `zip_default`) | n/a, new | answers whether the default view is enough: compare against `detail-view` with `branches` > 3 |
 | "↗ VÖBB" link button | 03.07. (tracking 09.10.) | event `voebb-click` (`available_now`, `zip_default`) | n/a, new | the closest thing to a conversion: BibBlitz cannot reserve, so this is where the user acts on the result |
 | Detail outcome | 09.10. | event `detail-view` (`status` ok/empty/error, `branches`, `available_now`, `nearest_available_km`, `zip_default` 0/1) | n/a, new | measurement only: shows detail fetch failures, how often nothing is available nearby, and how many viewers still use the default ZIP 10178 |
 | ISBN on detail page (plain text, not styled as a link; click does nothing yet) | 15.10. | event `isbn-click` | n/a, new | if people click it, link it to an ISBN search (also finds duplicate records of the same edition, with their own copies and availability) |
