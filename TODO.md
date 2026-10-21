@@ -27,6 +27,7 @@
 - merging of different versions of the same book/game (what to do with the id?)
 
 # DONE
+- library page redesign: text-only header (district eyebrow, 3xl title, open-now pill with today's hours), flat sections with dividers, no icon tiles or nested boxes, map after the address (h-48, centred on the library at zoom 15, no wheel zoom), today highlighted in the hours lists, "Kein Service" days folded into one line, back link falls back to `/` (design backlog, 20.10.)
 - intro: AI illustration replaced by an own photo (phone at the library shelf, `public/hero-am-regal.webp`, 4:5, 106 KB, EXIF stripped, originals stay in gitignored `res/photos/`) and three icon bullets by the headline "Ist es gerade im Regal?" with one concrete sentence; "Über BibBlitz" portrait replaced by `public/johannes.webp` (design backlog, 19.10.)
 - detail page redesign: text-only header with stacked subtitle, flat branch list with dividers instead of cards (design backlog, 16.10.)
 - detail page: long status texts and library names no longer break the layout: status split into pill (state or days) + note, district split from the library name, pill under the text on mobile; a note containing "ausleihbar" no longer marks a loaned copy as available, due-date days correct across DST (16.10.)

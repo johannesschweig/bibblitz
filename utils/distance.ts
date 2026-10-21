@@ -12,10 +12,13 @@ export function calculateHaversineDistance(lat1: number, lon1: number, lat2: num
   return R * c; // Distance in km
 }
 
-// Below 1 km in meters, above in km with one decimal and a German decimal comma
+// The user's position is only the centre of their ZIP area, so exact figures would be false precision:
+// below 1 km in steps of 100 m, up to 5 km in steps of 0.5 km, above in whole km (German decimal comma)
 export function formatDistance(km: number): string {
-  if (km < 1) {
-    return `${Math.round(km * 1000)} m`
+  const meters = Math.round(km * 10) * 100
+  if (km < 1 && meters < 1000) {
+    return meters === 0 ? 'unter 100 m' : `${meters} m`
   }
-  return `${km.toFixed(1).replace('.', ',')} km`
+  const rounded = km < 5 ? Math.round(km * 2) / 2 : Math.round(km)
+  return `${String(rounded).replace('.', ',')} km`
 }

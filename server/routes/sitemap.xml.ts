@@ -18,6 +18,10 @@ export default defineEventHandler((event) => {
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>${baseUrl}/libraries</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>${baseUrl}/imprint</loc>
     <priority>0.3</priority>
   </url>

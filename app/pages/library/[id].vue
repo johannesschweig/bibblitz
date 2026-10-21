@@ -1,77 +1,99 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import libraryData from '~/assets/libraries.json'
 import { calculateHaversineDistance, formatDistance } from '~~/utils/distance'
+import { berlinNow, getOpenStatus, type DayKey, type OpenStatus } from '~~/utils/openingHours'
 import LibraryMap from '~/components/LibraryMap.vue'
+import StatusPill from '~/components/StatusPill.vue'
 
 const { track } = useUmami()
 const route = useRoute()
 const userStore = useUserStore()
 
-const dayLabels = {
-  monday: 'Montag',
-  tuesday: 'Dienstag',
-  wednesday: 'Mittwoch',
-  thursday: 'Donnerstag',
-  friday: 'Freitag',
-  saturday: 'Samstag',
-  sunday: 'Sonntag'
+const days: { key: DayKey, label: string, short: string }[] = [
+  { key: 'monday', label: 'Montag', short: 'Mo' },
+  { key: 'tuesday', label: 'Dienstag', short: 'Di' },
+  { key: 'wednesday', label: 'Mittwoch', short: 'Mi' },
+  { key: 'thursday', label: 'Donnerstag', short: 'Do' },
+  { key: 'friday', label: 'Freitag', short: 'Fr' },
+  { key: 'saturday', label: 'Samstag', short: 'Sa' },
+  { key: 'sunday', label: 'Sonntag', short: 'So' }
+]
+
+// Set after mount: the server renders at build/request time, the visitor's clock decides what is "now"
+const now = ref<ReturnType<typeof berlinNow> | null>(null)
+let timer: ReturnType<typeof setInterval> | undefined
+onMounted(() => {
+  now.value = berlinNow()
+  timer = setInterval(() => { now.value = berlinNow() }, 60_000)
+})
+onBeforeUnmount(() => clearInterval(timer))
+
+const today = computed<DayKey | null>(() => now.value?.day ?? null)
+
+const openStatus = computed<OpenStatus | null>(() => {
+  if (!now.value) return null
+  const lib = library.value
+  // Libraries without published hours (e.g. mobile libraries) get no status
+  if (!lib?.opening_hours) return null
+  return getOpenStatus(lib.opening_hours, lib.service_hours, now.value)
+})
+
+const statusPill = computed(() => {
+  switch (openStatus.value) {
+    case 'open-service': return { tone: 'near', label: 'Jetzt geöffnet mit Service' } as const
+    case 'open-no-service': return { tone: 'wait', label: 'Jetzt geöffnet ohne Service' } as const
+    case 'open': return { tone: 'near', label: 'Jetzt geöffnet' } as const
+    case 'closed': return { tone: 'neutral', label: 'Jetzt geschlossen' } as const
+    default: return null
+  }
+})
+
+// "10:00-19:30" → "10:00–19:30"; null for days without hours
+function hoursOf(hours: WeekHours, key: DayKey) {
+  const value = hours?.[key]
+  return value && /\d/.test(value) ? value.replace('-', '–') : null
 }
 
-const libraryId = computed(() => {
-  const id = route.params.id
-  const raw = Array.isArray(id) ? id[0] : id
-  return /^[a-z]/i.test(raw) ? raw : undefined
-})
+const openingRows = computed(() => days.map(d => ({ ...d, hours: hoursOf(library.value?.opening_hours, d.key) })))
 
+// Days without service are folded into one line instead of one "Kein Service" row each
+const serviceRows = computed(() => days.map(d => ({ ...d, hours: hoursOf(library.value?.service_hours, d.key) })).filter(d => d.hours))
+const noServiceDays = computed(() => days.filter(d => !hoursOf(library.value?.service_hours, d.key)).map(d => d.short).join(', '))
+
+const rowClass = (key: DayKey) => key === today.value ? 'bg-gray-50 font-semibold' : ''
+
+// Arrived from Google or a shared link: there is no previous page of ours to go back to
+const router = useRouter()
+function goBack() {
+  if (window.history.state?.back) router.back()
+  else router.push('/')
+}
+
+// An unknown id is a real 404 for crawlers and shows a "not found" state instead of a fake library
 const library = computed(() => {
-  const id = libraryId.value
-  if (!id) {
-    return {
-      name: 'Unbekannte Bibliothek',
-      district: '',
-      address: '',
-      mapsLink: '#',
-      website: '#',
-      opening_hours: []
-    }
-  }
-
-  const lib = libraryData.find(lib => lib.id === id)
-  if (!lib) {
-    return {
-      name: 'Unbekannte Bibliothek',
-      district: '',
-      address: '',
-      mapsLink: '#',
-      website: '#',
-      opening_hours: []
-    }
-  }
+  const lib = libraryData.find(lib => lib.id === route.params.id)
+  if (!lib) return undefined
   return {
     ...lib,
-    mapsLink: `https://maps.google.com/?q=${encodeURIComponent(lib.name)}`,
+    // Name and address together: names alone ("Fahrbibliothek Mitte 5") can resolve to the wrong place
+    mapsLink: `https://maps.google.com/?q=${encodeURIComponent(`${lib.name}, ${lib.address}`)}`,
   }
 })
+const libraryId = computed(() => library.value?.id)
+
+if (!library.value) {
+  useHead({ title: 'Bibliothek nicht gefunden – BibBlitz', meta: [{ name: 'robots', content: 'noindex' }] })
+  if (import.meta.server) setResponseStatus(useRequestEvent()!, 404)
+}
 
 const distanceText = computed(() => {
   const userCoords = userStore.userCoords
-  if (!userCoords) return null
+  const lib = library.value
+  if (!userCoords || !lib) return null
 
-  const library = libraryData.find(lib => lib.id === libraryId.value)
-  const { lat, lon } = library || { lat: undefined, lon: undefined }
-  if (!lat && !lon) return null
-
-
-  // Calculate distance in kilometers
-  const km = calculateHaversineDistance(
-    userCoords.lat,
-    userCoords.lon,
-    lat,
-    lon
-  )
-
+  const km = calculateHaversineDistance(userCoords.lat, userCoords.lon, lib.lat, lib.lon)
   return `${formatDistance(km)} von dir entfernt`
 })
 
@@ -82,115 +104,81 @@ function outboundClicked(event: 'library-maps-click' | 'library-website-click') 
 </script>
 
 <template>
-  <div>
+  <div class="font-sans text-gray-800">
 
-    <NuxtLink class="btn btn-text btn-md mb-2 pl-0" @click="$router.go(-1)">
-      ← Zurück
-    </NuxtLink>
+    <button type="button" class="btn btn-text btn-md mb-2 pl-0" @click="goBack">
+      <Icon name="lucide:arrow-left" class="size-4" />
+      Zurück
+    </button>
 
-    <LibraryMap v-if="libraryId" :libraryId="libraryId" :key="libraryId" class="mb-2" />
+    <template v-if="library">
+    <header class="mb-8">
+      <p v-if="library.district" class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
+        {{ library.district }}
+      </p>
+      <h1 class="text-3xl md:text-4xl font-bold leading-tight tracking-tight text-gray-900 text-pretty break-words">
+        {{ library.name }}
+      </h1>
+      <StatusPill v-if="statusPill" v-bind="statusPill" class="mt-4" />
+    </header>
 
-    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+    <div class="divide-y divide-gray-200 border-y border-gray-200">
 
-      <div class="p-5 border-b border-gray-100 bg-linear-to-br from-slate-50 to-white">
-        <span
-          class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full">
-          {{ library.district }}
-        </span>
-        <h1 class="text-xl font-extrabold text-emerald-950 mt-2.5 leading-tight">
-          {{ library.name }}
-        </h1>
-      </div>
-
-      <div class="p-5 flex flex-col gap-5">
-        <div v-if="!userStore.userZipDefault && distanceText"
-          class="flex items-start gap-3 bg-blue-50/50 border border-blue-100/60 p-3 rounded-xl">
-          <div class="p-1.5 bg-blue-100 text-blue-600 rounded-lg text-xs shrink-0 mt-0.5">
-            <Icon name="lucide:footprints" class="size-4 block" />
-          </div>
-          <div>
-            <h3 class="text-xs font-bold text-blue-700 uppercase tracking-wide">Entfernung</h3>
-            <p class="text-sm text-blue-900 font-bold mt-0.5">
-              {{ distanceText }}
-            </p>
-          </div>
+      <section class="py-6">
+        <h2 class="text-xl font-bold mb-3">Adresse</h2>
+        <p class="text-gray-800">{{ library.address }}</p>
+        <p v-if="!userStore.userZipDefault && distanceText" class="mt-1 text-sm text-gray-600">{{ distanceText }}</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <a :href="library.mapsLink" target="_blank" class="btn btn-sm btn-secondary"
+            @click="outboundClicked('library-maps-click')">
+            In Google Maps öffnen
+            <Icon name="lucide:arrow-up-right" class="size-4" />
+          </a>
+          <a :href="library.website" target="_blank" class="btn btn-sm btn-secondary"
+            @click="outboundClicked('library-website-click')">
+            Bibliothekswebsite
+            <Icon name="lucide:arrow-up-right" class="size-4" />
+          </a>
         </div>
-        <div class="flex items-start gap-3">
-          <div class="p-2 bg-gray-100 text-gray-600 rounded-lg mt-0.5 shrink-0">
-            <Icon name="lucide:map-pin" class="size-4 block" />
-          </div>
-          <div>
-            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide">Adresse</h3>
-            <p class="text-sm text-gray-700 font-medium mt-0.5">{{ library.address }}</p>
-            <a :href="library.mapsLink" target="_blank" @click="outboundClicked('library-maps-click')"
-              class="text-xs text-blue-600 font-semibold hover:underline block mt-1">
-              In Google Maps öffnen ↗
-            </a>
-          </div>
+      </section>
 
-        </div>
+      <section v-if="libraryId" class="py-6">
+        <LibraryMap :libraryId="libraryId" :key="libraryId" />
+      </section>
 
-        <div class="flex items-start gap-3">
-          <div class="p-2 bg-gray-100 text-gray-600 rounded-lg mt-0.5 shrink-0">
-            <Icon name="lucide:clock" class="size-4 block" />
-          </div>
-          <div class="w-full">
-            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
-              Öffnungszeiten
-            </h3>
+      <section class="py-6">
+        <h2 class="text-xl font-bold mb-3">Öffnungszeiten</h2>
+        <ul class="divide-y divide-gray-200 text-sm">
+          <li v-for="row in openingRows" :key="row.key" class="flex justify-between px-2 py-2"
+            :class="rowClass(row.key)" :aria-current="row.key === today ? 'date' : undefined">
+            <span :class="row.key === today ? 'text-gray-900' : 'text-gray-600'">{{ row.label }}</span>
+            <span :class="row.hours ? 'text-gray-900' : 'text-gray-600'">{{ row.hours || 'Geschlossen' }}</span>
+          </li>
+        </ul>
+      </section>
 
-            <div class="bg-gray-50 rounded-xl p-3 text-sm flex flex-col gap-1.5">
-              <div v-for="(germanLabel, englishKey) in dayLabels" :key="englishKey"
-                class="flex justify-between border-b border-gray-200/50 last:border-none pb-1.5 last:pb-0">
-                <span class="text-gray-500 font-medium">{{ germanLabel }}</span>
+      <section v-if="library.service_hours" id="servicezeiten" class="py-6 scroll-mt-4">
+        <h2 class="text-xl font-bold">Servicezeiten</h2>
+        <p class="mt-1 mb-3 text-sm text-gray-600">
+          Ausleihe bei Mitarbeitern (z. B. Brettspiele, Konsolenspiele, teilweise Tonies)
+        </p>
+        <ul class="divide-y divide-gray-200 text-sm">
+          <li v-for="row in serviceRows" :key="row.key" class="flex justify-between px-2 py-2"
+            :class="rowClass(row.key)" :aria-current="row.key === today ? 'date' : undefined">
+            <span :class="row.key === today ? 'text-gray-900' : 'text-gray-600'">{{ row.label }}</span>
+            <span class="text-gray-900">{{ row.hours }}</span>
+          </li>
+        </ul>
+        <p v-if="noServiceDays" class="mt-3 px-2 text-sm text-gray-600">{{ noServiceDays }}: kein Service</p>
+      </section>
 
-                <span class="text-gray-800 font-bold" :class="{
-                  'text-red-700 font-medium': !library.opening_hours?.[englishKey] || library.opening_hours?.[englishKey] === 'Geschlossen'
-                }">
-                  {{ library.opening_hours?.[englishKey] || 'Geschlossen' }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+    </div>
+    </template>
 
-        <div v-if="library.service_hours" class="flex items-start gap-3">
-          <div class="p-2 bg-gray-100 text-gray-600 rounded-lg mt-0.5 shrink-0">
-            <Icon name="lucide:concierge-bell" class="size-4 block" />
-          </div>
-          <div class="w-full">
-            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
-              Service Zeiten
-            </h3>
-            <p class="text-sm text-gray-500">Ausleihe bei Mitarbeitern (z.B. Brettspiele, Konsolenspiele, tlw. Tonies)
-            </p>
-
-            <div class="bg-gray-50 rounded-xl p-3 text-sm flex flex-col gap-1.5">
-              <div v-for="(germanLabel, englishKey) in dayLabels" :key="englishKey"
-                class="flex justify-between border-b border-gray-200/50 last:border-none pb-1.5 last:pb-0">
-                <span class="text-gray-500 font-medium">{{ germanLabel }}</span>
-
-                <span class="text-gray-800 font-bold" :class="{
-                  'text-gray-500! font-medium': !library.service_hours?.[englishKey] || library.service_hours?.[englishKey] === 'Kein Service'
-                }">
-                  {{ library.service_hours?.[englishKey] || 'Kein Service' }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-      </div>
-
-      <div class="p-4 bg-gray-50 border-t border-gray-100 flex">
-        <a :href="library.website" target="_blank" class="w-full btn btn-secondary btn-md"
-          @click="outboundClicked('library-website-click')">
-          <span>Bibliothekswebsite öffnen</span>
-          <span class="text-xs">↗</span>
-        </a>
-      </div>
-
+    <div v-else class="py-10">
+      <h1 class="text-3xl md:text-4xl font-bold leading-tight tracking-tight text-gray-900">Bibliothek nicht gefunden</h1>
+      <p class="mt-3 text-gray-600">Diese Adresse gehört zu keiner Bibliothek im VÖBB.</p>
+      <NuxtLink to="/libraries" class="btn btn-md btn-secondary mt-6">Alle Bibliotheken ansehen</NuxtLink>
     </div>
   </div>
 </template>

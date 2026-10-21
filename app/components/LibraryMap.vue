@@ -1,6 +1,15 @@
 <!-- components/LibraryMap.vue -->
 <template>
-  <div ref="mapEl" class="w-full h-40 md:h-80 rounded-2xl overflow-hidden shadow-sm border border-gray-200" />
+  <div>
+    <div ref="mapEl" class="isolate w-full h-48 rounded-xl overflow-hidden border border-gray-200 bg-gray-100" />
+    <ul class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-600">
+      <li class="flex items-center gap-1.5"><span class="size-2 rounded-full bg-emerald-600"></span>Diese Bibliothek</li>
+      <li class="flex items-center gap-1.5"><span class="size-2 rounded-full bg-gray-400"></span>Andere Bibliothek</li>
+      <li v-if="!userStore.userZipDefault" class="flex items-center gap-1.5">
+        <span class="size-2 rounded-full bg-blue-600"></span>Dein Stammbezirk
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -24,10 +33,14 @@ onMounted(async () => {
   const L = (await import('leaflet')).default
   await import('leaflet/dist/leaflet.css')
 
+  // Centred on the library at a fixed zoom, whatever the user's ZIP is
+  const selectedLibrary = libraryData.find(lib => lib.id === props.libraryId)
   map = L.map(mapEl.value, {
-    center: [userStore.userCoords.lat, userStore.userCoords.lon],
-    zoom: 12,
+    center: selectedLibrary ? [selectedLibrary.lat, selectedLibrary.lon] : [52.52, 13.405],
+    zoom: selectedLibrary ? 15 : 11,
     zoomControl: true,
+    // The map sits mid-page: the wheel must keep scrolling the page
+    scrollWheelZoom: false,
   })
 
   // CartoDB Positron – clean, minimal, grey/white
@@ -59,13 +72,8 @@ onMounted(async () => {
   // Library markers
   addLibraryMarkers(L)
 
-  const selectedLibrary = libraryData.find(lib => lib.id === props.libraryId)
-  const bounds = L.latLngBounds(
-    [userStore.userCoords.lat, userStore.userCoords.lon],
-    [selectedLibrary?.lat, selectedLibrary?.lon]
-  )
-
-  map.fitBounds(bounds, { padding: [20, 20] })
+  // The container may still be settling when the tiles are requested
+  requestAnimationFrame(() => map?.invalidateSize())
 })
 
 function addLibraryMarkers(L: any) {
@@ -75,28 +83,27 @@ function addLibraryMarkers(L: any) {
 
   const libIcon = L.divIcon({
     html: `<div style="
-      width: 10px; height: 10px;
-      background: #374151;
+      width: 8px; height: 8px;
+      background: #9ca3af;
       border: 2px solid white;
       border-radius: 50%;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
     "></div>`,
     className: '',
-    iconSize: [10, 10],
-    iconAnchor: [5, 5],
+    iconSize: [8, 8],
+    iconAnchor: [4, 4],
   })
 
   const selectedLibIcon = L.divIcon({
     html: `<div style="
-      width: 14px; height: 14px;
-      background: #10b981;
-      border: 2px solid white;
+      width: 22px; height: 22px;
+      background: #059669;
+      border: 4px solid white;
       border-radius: 50%;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.45);
     "></div>`,
     className: '',
-    iconSize: [14, 14],
-    iconAnchor: [5, 5],
+    iconSize: [22, 22],
+    iconAnchor: [11, 11],
   })
 
   libraryData.forEach(lib => {

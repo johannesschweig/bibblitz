@@ -239,6 +239,7 @@ async function handleLoadMore() {
       </div>
 
       <div class="mt-12 flex gap-3 text-xs">
+        <NuxtLink to="/libraries" class="text-gray-500 hover:text-gray-700">Alle Bibliotheken</NuxtLink>
         <NuxtLink to="/imprint" class="text-gray-500 hover:text-gray-700">Impressum</NuxtLink>
         <NuxtLink to="/data-privacy" class="text-gray-500 hover:text-gray-700">Datenschutz</NuxtLink>
       </div>
