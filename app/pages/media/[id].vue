@@ -12,6 +12,7 @@ import ZipCode from '~/components/ZipCode.vue'
 import StatusPill from '~/components/StatusPill.vue'
 import MediaTitle from '~/components/MediaTitle.vue'
 import { getMediaTypeConfig } from '../../../utils/mediaTypeMapping'
+import { splitSubtitle } from '../../../utils/catalogText'
 
 const { track } = useUmami()
 const route = useRoute()
@@ -72,6 +73,15 @@ function trackDetailView() {
 watch(pending, trackDetailView)
 // nextTick: app.vue loads the saved ZIP in its own onMounted, which runs after the page's
 onMounted(() => nextTick(trackDetailView))
+
+// The title comes from the client-side detail fetch, so until it arrives the default site title stays.
+// Without the subtitle: it can be very long and the tab only shows the first words anyway.
+useHead({
+  title: () => {
+    const title = data.value?.data?.title
+    return title ? `${splitSubtitle(title).main} – BibBlitz` : undefined
+  }
+})
 
 const mediaConfig = computed(() => getMediaTypeConfig(data.value?.data?.mediaType ?? ''))
 

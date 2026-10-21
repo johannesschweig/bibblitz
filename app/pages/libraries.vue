@@ -2,7 +2,10 @@
 import libraryData from '~/assets/libraries.json'
 import { groupLibraries } from '~~/utils/libraryGroups'
 
-useHead({ title: 'Alle Bibliotheken – BibBlitz' })
+useHead({
+  title: 'Alle Bibliotheken – BibBlitz',
+  meta: [{ name: 'description', content: 'Alle Standorte der Berliner öffentlichen Bibliotheken (VÖBB) mit Adresse, Öffnungs- und Servicezeiten.' }]
+})
 
 const groups = groupLibraries(libraryData)
 </script>

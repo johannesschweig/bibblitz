@@ -1,3 +1,7 @@
+<script setup lang="ts">
+useHead({ title: 'Datenschutz – BibBlitz' })
+</script>
+
 <template>
   <main class="px-5 py-6 text-slate-900 leading-7">
     <h1 class="text-3xl font-semibold mb-6">Datenschutz</h1>

@@ -4,7 +4,11 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: 'de' },
-      title: 'BibBlitz - Suchen. Finden. Ausleihen.',
+      // Default for the home page; every other page sets "<page> – BibBlitz" via useHead
+      title: 'BibBlitz – Verfügbarkeit in Berliner Bibliotheken',
+      meta: [
+        { name: 'description', content: 'Finde Bücher, Hörbücher, Filme und Spiele in den Berliner Bibliotheken und sieh sofort, welche Bibliothek in deiner Nähe sie gerade verfügbar hat.' }
+      ],
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }
       ],

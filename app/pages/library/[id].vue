@@ -86,6 +86,11 @@ const libraryId = computed(() => library.value?.id)
 if (!library.value) {
   useHead({ title: 'Bibliothek nicht gefunden – BibBlitz', meta: [{ name: 'robots', content: 'noindex' }] })
   if (import.meta.server) setResponseStatus(useRequestEvent()!, 404)
+} else {
+  useHead({
+    title: `${library.value.name} – BibBlitz`,
+    meta: [{ name: 'description', content: `${library.value.name}, ${library.value.address}: Adresse, Öffnungszeiten und Anfahrt. Ein Standort des Verbunds der Öffentlichen Bibliotheken Berlins (VÖBB).` }]
+  })
 }
 
 const distanceText = computed(() => {
