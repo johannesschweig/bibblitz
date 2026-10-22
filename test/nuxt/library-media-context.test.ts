@@ -38,6 +38,7 @@ beforeEach(() => {
   vi.stubGlobal('umami', { track: vi.fn() })
 })
 
+// LibraryMap is stubbed: Leaflet initialises after the test ended and throws "Map container not found"
 describe('Media page branch links', () => {
   it('carry the media id to the library page', async () => {
     const wrapper = await mountSuspended(MediaPage, { route: '/media/1' })
@@ -51,7 +52,7 @@ describe('Media page branch links', () => {
 describe('Library page with a selected medium', () => {
   it('shows title, status and shelfmark of the copy from the cache', async () => {
     useItemCacheStore().items['1'] = detail as any
-    const wrapper = await mountSuspended(LibraryPage, { route: `/library/${library.id}?media=1` })
+    const wrapper = await mountSuspended(LibraryPage, { route: `/library/${library.id}?media=1`, global: { stubs: { LibraryMap: true } } })
 
     const summary = wrapper.find('[data-testid="selected-copy"]')
     expect(summary.exists()).toBe(true)
@@ -64,7 +65,7 @@ describe('Library page with a selected medium', () => {
   })
 
   it('fetches the medium when it is not cached yet (shared link, reload)', async () => {
-    const wrapper = await mountSuspended(LibraryPage, { route: `/library/${library.id}?media=1` })
+    const wrapper = await mountSuspended(LibraryPage, { route: `/library/${library.id}?media=1`, global: { stubs: { LibraryMap: true } } })
     await flushPromises()
 
     await vi.waitFor(() => expect(wrapper.find('[data-testid="selected-copy"]').text()).toContain('SF HERB'))
@@ -72,14 +73,14 @@ describe('Library page with a selected medium', () => {
 
   it('shows nothing without ?media', async () => {
     useItemCacheStore().items['1'] = detail as any
-    const wrapper = await mountSuspended(LibraryPage, { route: `/library/${library.id}` })
+    const wrapper = await mountSuspended(LibraryPage, { route: `/library/${library.id}`, global: { stubs: { LibraryMap: true } } })
 
     expect(wrapper.find('[data-testid="selected-copy"]').exists()).toBe(false)
   })
 
   it('shows nothing when the medium has no copy in this library', async () => {
     useItemCacheStore().items['1'] = { ...detail, availability: [detail.availability[1]] } as any
-    const wrapper = await mountSuspended(LibraryPage, { route: `/library/${library.id}?media=1` })
+    const wrapper = await mountSuspended(LibraryPage, { route: `/library/${library.id}?media=1`, global: { stubs: { LibraryMap: true } } })
 
     expect(wrapper.find('[data-testid="selected-copy"]').exists()).toBe(false)
   })

@@ -9,8 +9,6 @@ import ZipCode from '~/components/ZipCode.vue'
 import MediaTypeFilter from '~/components/MediaTypeFilter.vue'
 
 registerEndpoint('/api/search', () => ({ success: true, results: [], hasMore: false, token: null }))
-// The home page's showcase tiles load their availability
-registerEndpoint('/api/detail', () => ({ success: false }))
 
 beforeAll(() => {
   vi.stubGlobal('IntersectionObserver', class {
@@ -22,7 +20,8 @@ beforeAll(() => {
 
 describe('Search field', () => {
   it('has an accessible name', async () => {
-    const wrapper = await mountSuspended(IndexPage, { route: '/' })
+    // Showcase keeps fetching sequentially after the test ends; in CI that outlives the test environment
+    const wrapper = await mountSuspended(IndexPage, { route: '/', global: { stubs: { Showcase: true } } })
 
     expect(wrapper.find('input[type="search"]').attributes('aria-label')).toBeTruthy()
   })

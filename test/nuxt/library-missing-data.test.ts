@@ -23,7 +23,9 @@ beforeEach(() => {
   vi.stubGlobal('umami', { track: vi.fn() })
 })
 
-const mountLibrary = (id: string) => mountSuspended(LibraryPage, { route: `/library/${id}` })
+// LibraryMap is stubbed: Leaflet initialises after the test ended and throws "Map container not found"
+const mountLibrary = (id: string) =>
+  mountSuspended(LibraryPage, { route: `/library/${id}`, global: { stubs: { LibraryMap: true } } })
 
 describe('Library without opening hours', () => {
   it('shows a notice instead of seven days of "Geschlossen"', async () => {

@@ -18,7 +18,7 @@ beforeEach(() => {
 })
 
 async function mountLibrary() {
-  return mountSuspended(LibraryPage, { route: `/library/${library.id}` })
+  return mountSuspended(LibraryPage, { route: `/library/${library.id}`, global: { stubs: { LibraryMap: true } } })
 }
 
 describe('Library page outbound links', () => {
