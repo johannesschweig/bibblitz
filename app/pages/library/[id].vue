@@ -6,6 +6,8 @@ import { calculateHaversineDistance, formatDistance } from '~~/utils/distance'
 import { berlinNow, getOpenStatus, type DayKey, type OpenStatus } from '~~/utils/openingHours'
 import LibraryMap from '~/components/LibraryMap.vue'
 import StatusPill from '~/components/StatusPill.vue'
+import { calculateBranchStatus, parseStatus } from '~~/utils/availability'
+import { splitSubtitle } from '~~/utils/catalogText'
 
 const { track } = useUmami()
 const route = useRoute()
@@ -83,6 +85,34 @@ const library = computed(() => {
 })
 const libraryId = computed(() => library.value?.id)
 
+// The medium the user came from (?media=<id> on the branch links of the detail page): title, status
+// and shelfmark of the copy in this library, so nothing has to be remembered across the two screens.
+const itemCacheStore = useItemCacheStore()
+const mediaId = computed(() => (typeof route.query.media === 'string' ? route.query.media : undefined))
+const mediaItem = computed(() => (mediaId.value ? itemCacheStore.items[mediaId.value] : undefined))
+// Shared link or reload: the cache is empty, load the medium (deduped by the store)
+watchEffect(() => {
+  if (import.meta.client && mediaId.value && !mediaItem.value?.availability) {
+    itemCacheStore.fetchDetails(mediaId.value).catch(() => {})
+  }
+})
+const selectedCopy = computed(() => {
+  const copy = mediaItem.value?.availability?.find(b => b.libraryId === libraryId.value)
+  if (!mediaItem.value || !copy) return null
+  return {
+    title: splitSubtitle(mediaItem.value.title).main,
+    shelfmark: copy.shelfmark,
+    status: calculateBranchStatus(copy, userStore.userZipDefault),
+    notes: parseStatus(copy.status).notes
+  }
+})
+
+// Today's opening hours, shown right under the name (the full week is further down)
+const todayHours = computed(() => {
+  if (!today.value) return null
+  return hoursOf(library.value?.opening_hours, today.value)
+})
+
 if (!library.value) {
   useHead({ title: 'Bibliothek nicht gefunden – BibBlitz', meta: [{ name: 'robots', content: 'noindex' }] })
   if (import.meta.server) setResponseStatus(useRequestEvent()!, 404)
@@ -124,7 +154,24 @@ function outboundClicked(event: 'library-maps-click' | 'library-website-click') 
       <h1 class="text-3xl md:text-4xl font-bold leading-tight tracking-tight text-gray-900 text-pretty break-words">
         {{ library.name }}
       </h1>
-      <StatusPill v-if="statusPill" v-bind="statusPill" class="mt-4" />
+      <div v-if="statusPill" class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <StatusPill v-bind="statusPill" />
+        <span v-if="todayHours" class="text-sm text-gray-600">Heute {{ todayHours }}</span>
+      </div>
+
+      <div v-if="selectedCopy" data-testid="selected-copy" class="mt-6 rounded-lg border border-gray-200 bg-white p-4">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Dein Medium</p>
+        <NuxtLink :to="`/media/${mediaId}`" class="mt-1 block font-medium text-gray-900 hover:underline wrap-anywhere">
+          {{ selectedCopy.title }}
+        </NuxtLink>
+        <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-600">
+          <StatusPill v-bind="selectedCopy.status" />
+          <span v-if="selectedCopy.shelfmark">
+            Signatur: <span class="font-mono text-[13px] text-gray-700">{{ selectedCopy.shelfmark }}</span>
+          </span>
+        </div>
+        <p v-if="selectedCopy.notes.length" class="mt-2 text-sm text-gray-600">{{ selectedCopy.notes.join(' · ') }}</p>
+      </div>
     </header>
 
     <div class="divide-y divide-gray-200 border-y border-gray-200">
@@ -139,7 +186,7 @@ function outboundClicked(event: 'library-maps-click' | 'library-website-click') 
             In Google Maps öffnen
             <Icon name="lucide:arrow-up-right" class="size-4" />
           </a>
-          <a :href="library.website" target="_blank" class="btn btn-sm btn-secondary"
+          <a v-if="library.website" :href="library.website" target="_blank" class="btn btn-sm btn-secondary"
             @click="outboundClicked('library-website-click')">
             Bibliothekswebsite
             <Icon name="lucide:arrow-up-right" class="size-4" />
@@ -151,7 +198,19 @@ function outboundClicked(event: 'library-maps-click' | 'library-website-click') 
         <LibraryMap :libraryId="libraryId" :key="libraryId" />
       </section>
 
-      <section class="py-6">
+      <!-- Bookmobiles and a few others have no published hours: do not turn that into seven "Geschlossen" -->
+      <section v-if="!library.opening_hours" data-testid="no-hours" class="py-6">
+        <h2 class="text-xl font-bold mb-3">Öffnungszeiten</h2>
+        <p class="text-sm text-gray-600">
+          Keine Öffnungszeiten hinterlegt.
+          <template v-if="library.website">
+            Aktuelle Zeiten stehen auf der
+            <a :href="library.website" target="_blank" class="link">Website der Bibliothek</a>.
+          </template>
+        </p>
+      </section>
+
+      <section v-else class="py-6">
         <h2 class="text-xl font-bold mb-3">Öffnungszeiten</h2>
         <ul class="divide-y divide-gray-200 text-sm">
           <li v-for="row in openingRows" :key="row.key" class="flex justify-between px-2 py-2"

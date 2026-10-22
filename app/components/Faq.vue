@@ -47,8 +47,9 @@ const toggleFaq = (index: number) => {
     <div class="space-y-3">
       <div v-for="(faq, index) in faqs" :key="index"
         class="border border-gray-200 rounded-2xl bg-white overflow-hidden transition-all duration-200">
-        <button @click="toggleFaq(index)"
-          class="w-full flex items-center justify-between p-4 text-left select-none focus:outline-none">
+        <button @click="toggleFaq(index)" :id="`faq-button-${faq.id}`" :aria-expanded="openIndex === index"
+          :aria-controls="`faq-panel-${faq.id}`"
+          class="w-full flex items-center justify-between p-4 text-left select-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600">
           <span class="text-sm font-semibold text-gray-900 pr-4">
             {{ faq.question }}
           </span>
@@ -59,7 +60,8 @@ const toggleFaq = (index: number) => {
           </svg>
         </button>
 
-        <div v-show="openIndex === index" class="border-t border-gray-100 bg-gray-50/50">
+        <div v-show="openIndex === index" :id="`faq-panel-${faq.id}`" role="region"
+          :aria-labelledby="`faq-button-${faq.id}`" class="border-t border-gray-100 bg-gray-50/50">
           <p class="p-4 text-sm text-gray-700 leading-relaxed" v-html="faq.answer"></p>
         </div>
       </div>

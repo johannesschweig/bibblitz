@@ -26,6 +26,7 @@ function selectType(type: string | null) {
     <button
       type="button"
       @click="selectType(null)"
+      :aria-pressed="modelValue === null"
       :class="[
         'shrink-0 whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer border',
         modelValue === null
@@ -40,6 +41,7 @@ function selectType(type: string | null) {
       :key="item.type"
       type="button"
       @click="selectType(modelValue === item.type ? null : item.type)"
+      :aria-pressed="modelValue === item.type"
       :class="[
         'shrink-0 whitespace-nowrap px-3 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer border',
         modelValue === item.type

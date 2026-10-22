@@ -180,7 +180,8 @@ function authorClicked() {
           <ZipCode v-model="userStore.userZip" class="mb-2" />
           <ul class="divide-y divide-gray-200 border-b border-gray-200">
             <li v-for="(item, index) in displayedBranches" :key="index">
-              <NuxtLink :to="`/library/${item.libraryId}`"
+              <!-- ?media lets the library page show which copy the user is after -->
+              <NuxtLink :to="{ path: `/library/${item.libraryId}`, query: { media: mediaId } }"
                 class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto] items-center gap-x-3 gap-y-2 py-4 hover:bg-gray-50 active:bg-gray-50">
                 <div class="min-w-0 col-start-1 row-start-1">
                   <h3 class="font-medium text-gray-900 wrap-anywhere">{{ splitLibraryName(item.libraryName).name }}</h3>

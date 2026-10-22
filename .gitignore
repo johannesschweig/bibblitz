@@ -31,3 +31,6 @@ res/
 # editor swap files
 *.swp
 *.swo
+
+# impeccable design review output
+.impeccable/

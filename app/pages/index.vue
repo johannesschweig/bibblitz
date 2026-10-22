@@ -61,6 +61,14 @@ const filteredSearchIds = computed(() => {
   })
 })
 
+// The unfiltered count only covers the pages loaded so far, so say "geladen" while more can be loaded
+const resultCountText = computed(() => {
+  const loaded = mediaStore.searchIds.length
+  const partial = mediaStore.hasMore
+  if (!selectedMediaType.value) return partial ? `${loaded} Treffer geladen` : `${loaded} Treffer`
+  return `${filteredSearchIds.value.length} von ${loaded} Treffern`
+})
+
 // router.replace triggers the route.query.q watcher before mediaStore.lastQuery is set.
 // Without this marker the same search (and the same VÖBB scrape) would run twice.
 // Must be declared before the watcher: it runs immediately (`immediate`) and calls handleSearch.
@@ -163,7 +171,7 @@ async function handleLoadMore() {
       <!-- Search form -->
       <div class="mb-6">
         <form @submit.prevent="handleSearch(searchQuery, 'user')" class="flex gap-2 mb-3">
-          <input v-model="searchQuery" type="search" placeholder="Titel, Autor, Spiel, ISBN …" @search="handleInputClear"
+          <input v-model="searchQuery" type="search" aria-label="Suche nach Titel, Autor, Spiel oder ISBN" placeholder="Titel, Autor, Spiel, ISBN …" @search="handleInputClear"
             @input="handleInputClear"
             class="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-500"
             :disabled="loading" />
@@ -200,9 +208,8 @@ async function handleLoadMore() {
 
       <!-- Results -->
       <div v-else-if="mediaStore.searchIds.length > 0">
-        <p class="text-xs font-medium text-gray-500 uppercase tracking-widest mb-4">
-          {{ filteredSearchIds.length }} von {{ mediaStore.searchIds.length }} Treffern
-        </p>
+        <p data-testid="result-count" aria-live="polite"
+          class="text-xs font-medium text-gray-500 uppercase tracking-widest mb-4">{{ resultCountText }}</p>
 
         <!-- List uses filteredSearchIds -->
         <ul v-if="filteredSearchIds.length > 0" class="space-y-2">

@@ -65,6 +65,24 @@ describe('ZipCode', () => {
     expect(saveButton(wrapper).attributes('disabled')).toBeDefined()
   })
 
+  it('explains why a complete ZIP outside Berlin is rejected', async () => {
+    const wrapper = await mountEditing('99084')
+
+    expect(wrapper.find('[role="status"]').text()).toContain('Keine Berliner PLZ')
+  })
+
+  it('does not nag while the ZIP is still being typed', async () => {
+    const wrapper = await mountEditing('1055')
+
+    expect(wrapper.text()).not.toContain('Keine Berliner PLZ')
+  })
+
+  it('shows no rejection for a valid ZIP', async () => {
+    const wrapper = await mountEditing('10559')
+
+    expect(wrapper.text()).not.toContain('Keine Berliner PLZ')
+  })
+
   it('Enter with a ZIP outside Berlin neither saves nor tracks', async () => {
     const wrapper = await mountEditing('99084')
     vi.useFakeTimers()
@@ -89,6 +107,31 @@ describe('ZipCode', () => {
     expect(useUserStore().userZip).toBe('10559')
     expect(umamiTrack).toHaveBeenCalledOnce()
     expect(umamiTrack).toHaveBeenCalledWith('zip-save', { query: '1055X' })
+  })
+
+  // Someone who lives in the default ZIP 10178 has to be able to confirm it
+  it('confirms the unchanged default ZIP', async () => {
+    const wrapper = await mountSuspended(ZipCode)
+    await wrapper.find('button').trigger('click') // "Ändern"
+    expect(saveButton(wrapper).attributes('disabled')).toBeUndefined()
+    vi.useFakeTimers()
+
+    await saveButton(wrapper).trigger('click')
+    await vi.advanceTimersByTimeAsync(2000)
+
+    const store = useUserStore()
+    expect(store.userZip).toBe('10178')
+    expect(store.userZipDefault).toBe(false)
+    expect(localStorage.getItem('bibblitz_zip')).toBe('10178')
+    expect(umamiTrack).toHaveBeenCalledWith('zip-save', { query: '1017X' })
+  })
+
+  it('does not offer saving again once the ZIP is confirmed and unchanged', async () => {
+    useUserStore().saveLocation('10559')
+    const wrapper = await mountSuspended(ZipCode)
+    await wrapper.find('button').trigger('click')
+
+    expect(saveButton(wrapper).attributes('disabled')).toBeDefined()
   })
 
   it('clicking "Speichern" with a Berlin ZIP saves', async () => {

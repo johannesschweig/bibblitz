@@ -13,8 +13,12 @@ const isValidZip = computed(() => {
   return berlinZips.hasOwnProperty(zip)
 })
 
+// Only once all five digits are in: while typing, "invalid" is expected
+const showInvalid = computed(() => localZipInput.value.trim().length === 5 && !isValidZip.value)
+
 const isDirty = computed(() => localZipInput.value !== userStore.userZip)
-const canSave = computed(() => isValidZip.value && isDirty.value)
+// The default ZIP can be saved unchanged: that is how someone living there confirms it
+const canSave = computed(() => isValidZip.value && (isDirty.value || userStore.userZipDefault))
 
 watch(() => userStore.userZip, (newZip) => {
   localZipInput.value = newZip
@@ -61,7 +65,9 @@ function saveLocation() {
           </p>
         </div>
 
-        <button @click="editing = !editing" class="btn btn-sm btn-secondary">
+        <!-- Open state shows only a chevron, so it needs its own name -->
+        <button @click="editing = !editing" :aria-expanded="editing"
+          :aria-label="editing ? 'Postleitzahl-Eingabe schließen' : undefined" class="btn btn-sm btn-secondary">
           <Icon v-if="editing" name="lucide:chevron-up" class="size-4" />
           <span v-else>Ändern</span>
         </button>
@@ -71,11 +77,14 @@ function saveLocation() {
         <p class="text-xs text-gray-500">Gib deine PLZ ein, um Bibliotheken in deiner Nähe zu finden.</p>
         <div class="flex flex-col gap-2">
           <div class="flex items-center gap-2">
-            <input v-model="localZipInput" type="text" placeholder="z.B. 10559" @keyup.enter="saveLocation"
+            <input v-model="localZipInput" type="text" aria-label="Postleitzahl (Berlin)" placeholder="z.B. 10559" @keyup.enter="saveLocation"
               inputmode="numeric" maxlength="5"
               class="w-28 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-center font-bold placeholder:text-gray-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all" />
             <span v-if="isValidZip" class="text-sm text-gray-600 font-medium">
               {{ (berlinZips as any)[localZipInput.trim()]?.district }}
+            </span>
+            <span v-else-if="showInvalid" role="status" class="text-sm text-red-700">
+              Keine Berliner PLZ
             </span>
           </div>
           <button @click="saveLocation" :disabled="!canSave" class="btn btn-md md:self-start"
