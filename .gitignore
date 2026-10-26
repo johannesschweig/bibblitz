@@ -32,5 +32,8 @@ res/
 *.swp
 *.swo
 
+# raw Umami snapshots (session ids and search terms)
+data/umami/
+
 # impeccable design review output
 .impeccable/

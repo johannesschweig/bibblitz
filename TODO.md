@@ -25,6 +25,10 @@
 - vollanzeige as title: https://www.voebb.de/aDISWeb/app/prod00?sp=SAK15831927
 - add standort column in availability
 - merging of different versions of the same book/game (what to do with the id?)
+  - observed 26.10.2026 in real sessions: "Lieben knausgard" shows 4 rows "Lieben: Roman · 2012" (1-7 copies each) and the edition with the copies (2013, 22 branches, 15 available) is row 5; the user opened 5 rows in 50 s. "Yesteryear" shows 4 rows "Yesteryear · 2026", one of them "Nicht im Bestand".
+  - cheap first step: load the badges of the first 10-12 rows in the background (queue from 26.10. allows it), not only for rows scrolled into view; costs ~12 instead of ~6 VÖBB requests per search. Then check whether people still click through several look-alike rows before building the real merge.
+  - real merge: group by title + author + media type ("5 Ausgaben · 22 verfügbar"); open: which id the row links to, combined detail page needs several scrapes (10 s Vercel limit), risk of merging different works with the same title.
+  - sorting rows by availability once loaded was rejected for now: rows would jump while the badges arrive.
 
 # DONE
 - library page redesign: text-only header (district eyebrow, 3xl title, open-now pill with today's hours), flat sections with dividers, no icon tiles or nested boxes, map after the address (h-48, centred on the library at zoom 15, no wheel zoom), today highlighted in the hours lists, "Kein Service" days folded into one line, back link falls back to `/` (design backlog, 20.10.)

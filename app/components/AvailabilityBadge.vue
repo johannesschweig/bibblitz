@@ -22,7 +22,7 @@ const failed = ref(false)
 function load() {
   failed.value = false
   // Ask the central cache store
-  itemCacheStore.fetchDetails(props.mediaId)
+  itemCacheStore.fetchDetails(props.mediaId, { queued: true })
     .catch(() => {})
     .finally(() => {
       failed.value = !itemData.value?.availability

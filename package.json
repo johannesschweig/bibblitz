@@ -8,7 +8,9 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "test": "vitest run"
+    "test": "vitest run",
+    "umami": "node --env-file-if-exists=.env scripts/umami/fetch.mjs",
+    "umami:digest": "node scripts/umami/digest.mjs"
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.143",
