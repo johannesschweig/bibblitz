@@ -31,7 +31,8 @@ const { data, pending, error } = useAsyncData(`detail-${mediaId}`, async () => {
 const displayedBranches = computed(() => {
   const branches = sortedBranches.value
 
-  if (branches.length <= 3 || showAllBranches.value) {
+  // The default ZIP is not the user's location, so "far away" would hide the wrong branches
+  if (branches.length <= 3 || showAllBranches.value || userStore.userZipDefault) {
     return branches
   }
 
