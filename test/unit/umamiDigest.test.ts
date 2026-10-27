@@ -88,6 +88,32 @@ describe('buildDigest', () => {
     expect(d.properties['detail-view'].nearest_available_km).toMatchObject({ n: 8, median: 3, zero: 1 })
   })
 
+  it('does not count the filter events as unknown', () => {
+    const filter = buildDigest({ ...raw, events: ['filter-open', 'filter-apply', 'filter-language', 'filter-media-type', 'filter-reset'].map((n) => row('a', '2026-10-28T10:00:00Z', n)) })
+    expect(filter.unknownEvents).toEqual([])
+  })
+
+  describe('language filter decision', () => {
+    const languageEvents = (sessions: number, perSession: number) =>
+      Array.from({ length: sessions }, (_, s) =>
+        Array.from({ length: perSession }, (_, i) => row(`s${s}`, `2026-11-0${1 + (i % 9)}T10:00:00Z`, 'filter-language'))
+      ).flat()
+
+    it('starts at zero', () => {
+      expect(d.decisions.languageFilter).toMatchObject({ events: 0, sessions: 0, met: false, due: '2026-12-22', needsEvents: 8, needsSessions: 5 })
+    })
+
+    it('needs events and sessions: many events from few sessions are not enough', () => {
+      const few = buildDigest({ ...raw, events: languageEvents(2, 6) })
+      expect(few.decisions.languageFilter).toMatchObject({ events: 12, sessions: 2, met: false })
+    })
+
+    it('is met with 8 events from 5 sessions', () => {
+      const enough = buildDigest({ ...raw, events: [...languageEvents(5, 1), ...languageEvents(1, 3).map((e) => ({ ...e, sessionId: 's0' }))] })
+      expect(enough.decisions.languageFilter).toMatchObject({ events: 8, sessions: 5, met: true })
+    })
+  })
+
   it('drops localhost rows when the snapshot was fetched unfiltered', () => {
     const local = { ...row('dev', '2026-10-20T12:00:00Z', 'showcase-click'), hostname: 'localhost' }
     const filtered = buildDigest({ ...raw, events: [...raw.events, local] })

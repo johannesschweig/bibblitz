@@ -14,6 +14,7 @@ import StatusPill from '~/components/StatusPill.vue'
 import MediaTitle from '~/components/MediaTitle.vue'
 import { getMediaTypeConfig } from '../../../utils/mediaTypeMapping'
 import { splitSubtitle } from '../../../utils/catalogText'
+import { formatLanguageLine } from '../../../utils/language'
 
 const { track } = useUmami()
 const route = useRoute()
@@ -95,6 +96,9 @@ const metaLine = computed(() => {
   return [type, item.platform, item.year].filter(Boolean).join(' · ')
 })
 
+// "Deutsch · Englisch"
+const languageLine = computed(() => formatLanguageLine(data.value?.data?.languages))
+
 // Measures whether the default view (nearby branches only) is enough or people open the far ones too
 function expandBranches() {
   track('branches-expand', {
@@ -159,6 +163,7 @@ function authorClicked() {
         </h1>
         <p v-if="data.data.author" class="mt-3 text-xl text-gray-800" @click="authorClicked()">{{ data.data.author }}</p>
         <p v-if="data.data.isbn" class="mt-2 text-sm text-gray-500">ISBN <span @click="isbnClicked()">{{ data.data.isbn }}</span></p>
+        <p v-if="languageLine" data-testid="language-line" class="mt-1 text-sm text-gray-500">Sprache {{ languageLine }}</p>
         <a :href="getPermanentUrlFromId(data.data.id)" target="_blank" class="btn btn-md btn-secondary mt-6"
           @click="voebbClicked()">
           VÖBB

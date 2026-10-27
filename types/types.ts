@@ -19,6 +19,8 @@ export interface MediaItem {
   year?: string;
   platform?: string;
   isbn?: string;
+  // "Sprache" from the detail page
+  languages?: string[];
   mediaType: string;
   availability?: AvailabilityInfo[];
   loadingDetails?: boolean;

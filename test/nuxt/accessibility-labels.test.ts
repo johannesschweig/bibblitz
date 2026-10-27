@@ -6,7 +6,7 @@ import { mountSuspended, registerEndpoint } from '@nuxt/test-utils/runtime'
 import IndexPage from '~/pages/index.vue'
 import Faq from '~/components/Faq.vue'
 import ZipCode from '~/components/ZipCode.vue'
-import MediaTypeFilter from '~/components/MediaTypeFilter.vue'
+import FilterPage from '~/components/FilterPage.vue'
 
 registerEndpoint('/api/search', () => ({ success: true, results: [], hasMore: false, token: null }))
 
@@ -42,22 +42,28 @@ describe('ZipCode', () => {
   })
 })
 
-describe('MediaTypeFilter', () => {
-  it('marks the selected chip as pressed', async () => {
-    const wrapper = await mountSuspended(MediaTypeFilter, {
-      props: { types: [{ type: 'Buch', count: 2 }, { type: 'DVD', count: 1 }], modelValue: 'Buch', totalCount: 3 }
-    })
-    const pressed = wrapper.findAll('button').map(b => [b.text().split(' ')[0], b.attributes('aria-pressed')])
+describe('FilterPage', () => {
+  const props = {
+    open: true,
+    selectedLanguages: ['Englisch'],
+    selectedMediaTypes: ['Buch']
+  }
 
-    expect(pressed).toEqual([['Alle', 'false'], ['Buch', 'true'], ['DVD', 'false']])
+  it('is a labelled modal dialog', async () => {
+    const wrapper = await mountSuspended(FilterPage, { props })
+    const dialog = wrapper.find('[role="dialog"]')
+
+    expect(dialog.attributes('aria-modal')).toBe('true')
+    expect(wrapper.find(`#${dialog.attributes('aria-labelledby')}`).text()).toBe('Filter')
   })
 
-  it('marks "Alle" as pressed without a selection', async () => {
-    const wrapper = await mountSuspended(MediaTypeFilter, {
-      props: { types: [{ type: 'Buch', count: 2 }], modelValue: null, totalCount: 2 }
-    })
+  it('marks the selected chips as pressed', async () => {
+    const wrapper = await mountSuspended(FilterPage, { props })
+    const pressed = wrapper.findAll('button[aria-pressed]').map(b => [b.text().split(' ')[0], b.attributes('aria-pressed')])
 
-    expect(wrapper.findAll('button')[0]!.attributes('aria-pressed')).toBe('true')
+    expect(pressed.slice(0, 2)).toEqual([['Deutsch', 'false'], ['Englisch', 'true']])
+    expect(pressed.find(([label]) => label === 'Buch')).toEqual(['Buch', 'true'])
+    expect(pressed.find(([label]) => label === 'DVD')).toEqual(['DVD', 'false'])
   })
 })
 

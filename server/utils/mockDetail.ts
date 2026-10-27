@@ -23,6 +23,7 @@ const fixtures: Record<string, Fixture> = {
     author: 'Min Jin Lee',
     year: '2018',
     isbn: '9783423289726',
+    languages: ['Deutsch'],
     availability: [
       { libraryName: 'Mitte: Bezirkszentralbibliothek Philipp Schaeffer', status: 'Verfügbar', shelfmark: 'Roman Lee' },
       { libraryName: 'Mitte: Hansabibliothek', status: `Ausgeliehen - ${due(5)}`, shelfmark: 'Roman Lee' },
@@ -62,6 +63,7 @@ const fixtures: Record<string, Fixture> = {
     author: 'William Gibson',
     year: '2003',
     isbn: '3898132595',
+    languages: ['Deutsch', 'Englisch'],
     availability: [
       { libraryName: 'ZLB: Amerika-Gedenkbibliothek (AGB)', status: 'Verfügbar', shelfmark: '112/000 041 487' },
       { libraryName: 'Mitte: Hansabibliothek', status: 'Verfügbar', shelfmark: 'Hörbuch' }

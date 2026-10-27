@@ -7,8 +7,6 @@
     - add year (Veröffentlichung)
 - wildcard search with * (not sure if voebb supports it)
 - seltenes fundstück / meistausgeliehene medien für artikel in der zeitung
-- filter
-  - filter by language (nebenan request)
 - instant notifications when available: in app (native) or via email or in telegram
   - bell functionality: add a bell to a exemplar. if you load the page all bells are loaded. you get a popup with the bells that are green.
   - bell for a search?
@@ -31,6 +29,7 @@
   - sorting rows by availability once loaded was rejected for now: rows would jump while the badges arrive.
 
 # DONE
+- language filter + filter page (27.10.): "Filter <n>" button under the search opens a fullscreen page with language (Deutsch, Englisch, Französisch) and media type (14 chips), fixed lists, single-select each. Both are applied by VÖBB's own facets in one request (`?lang=` / `?type=`), so they filter all hits, not just the loaded rows; e-media are never offered and left out when filtering; no counts on the chips (VÖBB's counts do not match the visible list); zero-hit and error states keep the filter and offer a way out. Language line on the detail page. Decision on 22.12.2026 (see CLAUDE.md feature inventory). Open: no URL/back-button handling for the open page, no total count ("1.457 Treffer") although VÖBB reports one, result rows of box sets / multi-volume records stay hidden
 - detail + library page: copies that are "Nur Lesesaal" or only "bestellbar" (Magazin) get a note next to the unchanged "Verfügbar" pill, read from VÖBB's Bestellmöglichkeit column (`parseAccess` in `utils/shelfmark.ts`, 27.10.). Open: the result-row badge still counts them as available (option B: own pill/tone and exclusion from the badge)
 - library page redesign: text-only header (district eyebrow, 3xl title, open-now pill with today's hours), flat sections with dividers, no icon tiles or nested boxes, map after the address (h-48, centred on the library at zoom 15, no wheel zoom), today highlighted in the hours lists, "Kein Service" days folded into one line, back link falls back to `/` (design backlog, 20.10.)
 - intro: AI illustration replaced by an own photo (phone at the library shelf, `public/hero-am-regal.webp`, 4:5, 106 KB, EXIF stripped, originals stay in gitignored `res/photos/`) and three icon bullets by the headline "Ist es gerade im Regal?" with one concrete sentence; "Über BibBlitz" portrait replaced by `public/johannes.webp` (design backlog, 19.10.)

@@ -1,24 +1,27 @@
 <!-- pages/index.vue -->
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useMediaStore } from '~/stores/mediaStore'
 import { useVoebbStatusStore } from '~/stores/voebbStatusStore'
-import { useItemCacheStore } from '#imports'
 import AppIntro from '~/components/AppIntro.vue'
 import Faq from '~/components/Faq.vue'
 import MediaItem from '~/components/MediaItem.vue'
 import About from '~/components/About.vue'
 import Showcase from '~/components/Showcase.vue'
-import MediaTypeFilter from '~/components/MediaTypeFilter.vue'
-import { getMediaTypeConfig } from '../../utils/mediaTypeMapping'
+import FilterPage from '~/components/FilterPage.vue'
 import { normalizeIsbn } from '../../utils/isbn'
+import { parseFilterParam, sameSelection } from '../../utils/filters'
+
+interface Filters {
+  languages: string[]
+  mediaTypes: string[]
+}
 
 const { track } = useUmami()
 const route = useRoute()
 const router = useRouter()
 const mediaStore = useMediaStore()
-const itemCacheStore = useItemCacheStore()
 const voebbStatus = useVoebbStatusStore()
 
 const searchQuery = ref('')
@@ -27,8 +30,8 @@ const hasSearched = ref(false)
 const searchFailed = ref(false)
 const lastQuery = ref('')
 
-// Currently selected filter (null = all)
-const selectedMediaType = ref<string | null>(null)
+const filterOpen = ref(false)
+const filterButton = ref<HTMLButtonElement | null>(null)
 
 const quickSearches = [
   { icon: 'lucide:book-open', label: 'Dune', query: 'Dune Wüstenplanet' },
@@ -36,68 +39,60 @@ const quickSearches = [
   { icon: 'lucide:headphones', label: 'Tonie Eiskönigin', query: 'Tonie Eiskönigin' }
 ]
 
-// 1. Overview of all media types in the results, with counts
-const mediaTypes = computed(() => {
-  const counts: Record<string, number> = {}
+// Both filters are applied by VÖBB as part of the search and stay active until they are reset
+const currentFilters = (): Filters => ({ languages: mediaStore.languages, mediaTypes: mediaStore.mediaTypes })
+const activeFilterCount = computed(() => mediaStore.languages.length + mediaStore.mediaTypes.length)
+// Also with no results at all, so a filter that hides everything can be reset
+const showFilterButton = computed(() => !loading.value && (mediaStore.searchIds.length > 0 || activeFilterCount.value > 0))
+const filterSummary = computed(() => [...mediaStore.languages, ...mediaStore.mediaTypes].join(', '))
 
-  for (const id of mediaStore.searchIds) {
-    const rawType = itemCacheStore.items[id]?.mediaType || 'unbekannt'
-    const label = getMediaTypeConfig(rawType).label  // ← normalized
-    counts[label] = (counts[label] || 0) + 1
-  }
-
-  return Object.entries(counts)
-    .sort((a, b) => b[1] - a[1])
-    .map(([type, count]) => ({ type, count }))
-})
-
-// 2. Filtered IDs based on the selected tag
-const filteredSearchIds = computed(() => {
-  if (!selectedMediaType.value) return mediaStore.searchIds
-
-  return mediaStore.searchIds.filter(id => {
-    const rawType = itemCacheStore.items[id]?.mediaType || 'unbekannt'
-    return getMediaTypeConfig(rawType).label === selectedMediaType.value
-  })
-})
-
-// The unfiltered count only covers the pages loaded so far, so say "geladen" while more can be loaded
+// The count only covers the pages loaded so far, so say "geladen" while more can be loaded
 const resultCountText = computed(() => {
   const loaded = mediaStore.searchIds.length
-  const partial = mediaStore.hasMore
-  if (!selectedMediaType.value) return partial ? `${loaded} Treffer geladen` : `${loaded} Treffer`
-  return `${filteredSearchIds.value.length} von ${loaded} Treffern`
+  return mediaStore.hasMore ? `${loaded} Treffer geladen` : `${loaded} Treffer`
 })
 
-// router.replace triggers the route.query.q watcher before mediaStore.lastQuery is set.
+// ?q=Dune&lang=Englisch&type=Buch
+function searchRouteQuery(query: string, filters: Filters) {
+  return {
+    q: query,
+    ...(filters.languages.length > 0 && { lang: filters.languages.join(',') }),
+    ...(filters.mediaTypes.length > 0 && { type: filters.mediaTypes.join(',') })
+  }
+}
+
+// router.replace triggers the route.query watcher before mediaStore.lastQuery is set.
 // Without this marker the same search (and the same VÖBB scrape) would run twice.
 // Must be declared before the watcher: it runs immediately (`immediate`) and calls handleSearch.
-let inFlightQuery = ''
+let inFlightSearch = ''
+const searchKey = (query: string, filters: Filters) =>
+  [query, [...filters.languages].sort().join(','), [...filters.mediaTypes].sort().join(',')].join('|')
 
 watch(
-  () => route.query.q,
-  (newQuery) => {
+  () => [route.query.q, route.query.lang, route.query.type],
+  ([newQuery]) => {
     // This page is kept alive (see app.vue), so the watcher keeps firing on /media and /library.
     // Without this guard the else branch below would router.replace the q param onto those pages.
     if (route.path !== '/') return
 
     if (newQuery) {
       const queryStr = String(newQuery)
+      const filters = { languages: parseFilterParam(route.query.lang), mediaTypes: parseFilterParam(route.query.type) }
       searchQuery.value = queryStr
       hasSearched.value = true
 
-      if (queryStr !== mediaStore.lastQuery) {
-        handleSearch(queryStr, 'user')
+      const sameFilters = sameSelection(filters.languages, mediaStore.languages) && sameSelection(filters.mediaTypes, mediaStore.mediaTypes)
+      if (queryStr !== mediaStore.lastQuery || !sameFilters) {
+        handleSearch(queryStr, 'user', filters)
       }
     } else {
       if (mediaStore.lastQuery && mediaStore.searchIds.length > 0) {
         searchQuery.value = mediaStore.lastQuery
         hasSearched.value = true
-        router.replace({ query: { q: mediaStore.lastQuery } })
+        router.replace({ query: searchRouteQuery(mediaStore.lastQuery, currentFilters()) })
       } else {
         searchQuery.value = ''
         hasSearched.value = false
-        selectedMediaType.value = null
         mediaStore.clearSearch()
       }
     }
@@ -108,8 +103,7 @@ watch(
 function handleInputClear() {
   if (searchQuery.value === '') {
     hasSearched.value = false
-    selectedMediaType.value = null
-    mediaStore.searchIds = []
+    mediaStore.clearSearch()
     router.replace({ query: {} })
   }
 }
@@ -119,40 +113,86 @@ function handleQuickSearch(query: string) {
   handleSearch(query, 'quick')
 }
 
-async function handleSearch(queryText: string, source: 'user' | 'quick') {
+// 'filter' is a search the filter page triggered: it is tracked as filter-apply, not as a search.
+// Returns whether the search worked.
+async function handleSearch(queryText: string, source: 'user' | 'quick' | 'filter', filters: Filters = currentFilters()): Promise<boolean> {
   const cleanQuery = queryText.trim()
-  if (!cleanQuery) return
-  if (cleanQuery === inFlightQuery) return
-  inFlightQuery = cleanQuery
+  if (!cleanQuery) return true
+  const key = searchKey(cleanQuery, filters)
+  if (key === inFlightSearch) return true
+  inFlightSearch = key
   loading.value = true
   hasSearched.value = false
   searchFailed.value = false
-  selectedMediaType.value = null
   lastQuery.value = cleanQuery
-  router.replace({ query: { q: cleanQuery } })
+  router.replace({ query: searchRouteQuery(cleanQuery, filters) })
   let failed = false
   try {
-    await mediaStore.executeSearch(cleanQuery)
+    await mediaStore.executeSearch(cleanQuery, filters)
   } catch (error) {
     failed = true
     searchFailed.value = true
     console.error('Fehler bei der VÖBB-Suche:', error)
   } finally {
-    if (inFlightQuery === cleanQuery) inFlightQuery = ''
+    if (inFlightSearch === key) inFlightSearch = ''
     loading.value = false
     hasSearched.value = true
   }
-  // Track only after the response so the result count and errors can be sent along
-  track(
-    source === 'user' ? 'search-started' : 'search-quick',
-    {
-      query: cleanQuery,
-      results: mediaStore.searchIds.length,
-      ...(normalizeIsbn(cleanQuery) && { isbn: 1 }),
-      ...(failed && { error: 1 })
-    }
-  )
+  // The URL shows what VÖBB applied: a value it does not offer for this search is dropped
+  if (!failed && !(sameSelection(mediaStore.languages, filters.languages) && sameSelection(mediaStore.mediaTypes, filters.mediaTypes))) {
+    router.replace({ query: searchRouteQuery(cleanQuery, currentFilters()) })
+  }
+  if (source !== 'filter') {
+    // Track only after the response so the result count and errors can be sent along
+    track(
+      source === 'user' ? 'search-started' : 'search-quick',
+      {
+        query: cleanQuery,
+        results: mediaStore.searchIds.length,
+        ...(normalizeIsbn(cleanQuery) && { isbn: 1 }),
+        ...(mediaStore.languages.length > 0 && { language: mediaStore.languages.join(',') }),
+        ...(mediaStore.mediaTypes.length > 0 && { media_type: mediaStore.mediaTypes.join(',') }),
+        ...(failed && { error: 1 })
+      }
+    )
+  }
+  return !failed
 }
+
+// 'empty-state' = "Filter ändern" under a search that found nothing with the filter
+function openFilter(source: 'button' | 'empty-state' = 'button') {
+  filterOpen.value = true
+  track('filter-open', { source })
+}
+
+function closeFilter() {
+  filterOpen.value = false
+  nextTick(() => filterButton.value?.focus())
+}
+
+// The dialog closes right away, the list shows the skeleton while VÖBB searches again
+async function applyFilters(selection: Filters) {
+  closeFilter()
+  const unchanged = sameSelection(selection.languages, mediaStore.languages) && sameSelection(selection.mediaTypes, mediaStore.mediaTypes)
+  if (unchanged) return
+  const worked = await handleSearch(lastQuery.value || mediaStore.lastQuery, 'filter', selection)
+  const language = selection.languages.join(',')
+  const mediaType = selection.mediaTypes.join(',')
+  const results = mediaStore.searchIds.length
+  track('filter-apply', {
+    results,
+    ...(language && { language }),
+    ...(mediaType && { media_type: mediaType }),
+    ...(!language && !mediaType && { reset: 1 }),
+    ...(!worked && { error: 1 })
+  })
+  // Own events per filter: Umami counts sessions per event name, not per property value
+  if (worked && language) track('filter-language', { language, results })
+  if (worked && mediaType) track('filter-media-type', { media_type: mediaType, results })
+}
+
+// Way out of a filter that hides everything
+const resetFilters = () => applyFilters({ languages: [], mediaTypes: [] })
 
 async function handleLoadMore() {
   try {
@@ -194,11 +234,21 @@ async function handleLoadMore() {
           </button>
         </div>
 
-        <!-- Filter tags right below the search (once there are results) -->
-        <div v-if="mediaStore.searchIds.length > 0 && !loading">
-          <MediaTypeFilter v-model="selectedMediaType" :types="mediaTypes" :total-count="mediaStore.searchIds.length" />
+        <!-- Filter button right below the search (once there are results, or while a filter hides all) -->
+        <div v-if="showFilterButton">
+          <button ref="filterButton" type="button" class="btn btn-sm btn-secondary" aria-haspopup="dialog"
+            @click="openFilter('button')">
+            <Icon name="lucide:sliders-horizontal" class="size-4" />
+            Filter
+            <span v-if="activeFilterCount > 0" aria-hidden="true"
+              class="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1.5 text-xs font-semibold text-white">{{ activeFilterCount }}</span>
+            <span v-if="activeFilterCount > 0" class="sr-only">, {{ activeFilterCount }} aktiv</span>
+          </button>
         </div>
       </div>
+
+      <FilterPage :open="filterOpen" :selected-languages="mediaStore.languages" :selected-media-types="mediaStore.mediaTypes"
+        @close="closeFilter" @apply="applyFilters" />
 
       <!-- Loading state -->
       <div v-if="loading">
@@ -211,13 +261,9 @@ async function handleLoadMore() {
         <p data-testid="result-count" aria-live="polite"
           class="text-xs font-medium text-gray-500 uppercase tracking-widest mb-4">{{ resultCountText }}</p>
 
-        <!-- List uses filteredSearchIds -->
-        <ul v-if="filteredSearchIds.length > 0" class="space-y-2">
-          <MediaItem v-for="id in filteredSearchIds" :key="id" :mediaId="id" />
+        <ul class="space-y-2">
+          <MediaItem v-for="id in mediaStore.searchIds" :key="id" :mediaId="id" />
         </ul>
-        <div v-else class="text-center py-12 text-gray-500 text-sm">
-          Keine Treffer für den gewählten Filter.
-        </div>
 
         <div v-if="mediaStore.hasMore" class="text-center mt-4">
           <button type="button" class="btn btn-md btn-secondary" :disabled="mediaStore.loadingMore"
@@ -231,12 +277,21 @@ async function handleLoadMore() {
       <div v-else-if="hasSearched && voebbStatus.maintenance" class="text-center py-16 text-gray-500 text-sm">
         Die Suche ist gerade nicht möglich.
       </div>
+      <!-- The filters stay active, so "Erneut versuchen" searches with them again -->
       <div v-else-if="hasSearched && searchFailed" class="text-center py-16 text-gray-500 text-sm">
-        Die Suche hat nicht geklappt. Bitte versuche es gleich noch einmal.
+        <p>Die Suche hat nicht geklappt. Bitte versuche es gleich noch einmal.</p>
+        <button type="button" class="btn btn-md btn-secondary mt-4" @click="handleSearch(lastQuery, 'user')">
+          Erneut versuchen
+        </button>
       </div>
       <!-- Empty state after a search -->
       <div v-else-if="hasSearched" class="text-center py-16 text-gray-500 text-sm">
-        Keine Treffer für „{{ lastQuery }}“ gefunden.
+        <p v-if="activeFilterCount > 0">Keine Treffer für „{{ lastQuery }}“ mit dem Filter {{ filterSummary }}.</p>
+        <p v-else>Keine Treffer für „{{ lastQuery }}“ gefunden.</p>
+        <div v-if="activeFilterCount > 0" class="mt-4 flex flex-wrap justify-center gap-2">
+          <button type="button" class="btn btn-md btn-accent" @click="resetFilters">Filter zurücksetzen</button>
+          <button type="button" class="btn btn-md btn-secondary" @click="openFilter('empty-state')">Filter ändern</button>
+        </div>
       </div>
       <div v-else class="flex flex-col gap-8">
         <AppIntro />

@@ -10,17 +10,29 @@ export const useMediaStore = defineStore('media', {
     hasMore: false,
     loadingMore: false,
     currentPage: 1,
+    // Active filters, applied by VÖBB (see /api/search). Their values are the fixed lists in utils/filterOptions.ts.
+    languages: [] as string[],
+    mediaTypes: [] as string[],
   }),
 
   actions: {
-    async executeSearch(query: string) {
+    async executeSearch(query: string, filters: { languages?: string[]; mediaTypes?: string[] } = {}) {
       this.searchIds = [];
       this.nextPageToken = null;
       this.hasMore = false;
       this.currentPage = 1;
+      // The requested filters are active right away: if the request fails they stay, so "retry" uses them
+      this.languages = filters.languages ?? [];
+      this.mediaTypes = filters.mediaTypes ?? [];
       const itemCache = useItemCacheStore();
 
-      const data: any = await $fetch('/api/search', { query: { q: query } });
+      const data: any = await $fetch('/api/search', {
+        query: {
+          q: query,
+          ...(this.languages.length && { lang: this.languages.join(',') }),
+          ...(this.mediaTypes.length && { type: this.mediaTypes.join(',') })
+        }
+      });
       const status = useVoebbStatusStore();
 
       if (data.maintenance) {
@@ -44,6 +56,9 @@ export const useMediaStore = defineStore('media', {
         this.lastQuery = query
         this.nextPageToken = data.token ?? null;
         this.hasMore = !!data.hasMore;
+        // What the server applied: a value that is not on the filter page is dropped
+        this.languages = data.appliedLanguages ?? [];
+        this.mediaTypes = data.appliedMediaTypes ?? [];
       }
     },
     async loadMore() {
@@ -85,6 +100,8 @@ export const useMediaStore = defineStore('media', {
       this.lastQuery = ''
       this.nextPageToken = null
       this.hasMore = false
+      this.languages = []
+      this.mediaTypes = []
     }
 
   }

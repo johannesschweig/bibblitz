@@ -1,12 +1,15 @@
 // server/api/search.get.ts
 import { defineEventHandler, getQuery, createError } from 'h3';
-import axios from 'axios';
+import axios, { type AxiosInstance } from 'axios';
 import * as cheerio from 'cheerio';
 import { wrapper } from 'axios-cookiejar-support';
 import { CookieJar } from 'tough-cookie';
 import { cleanTitle, cleanAuthor, parseYear } from '../../utils/catalogText';
 import { normalizeIsbn, toIsbn13 } from '../../utils/isbn';
 import { isMaintenancePage, parseMaintenanceUntil } from '../../utils/maintenance';
+import { parseFilterParam } from '../../utils/filters';
+import { LANGUAGE_OPTIONS, MEDIA_TYPE_OPTIONS } from '../../utils/filterOptions';
+import { parseFacet, isFilterActive, resolveFilterIds } from '../utils/facets';
 
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36';
 
@@ -77,8 +80,37 @@ function parseResultsPage($: cheerio.CheerioAPI, responseUrl: string) {
   return { searchResults, hasMore, identity, requestCount, actionUrl };
 }
 
+// Presses a button of the results page: the hidden session fields plus whatever the button needs
+function postPageAction(
+  client: AxiosInstance,
+  actionUrl: string,
+  session: { identity: string; requestCount: string },
+  fields: Array<[string, string]>,
+  button: { source?: string; focus?: string } = {}
+) {
+  const params = new URLSearchParams();
+  params.append('identity', session.identity);
+  params.append('keyCode', '0');
+  params.append('focus', button.focus ?? '');
+  params.append('stz', '');
+  params.append('source', button.source ?? '');
+  params.append('selected', '');
+  params.append('requestCount', session.requestCount);
+  params.append('scriptEnabled', 'true');
+  params.append('scrollPos', '0');
+  fields.forEach(([key, value]) => params.append(key, value));
+
+  return client.post(actionUrl, params.toString(), {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Referer': actionUrl,
+      'User-Agent': USER_AGENT
+    }
+  });
+}
+
 export default defineEventHandler(async (event) => {
-  const { q, token } = getQuery(event);
+  const { q, token, lang, type } = getQuery(event);
 
   try {
     let html: string;
@@ -90,26 +122,12 @@ export default defineEventHandler(async (event) => {
       const restoredJar = CookieJar.deserializeSync(decoded.cookies as any);
       const restoredClient = wrapper(axios.create({ jar: restoredJar }));
 
-      const params = new URLSearchParams();
-      params.append('identity', decoded.identity);
-      params.append('keyCode', '0');
-      params.append('focus', '');
-      params.append('stz', '');
-      params.append('source', '');
-      params.append('selected', '');
-      params.append('requestCount', decoded.requestCount);
-      params.append('scriptEnabled', 'true');
-      params.append('scrollPos', '0');
-      params.append('$Toolbar_3.x', '5');
-      params.append('$Toolbar_3.y', '5');
-
-      const nextRes = await restoredClient.post(decoded.actionUrl, params.toString(), {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Referer': decoded.actionUrl,
-          'User-Agent': USER_AGENT
-        }
-      });
+      const nextRes = await postPageAction(
+        restoredClient,
+        decoded.actionUrl,
+        { identity: decoded.identity, requestCount: decoded.requestCount },
+        [['$Toolbar_3.x', '5'], ['$Toolbar_3.y', '5']]
+      );
 
       html = nextRes.data;
       responseUrl = nextRes.request.res.responseUrl;
@@ -180,14 +198,46 @@ export default defineEventHandler(async (event) => {
     responseUrl = searchRes.request.res.responseUrl;
 
     // PHASE 3: parse the results page HTML
-    const $ = cheerio.load(html);
-    const { searchResults, hasMore, identity: nextIdentity, requestCount, actionUrl } = parseResultsPage($, responseUrl);
+    let $ = cheerio.load(html);
+    let page = parseResultsPage($, responseUrl);
+
+    // PHASE 4 (optional): narrow the results with the facets, both in one request. VÖBB combines the values of
+    // one facet with OR and the facets with AND. Only the values of the filter page are accepted (see utils/filterOptions.ts).
+    const wantedLanguages = parseFilterParam(lang).filter(label => LANGUAGE_OPTIONS.includes(label));
+    const wantedTypes = parseFilterParam(type).filter(label => MEDIA_TYPE_OPTIONS.includes(label));
+    if (wantedLanguages.length > 0 || wantedTypes.length > 0) {
+      const { ids, nothingMatches } = resolveFilterIds(parseFacet($, 'Sprache'), parseFacet($, 'Medienart'), wantedLanguages, wantedTypes);
+
+      if (nothingMatches) {
+        page = { ...page, searchResults: [], hasMore: false };
+      } else {
+        const filterButton = $('input.imp-button.filter').first();
+        const filterRes = await postPageAction(
+          client,
+          page.actionUrl,
+          { identity: page.identity, requestCount: page.requestCount },
+          [
+            ...ids.map((id): [string, string] => ['$CbTree_text', id]),
+            [filterButton.attr('name') || '$Button$2', 'pressed']
+          ],
+          { source: '$B', focus: filterButton.attr('data-fld') || '$$GFBO_11' }
+        );
+        html = filterRes.data;
+        responseUrl = filterRes.request.res.responseUrl;
+        $ = cheerio.load(html);
+        page = parseResultsPage($, responseUrl);
+        // No result matches every chosen value: VÖBB answers with the unfiltered list, which must not be shown
+        if (!isFilterActive($)) page = { ...page, searchResults: [], hasMore: false };
+      }
+    }
 
     return {
       success: true,
-      results: searchResults,
-      hasMore,
-      token: hasMore ? encodeToken({ identity: nextIdentity, requestCount, actionUrl, cookies: jar.toJSON() }) : null
+      results: page.searchResults,
+      hasMore: page.hasMore,
+      token: page.hasMore ? encodeToken({ identity: page.identity, requestCount: page.requestCount, actionUrl: page.actionUrl, cookies: jar.toJSON() }) : null,
+      appliedLanguages: wantedLanguages,
+      appliedMediaTypes: wantedTypes
     };
 
   } catch (error: any) {

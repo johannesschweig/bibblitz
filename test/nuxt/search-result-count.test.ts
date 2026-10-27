@@ -1,5 +1,5 @@
 // The result count must not suggest completeness: while "Weitere Treffer laden" is offered, the
-// unfiltered count says "geladen". The count follows the filter and the loaded pages.
+// count says "geladen". It follows the loaded pages.
 import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
 import { mountSuspended, registerEndpoint } from '@nuxt/test-utils/runtime'
 import { flushPromises } from '@vue/test-utils'
@@ -48,11 +48,10 @@ async function mountResults() {
   return wrapper
 }
 
-const count = (wrapper: Awaited<ReturnType<typeof mountResults>>) =>
+const count = (wrapper: Wrapper) =>
   wrapper.find('[data-testid="result-count"]').text()
 
-const chip = (wrapper: Awaited<ReturnType<typeof mountResults>>, label: string) =>
-  wrapper.findAll('button').find(b => b.text().startsWith(label))!
+type Wrapper = Awaited<ReturnType<typeof mountResults>>
 
 describe('Result count', () => {
   it('says "geladen" while more results can be loaded', async () => {
@@ -61,29 +60,12 @@ describe('Result count', () => {
     expect(count(wrapper)).toBe('3 Treffer geladen')
   })
 
-  it('follows the media-type filter', async () => {
-    const wrapper = await mountResults()
-
-    await chip(wrapper, 'Buch').trigger('click')
-    expect(count(wrapper)).toBe('2 von 3 Treffern')
-
-    await chip(wrapper, 'DVD').trigger('click')
-    expect(count(wrapper)).toBe('1 von 3 Treffern')
-
-    await chip(wrapper, 'Alle').trigger('click')
-    expect(count(wrapper)).toBe('3 Treffer geladen')
-  })
-
   it('updates after loading more and drops "geladen" once everything is loaded', async () => {
     const wrapper = await mountResults()
 
-    await chip(wrapper, 'Buch').trigger('click')
     await wrapper.findAll('button').find(b => b.text() === 'Weitere Treffer laden')!.trigger('click')
     await flushPromises()
 
-    expect(count(wrapper)).toBe('3 von 4 Treffern')
-
-    await chip(wrapper, 'Alle').trigger('click')
     expect(count(wrapper)).toBe('4 Treffer')
   })
 

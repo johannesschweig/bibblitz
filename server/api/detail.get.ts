@@ -3,6 +3,7 @@ import * as cheerio from 'cheerio';
 import { filterAndEnrichBranches } from '../../utils/availability';
 import { cleanTitle, cleanAuthor, cleanContributors, parseYear } from '../../utils/catalogText';
 import { parseIsbn } from '../../utils/isbn';
+import { parseLanguages } from '../../utils/language';
 import { parseAvailabilityTable } from '../../utils/shelfmark';
 import { isMaintenancePage, parseMaintenanceUntil } from '../../utils/maintenance';
 import type { MediaItem } from '../../types/types';
@@ -55,6 +56,7 @@ export default defineEventHandler(async (event) => {
     let author: string | undefined = undefined;
     let isbn: string | undefined = undefined;
     let year: string | undefined = undefined;
+    let languages: string[] = [];
 
     $('#R06 table.gi tr').each((_, el) => {
       const th = $(el).find('th');
@@ -74,6 +76,10 @@ export default defineEventHandler(async (event) => {
       }
       else if (leftText.includes('ISBN')) {
         isbn = parseIsbn(rightText);
+      }
+      // Exact match: "Sprache und Schrift der Expression" etc. are other rows. "Deutsch ; Englisch"
+      else if (leftText === 'Sprache' && languages.length === 0) {
+        languages = parseLanguages(rightText);
       }
     });
 
@@ -105,6 +111,7 @@ export default defineEventHandler(async (event) => {
         author: cleanAuthor(responsibility) ?? cleanContributors(author),
         year,
         isbn,
+        languages,
         availability: processedAvailability
       } as MediaItem
     };

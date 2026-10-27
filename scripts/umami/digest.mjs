@@ -10,7 +10,11 @@ import { pathToFileURL } from 'node:url'
 export const FEATURES = {
   'search-started': 'Text / ISBN search',
   'search-quick': 'Quick-search chips',
-  'click-media-filter': 'Media-type filter',
+  'filter-open': 'Filter page: opened',
+  'filter-apply': 'Filter page: applied (language, media type; reset: 1 = cleared)',
+  'filter-language': 'Filter page: a language was applied (decision metric 22.12.2026)',
+  'filter-media-type': 'Filter page: a media type was applied',
+  'filter-reset': 'Filter page: reset',
   'search-next-page': 'Pagination',
   'search-load-more': 'Pagination (old event name)',
   'zip-save': 'ZIP entry',
@@ -26,7 +30,8 @@ export const FEATURES = {
 }
 
 // Events of removed features: still show up in old data, are not "unknown".
-export const REMOVED_EVENTS = ['bookmark-button-clicked', 'share-media', 'library-click']
+// click-media-filter: the media-type chips moved onto the filter page on 27.10.2026 (filter-apply).
+export const REMOVED_EVENTS = ['bookmark-button-clicked', 'share-media', 'library-click', 'click-media-filter']
 
 // Fixed on 09.10.2026: search events fired twice (0 s apart) and FAQ closes were counted as events.
 // Only the search duplicates can be repaired from the raw events (FAQ ids live in the event data, not in the event rows).
@@ -36,6 +41,10 @@ const DEDUPE_WINDOW_MS = 2000
 export const LAUNCH_DATE = '2026-06-15'
 export const VOEBB_TRACKING_DATE = '2026-10-09'
 export const LIBRARY_OUTBOUND_TRACKING_DATE = '2026-10-17'
+
+// Decision on the language filter (CLAUDE.md, feature inventory): keep it with at least this many
+// `filter-language` events from at least this many sessions, otherwise remove the language chips.
+export const LANGUAGE_FILTER_DECISION = { since: '2026-10-27', due: '2026-12-22', needsEvents: 8, needsSessions: 5 }
 
 const TZ = 'Europe/Berlin'
 const dayFmt = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' })
@@ -202,6 +211,16 @@ export function buildDigest(raw) {
   }
   const weekly = [...weeks.values()].sort((a, b) => a.week.localeCompare(b.week)).map((x) => ({ ...x, sessions: x.sessions.size }))
 
+  const languageFilter = byEvent['filter-language']
+  const decisions = {
+    languageFilter: {
+      ...LANGUAGE_FILTER_DECISION,
+      events: languageFilter?.count ?? 0,
+      sessions: languageFilter?.sessions.size ?? 0,
+      met: (languageFilter?.count ?? 0) >= LANGUAGE_FILTER_DECISION.needsEvents && (languageFilter?.sessions.size ?? 0) >= LANGUAGE_FILTER_DECISION.needsSessions
+    }
+  }
+
   const overview = {}
   for (const k of ['pageviews', 'visitors', 'visits', 'bounces', 'totaltime']) {
     const cur = num(stats?.[k])
@@ -246,6 +265,7 @@ export function buildDigest(raw) {
     neverFired,
     unknownEvents,
     properties,
+    decisions,
     funnel,
     weekly
   }
