@@ -7,6 +7,7 @@ import { berlinNow, getOpenStatus, type DayKey, type OpenStatus } from '~~/utils
 import LibraryMap from '~/components/LibraryMap.vue'
 import StatusPill from '~/components/StatusPill.vue'
 import { calculateBranchStatus, parseStatus } from '~~/utils/availability'
+import { accessNote } from '~~/utils/shelfmark'
 import { splitSubtitle } from '~~/utils/catalogText'
 
 const { track } = useUmami()
@@ -102,6 +103,7 @@ const selectedCopy = computed(() => {
   return {
     title: splitSubtitle(mediaItem.value.title).main,
     shelfmark: copy.shelfmark,
+    access: copy.access,
     status: calculateBranchStatus(copy, userStore.userZipDefault),
     notes: parseStatus(copy.status).notes
   }
@@ -170,6 +172,7 @@ function outboundClicked(event: 'library-maps-click' | 'library-website-click') 
             Signatur: <span class="font-mono text-[13px] text-gray-700">{{ selectedCopy.shelfmark }}</span>
           </span>
         </div>
+        <p v-if="selectedCopy.access" data-testid="access-note" class="mt-2 text-sm font-medium text-gray-800">{{ accessNote(selectedCopy.access) }}</p>
         <p v-if="selectedCopy.notes.length" class="mt-2 text-sm text-gray-600">{{ selectedCopy.notes.join(' · ') }}</p>
       </div>
     </header>

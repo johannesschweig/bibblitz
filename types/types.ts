@@ -1,8 +1,13 @@
+// Restriction from the "Bestellmöglichkeit" column that "Verfügbar" does not tell:
+// reading-room = can only be used on site, order-only = closed stacks, has to be ordered first
+export type CopyAccess = 'reading-room' | 'order-only';
+
 export interface AvailabilityInfo {
   libraryName: string;
   libraryId?: string;
   status: string;
   shelfmark?: string;
+  access?: CopyAccess;
   distance?: number;
   daysToWait?: number;
 }

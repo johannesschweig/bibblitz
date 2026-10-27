@@ -12,7 +12,7 @@ function due(days: number): string {
   return `Fällig am: ${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`
 }
 
-type Raw = Pick<AvailabilityInfo, 'libraryName' | 'status' | 'shelfmark'>
+type Raw = Pick<AvailabilityInfo, 'libraryName' | 'status' | 'shelfmark' | 'access'>
 type Fixture = Omit<MediaItem, 'id' | 'availability'> & { availability: Raw[] }
 
 const fixtures: Record<string, Fixture> = {
@@ -43,6 +43,17 @@ const fixtures: Record<string, Fixture> = {
     year: '2021',
     availability: [
       { libraryName: 'ZLB: Amerika-Gedenkbibliothek (AGB)', status: `Ausgeliehen - ${due(11)} - Das Beiheft ist unter derselben Grundsignatur getrennt ausleihbar.`, shelfmark: 'Film 10 Ly 5 a:BD/4K.BD' }
+    ]
+  },
+  // Reading-room-only copy plus a closed-stacks copy that has to be ordered (see the access note)
+  '15180452': {
+    title: 'Carl Vogt : seine Entwicklung vom angehenden naturwissenschaftlichen Materialisten zum idealen Politiker der Paulskirche ; (1817 - 1848)',
+    mediaType: 'Band',
+    author: 'Hermann Misteli',
+    year: '1938',
+    availability: [
+      { libraryName: 'ZLB: Berlin-Sammlungen', status: 'Verfügbar', shelfmark: 'KucLa 3309', access: 'reading-room' },
+      { libraryName: 'ZLB: Amerika-Gedenkbibliothek (AGB)', status: 'Verfügbar', shelfmark: '112/000 041 487', access: 'order-only' }
     ]
   },
   '00224031': {

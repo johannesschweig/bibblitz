@@ -4,7 +4,7 @@
 // ("Freihand Erwachsene / Historisches - Roman Garm", "Magazin 1 - Bereitstellung 1-3 Tage - Roman Garm").
 import type { CheerioAPI, Cheerio } from 'cheerio';
 import type { AnyNode } from 'domhandler';
-import type { AvailabilityInfo } from '../types/types';
+import type { AvailabilityInfo, CopyAccess } from '../types/types';
 
 /** Returns the signature from a Standort cell, or undefined when the cell has no " - " separator. */
 export function parseShelfmark(standort: string | undefined): string | undefined {
@@ -12,6 +12,25 @@ export function parseShelfmark(standort: string | undefined): string | undefined
   const parts = standort.split(/\s+-\s+/);
   if (parts.length < 2) return undefined;
   return parts[parts.length - 1].trim() || undefined;
+}
+
+/**
+ * Reads the restriction from a Bestellmöglichkeit cell: "Nur Lesesaal - Magazin, nur Lesesaal" or
+ * "2 Wochen - Magazin, bestellbar". Ordinary cells ("4 Wochen - Bestellwunsch möglich",
+ * "4 Wochen - Vormerkung möglich", "4 Wochen - Keine Bestellung möglich") have none.
+ */
+export function parseAccess(orderCell: string | undefined): CopyAccess | undefined {
+  if (!orderCell) return undefined;
+  if (/lesesaal/i.test(orderCell)) return 'reading-room';
+  if (/\bbestellbar\b/i.test(orderCell)) return 'order-only';
+  return undefined;
+}
+
+/** Note shown next to a copy with a restriction. */
+export function accessNote(access: CopyAccess | undefined): string | undefined {
+  if (access === 'reading-room') return 'Nur im Lesesaal einsehbar, nicht ausleihbar';
+  if (access === 'order-only') return 'Lagert im Magazin und muss vorab bestellt werden';
+  return undefined;
 }
 
 /** Reads the per-branch rows of the detail page's availability table. */
@@ -23,6 +42,7 @@ export function parseAvailabilityTable($: CheerioAPI, table: Cheerio<AnyNode>): 
   const headers = table.find('thead th').map((_, th) => $(th).text().trim().toLowerCase()).get();
   const signatureCol = headers.indexOf('signatur');
   const locationCol = headers.indexOf('standort') >= 0 ? headers.indexOf('standort') : 1;
+  const orderCol = headers.indexOf('bestellmöglichkeit');
 
   table.find('tbody tr').each((_, el) => {
     const cells = $(el).find('td');
@@ -30,10 +50,12 @@ export function parseAvailabilityTable($: CheerioAPI, table: Cheerio<AnyNode>): 
     const cellText = (i: number) => cells.eq(i).text().trim().replace(/\s+/g, ' ');
     const branchText = cellText(0);
     const shelfmark = signatureCol >= 0 ? cellText(signatureCol) : parseShelfmark(cellText(locationCol));
+    // Without a header the column sits right before the status column
+    const access = parseAccess(cellText(orderCol >= 0 ? orderCol : cells.length - 2));
     const statusText = cells.last().text().trim().replace(/\s+/g, ' ');
     if (branchText.toLowerCase().includes('kopierlink') || branchText.toLowerCase().includes('[buch]')) return;
     if (branchText && statusText) {
-      availability.push({ libraryName: branchText, status: statusText, shelfmark: shelfmark || undefined });
+      availability.push({ libraryName: branchText, status: statusText, shelfmark: shelfmark || undefined, ...(access && { access }) });
     }
   });
   return availability;

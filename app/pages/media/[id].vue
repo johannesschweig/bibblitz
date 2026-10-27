@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { useItemCacheStore } from '@/stores/itemCacheStore'
 import { getPermanentUrlFromId } from '../../../utils/index.ts'
 import { sortBranchesByDistance, calculateBranchStatus, parseStatus, splitLibraryName } from '../../../utils/availability'
+import { accessNote } from '../../../utils/shelfmark'
 import { formatDistance } from '../../../utils/distance'
 import { useUserStore } from '~/stores/userStore.js'
 import { useVoebbStatusStore } from '~/stores/voebbStatusStore'
@@ -194,6 +195,10 @@ function authorClicked() {
                       Signatur: <span class="font-mono text-[13px] text-gray-700">{{ item.shelfmark }}</span>
                     </p>
                   </div>
+                  <p v-if="item.access" data-testid="access-note" class="mt-1.5 flex items-start gap-1.5 text-sm font-medium text-gray-800">
+                    <Icon :name="item.access === 'reading-room' ? 'lucide:book-lock' : 'lucide:archive'" class="mt-0.5 size-4 shrink-0 text-gray-600" />
+                    <span>{{ accessNote(item.access) }}</span>
+                  </p>
                   <p v-if="parseStatus(item.status).notes.length" class="mt-1.5 flex items-start gap-1.5 text-sm text-gray-600">
                     <Icon name="lucide:info" class="mt-0.5 size-4 shrink-0 text-gray-500" />
                     <span>{{ parseStatus(item.status).notes.join(' · ') }}</span>

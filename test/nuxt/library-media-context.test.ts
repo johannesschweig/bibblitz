@@ -47,6 +47,24 @@ describe('Media page branch links', () => {
     const hrefs = wrapper.findAll('a').map(a => a.attributes('href'))
     expect(hrefs).toContain(`/library/${library.id}?media=1`)
   })
+
+  it('notes copies that are reading-room-only or have to be ordered, and only those', async () => {
+    // Own id: useAsyncData caches the page data per key across tests
+    useItemCacheStore().items['2'] = {
+      ...detail,
+      id: '2',
+      availability: [
+        { ...detail.availability[0], access: 'reading-room' },
+        { ...detail.availability[1], access: 'order-only' },
+        { ...detail.availability[1], libraryId: 'hansabibliothek', libraryName: 'Mitte: Hansabibliothek' }
+      ]
+    } as any
+    const wrapper = await mountSuspended(MediaPage, { route: '/media/2' })
+    await vi.waitFor(() => expect(wrapper.text()).toContain('Bruno-Loesche-Bibliothek'))
+
+    const notes = wrapper.findAll('[data-testid="access-note"]').map(n => n.text())
+    expect(notes).toEqual(['Nur im Lesesaal einsehbar, nicht ausleihbar', 'Lagert im Magazin und muss vorab bestellt werden'])
+  })
 })
 
 describe('Library page with a selected medium', () => {
@@ -69,6 +87,14 @@ describe('Library page with a selected medium', () => {
     await flushPromises()
 
     await vi.waitFor(() => expect(wrapper.find('[data-testid="selected-copy"]').text()).toContain('SF HERB'))
+  })
+
+  it('shows the access restriction of the copy', async () => {
+    const restricted = { ...detail, availability: [{ ...detail.availability[0], access: 'reading-room' }] }
+    useItemCacheStore().items['1'] = restricted as any
+    const wrapper = await mountSuspended(LibraryPage, { route: `/library/${library.id}?media=1`, global: { stubs: { LibraryMap: true } } })
+
+    expect(wrapper.find('[data-testid="selected-copy"] [data-testid="access-note"]').text()).toContain('Lesesaal')
   })
 
   it('shows nothing without ?media', async () => {
