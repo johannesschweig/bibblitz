@@ -1,6 +1,6 @@
 <!-- components/Showcase.vue -->
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
+import { onMounted } from 'vue'
 import { useItemCacheStore } from '~/stores/itemCacheStore'
 import MediaItem from '~/components/MediaItem.vue'
 
@@ -9,20 +9,12 @@ const showcase = {
   ids: [
     '34112359',
     '01392424',
-    '07235286',
-    '34971091',
-    '35168840',
-    '00224031',
-    '06115009'
+    '07235286'
   ]
 }
 
 const itemCacheStore = useItemCacheStore()
 const { track } = useUmami()
-
-const INITIAL_COUNT = 3
-const expanded = ref(false)
-const visibleIds = computed(() => expanded.value ? showcase.ids : showcase.ids.slice(0, INITIAL_COUNT))
 
 // Load sequentially instead of in parallel – VÖBB responds unreliably
 // to many concurrent requests (timeouts/rate limiting).
@@ -52,11 +44,7 @@ function trackClick(id: string) {
       Beliebt bei BibBlitz
     </p>
     <ul class="space-y-2">
-      <MediaItem v-for="id in visibleIds" :key="id" :mediaId="id" @click="trackClick(id)" />
+      <MediaItem v-for="id in showcase.ids" :key="id" :mediaId="id" @click="trackClick(id)" />
     </ul>
-    <button v-if="!expanded && showcase.ids.length > INITIAL_COUNT" type="button" @click="expanded = true"
-      class="btn btn-sm btn-secondary mt-3">
-      Mehr anzeigen
-    </button>
   </section>
 </template>
