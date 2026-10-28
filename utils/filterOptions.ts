@@ -5,10 +5,13 @@
 // roman, kinder, liebe, berlin, märchen, krimi). Spanisch and Russisch follow, but were left out on purpose.
 export const LANGUAGE_OPTIONS = ['Deutsch', 'Englisch', 'Französisch'];
 
+// "Gesellschaftsspiel" is VÖBB's "Konventionelles Spiel": board and card games, Memory, puzzles and kits. It was
+// called "Spiel" until 28.10.2026, which people read as "all games" (a PC game search came back empty).
+// Old links with ?type=Spiel are mapped in utils/filters.ts.
 // Media types with copies, as chip labels (see utils/mediaTypeFacet.ts for the VÖBB values behind them).
 // Not offered: e-media, series and articles (BibBlitz hides their rows), the sum "Filme", and by choice the
 // catch-alls "Medienkombination" and "sonstiges Material oder Gegenstand" (a language filter still includes them).
 export const MEDIA_TYPE_OPTIONS = [
-  'Buch', 'DVD', 'Blu-ray', 'CD', 'Spiel', 'Konsolenspiel', 'Computerspiel', 'Noten', 'MP3', 'Kassette',
+  'Buch', 'DVD', 'Blu-ray', 'CD', 'Gesellschaftsspiel', 'Konsolenspiel', 'Computerspiel', 'Noten', 'MP3', 'Kassette',
   'Schallplatte', 'Video', 'Punktschrift', 'Karte'
 ];

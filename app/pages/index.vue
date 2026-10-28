@@ -11,7 +11,7 @@ import About from '~/components/About.vue'
 import Showcase from '~/components/Showcase.vue'
 import FilterPage from '~/components/FilterPage.vue'
 import { normalizeIsbn } from '../../utils/isbn'
-import { parseFilterParam, sameSelection } from '../../utils/filters'
+import { parseFilterParam, parseMediaTypeParam, sameSelection } from '../../utils/filters'
 
 interface Filters {
   languages: string[]
@@ -77,7 +77,7 @@ watch(
 
     if (newQuery) {
       const queryStr = String(newQuery)
-      const filters = { languages: parseFilterParam(route.query.lang), mediaTypes: parseFilterParam(route.query.type) }
+      const filters = { languages: parseFilterParam(route.query.lang), mediaTypes: parseMediaTypeParam(route.query.type) }
       searchQuery.value = queryStr
       hasSearched.value = true
 

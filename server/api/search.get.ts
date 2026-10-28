@@ -7,7 +7,7 @@ import { CookieJar } from 'tough-cookie';
 import { cleanTitle, cleanAuthor, parseYear } from '../../utils/catalogText';
 import { normalizeIsbn, toIsbn13 } from '../../utils/isbn';
 import { isMaintenancePage, parseMaintenanceUntil } from '../../utils/maintenance';
-import { parseFilterParam } from '../../utils/filters';
+import { parseFilterParam, parseMediaTypeParam } from '../../utils/filters';
 import { LANGUAGE_OPTIONS, MEDIA_TYPE_OPTIONS } from '../../utils/filterOptions';
 import { parseFacet, isFilterActive, resolveFilterIds } from '../utils/facets';
 
@@ -204,7 +204,7 @@ export default defineEventHandler(async (event) => {
     // PHASE 4 (optional): narrow the results with the facets, both in one request. VÖBB combines the values of
     // one facet with OR and the facets with AND. Only the values of the filter page are accepted (see utils/filterOptions.ts).
     const wantedLanguages = parseFilterParam(lang).filter(label => LANGUAGE_OPTIONS.includes(label));
-    const wantedTypes = parseFilterParam(type).filter(label => MEDIA_TYPE_OPTIONS.includes(label));
+    const wantedTypes = parseMediaTypeParam(type).filter(label => MEDIA_TYPE_OPTIONS.includes(label));
     if (wantedLanguages.length > 0 || wantedTypes.length > 0) {
       const { ids, nothingMatches } = resolveFilterIds(parseFacet($, 'Sprache'), parseFacet($, 'Medienart'), wantedLanguages, wantedTypes);
 

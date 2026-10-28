@@ -184,7 +184,7 @@ describe('Single select', () => {
     expect(button(wrapper, 'Deutsch').attributes('aria-pressed')).toBe('false')
 
     await button(wrapper, 'Buch').trigger('click')
-    await button(wrapper, 'Spiel').trigger('click')
+    await button(wrapper, 'Gesellschaftsspiel').trigger('click')
     expect(button(wrapper, 'Buch').attributes('aria-pressed')).toBe('false')
   })
 })

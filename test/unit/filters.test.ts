@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parseFilterParam, sameSelection } from '../../utils/filters'
+import { parseFilterParam, parseMediaTypeParam, sameSelection } from '../../utils/filters'
 
 describe('parseFilterParam', () => {
   it('splits a comma list, trims and drops duplicates and empties', () => {
@@ -30,5 +30,13 @@ describe('sameSelection', () => {
     expect(sameSelection(['Deutsch'], ['Englisch'])).toBe(false)
     expect(sameSelection(['Deutsch'], [])).toBe(false)
     expect(sameSelection([], [])).toBe(true)
+  })
+})
+
+describe('parseMediaTypeParam', () => {
+  it('maps the renamed chip so old ?type=Spiel links keep working', () => {
+    expect(parseMediaTypeParam('Spiel')).toEqual(['Gesellschaftsspiel'])
+    expect(parseMediaTypeParam('Gesellschaftsspiel')).toEqual(['Gesellschaftsspiel'])
+    expect(parseMediaTypeParam('Spiel,Gesellschaftsspiel,Buch')).toEqual(['Gesellschaftsspiel', 'Buch'])
   })
 })

@@ -11,8 +11,8 @@ export const MEDIA_TYPE_MAP: Record<string, MediaTypeConfig> = {
   'hochschulschrift': { label: 'Buch', icon: 'lucide:book' },
   'noten': { label: 'Noten', icon: 'lucide:music' },
   // Games
-  'spiel': { label: 'Spiel', icon: 'lucide:dices' },
-  'konventionelles spiel': { label: 'Spiel', icon: 'lucide:dices' },
+  'spiel': { label: 'Gesellschaftsspiel', icon: 'lucide:dices' },
+  'konventionelles spiel': { label: 'Gesellschaftsspiel', icon: 'lucide:dices' },
   'konsolenspiel': { label: 'Konsolenspiel', icon: 'lucide:gamepad-2' },
   // Film
   'dvd': { label: 'DVD', icon: 'lucide:clapperboard' },

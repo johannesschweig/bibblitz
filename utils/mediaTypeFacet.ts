@@ -13,7 +13,7 @@ const CHIP_LABELS: Record<string, string> = {
   'Blu-ray Disc': 'Blu-ray',
   'Ultra HD Blu-ray': 'Blu-ray',
   'Blu-ray Audio': 'Blu-ray',
-  'Konventionelles Spiel': 'Spiel',
+  'Konventionelles Spiel': 'Gesellschaftsspiel',
   'Punktschrift (Kurzschrift)': 'Punktschrift',
   'Punktschrift (Vollschrift)': 'Punktschrift',
   'MC': 'Kassette',
