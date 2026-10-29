@@ -93,7 +93,7 @@ How to read the "Umami indicator" column: **event** = custom event (Events tab, 
 | Branch sorting by distance, due-days / overdue labels, hide far branches | 16.06. / 28.06. / 03.07. | none (part of detail page) | n/a | |
 | "N entferntere Bibliotheken anzeigen" button (branches beyond 7 km are hidden when there are more than 3, only with a saved ZIP: with the default ZIP all branches are shown, since 10178 is not the user's location; changed 26.10.) | 03.07. (tracking 20.10.) | event `branches-expand` (`hidden`, `available_now` among the visible branches, `zip_default`) | n/a, new | answers whether the default view is enough: compare against `detail-view` with `branches` > 3 |
 | "↗ VÖBB" link button | 03.07. (tracking 09.10.) | event `voebb-click` (`available_now`, `zip_default`) | n/a, new | the closest thing to a conversion: BibBlitz cannot reserve, so this is where the user acts on the result |
-| Detail outcome | 09.10. | event `detail-view` (`status` ok/empty/error, `branches`, `available_now`, `nearest_available_km`, `zip_default` 0/1) | n/a, new | measurement only: shows detail fetch failures, how often nothing is available nearby, and how many viewers still use the default ZIP 10178 |
+| Detail outcome | 09.10. | event `detail-view` (`status` ok/empty/failed/error, `failed` since 29.10. = record known from the search row but its copies could not be fetched, before that logged as `empty`; `branches`, `available_now`, `nearest_available_km`, `zip_default` 0/1) | n/a, new | measurement only: shows detail fetch failures, how often nothing is available nearby, and how many viewers still use the default ZIP 10178 |
 | Language line on the detail page ("Sprache Deutsch · Englisch") | 27.10. | none | n/a | passive, matches the language filter |
 | ISBN on detail page (plain text, not styled as a link; click does nothing yet) | 15.10. | event `isbn-click` | n/a, new | if people click it, link it to an ISBN search (also finds duplicate records of the same edition, with their own copies and availability) |
 | Author click (search by author) | 09.07. | event `author-click` | 2 | **deletion candidate** (decide at 06.11. re-check, do not delete before) |
@@ -115,6 +115,7 @@ How to read the "Umami indicator" column: **event** = custom event (Events tab, 
 | Imprint | 30.06. | URL `/imprint` | 19 visitors | legal, keep |
 | Data privacy | 30.06. | URL `/data-privacy` | 4 visitors | legal, keep |
 | `/dev` tracking opt-out | 28.06. | none (own visits are excluded) | n/a | dev tool |
+| Navbar: "Zurück" left, logo centred (`AppNavbar.vue`, every page but `/`) | 29.10. | events `back-click` (`from` home/detail/library/other, `had_history` 0 = direct landing, fell back) and `logo-click` (`from`, `had_results`) | n/a, new | replaced the two page-level back buttons. Fallback without history: `/`, on a shared library link with `?media=<id>` the book. The logo clears the results on purpose (decided 29.10., P3 in `TODO.md`: a logo that returns to old results would be unusual); `logo-click` only measures whether people use it as "back" instead of "Zurück" |
 
 ### Removed
 

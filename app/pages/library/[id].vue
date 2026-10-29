@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import libraryData from '~/assets/libraries.json'
 import { calculateHaversineDistance, formatDistance } from '~~/utils/distance'
 import { berlinNow, getOpenStatus, type DayKey, type OpenStatus } from '~~/utils/openingHours'
@@ -66,13 +66,6 @@ const serviceRows = computed(() => days.map(d => ({ ...d, hours: hoursOf(library
 const noServiceDays = computed(() => days.filter(d => !hoursOf(library.value?.service_hours, d.key)).map(d => d.short).join(', '))
 
 const rowClass = (key: DayKey) => key === today.value ? 'bg-gray-50 font-semibold' : ''
-
-// Arrived from Google or a shared link: there is no previous page of ours to go back to
-const router = useRouter()
-function goBack() {
-  if (window.history.state?.back) router.back()
-  else router.push('/')
-}
 
 // An unknown id is a real 404 for crawlers and shows a "not found" state instead of a fake library
 const library = computed(() => {
@@ -142,11 +135,6 @@ function outboundClicked(event: 'library-maps-click' | 'library-website-click') 
 
 <template>
   <div class="font-sans text-gray-800">
-
-    <button type="button" class="btn btn-text btn-md mb-2 pl-0" @click="goBack">
-      <Icon name="lucide:arrow-left" class="size-4" />
-      Zurück
-    </button>
 
     <template v-if="library">
     <header class="mb-8">

@@ -24,7 +24,7 @@ const userStore = useUserStore()
 const voebbStatus = useVoebbStatusStore()
 const showAllBranches = ref(false)
 
-const { data, pending, error } = useAsyncData(`detail-${mediaId}`, async () => {
+const { data, pending, error, refresh } = useAsyncData(`detail-${mediaId}`, async () => {
   const details = await itemCacheStore.fetchDetails(mediaId)
   if (!details) throw new Error('Details konnten nicht geladen werden')
   return { success: true, data: details }
@@ -56,13 +56,18 @@ const sortedBranches = computed(() => {
   return sortBranchesByDistance(data.value.data.availability, userStore.userCoords)
 })
 
-// Measures once per page view what the user sees on the detail page (errors, availability, default ZIP)
+// Measures once per page view what the user sees on the detail page (errors, availability, default ZIP).
+// `failed`: the record is known (e.g. from the search row) but its copies could not be fetched, `empty`:
+// VÖBB answered with no copies at all.
 let detailTracked = false
 function trackDetailView() {
   if (detailTracked || pending.value || !import.meta.client) return
   detailTracked = true
   const branches = sortedBranches.value
-  const status = error.value || !data.value?.success ? 'error' : branches.length === 0 ? 'empty' : 'ok'
+  const status = error.value || !data.value?.success ? 'error'
+    : !data.value.data.availability ? 'failed'
+    : branches.length === 0 ? 'empty'
+    : 'ok'
   const free = branches.filter(b => b.daysToWait === -999)
   const nearestFree = free.map(b => b.distance).filter((d): d is number => d !== undefined)
   track('detail-view', {
@@ -109,6 +114,11 @@ function expandBranches() {
   showAllBranches.value = true
 }
 
+// Fetches the record again (the store only skips records that already have their copies)
+function retry() {
+  refresh()
+}
+
 function voebbClicked() {
   track('voebb-click', {
     available_now: sortedBranches.value.filter(b => b.daysToWait === -999).length,
@@ -129,13 +139,6 @@ function authorClicked() {
 
 <template>
   <div class="font-sans text-gray-800">
-    <!-- Back button -->
-    <div class="mb-2">
-      <NuxtLink class="btn btn-text btn-md mb-2 pl-0" @click="$router.go(-1)">
-        ← Zurück
-      </NuxtLink>
-    </div>
-
     <!-- Loading state -->
     <div v-if="pending">
       <p role="status" class="sr-only">Suche Medien-Details …</p>
@@ -151,6 +154,7 @@ function authorClicked() {
     <div v-else-if="error || !data?.success" class="bg-red-50 text-red-700 p-4 rounded-lg mb-6 border border-red-200">
       <p class="font-semibold">Fehler beim Laden der Daten</p>
       <p class="text-sm">{{ error?.message || data?.error }}</p>
+      <button type="button" class="btn btn-md btn-secondary mt-3" @click="retry()">Erneut versuchen</button>
     </div>
 
     <!-- Data display -->
@@ -176,7 +180,9 @@ function authorClicked() {
         <h2 class="text-xl font-bold mb-4">Standorte</h2>
 
         <div v-if="!data.data.availability" class="text-gray-500 p-4 text-center">
-          {{ voebbStatus.maintenance ? 'Standorte sind während der VÖBB-Wartung nicht abrufbar.' : 'Standorte konnten nicht geladen werden.' }}
+          <p>{{ voebbStatus.maintenance ? 'Standorte sind während der VÖBB-Wartung nicht abrufbar.' : 'Standorte konnten nicht geladen werden.' }}</p>
+          <!-- During maintenance a retry cannot work, the banner on the page says until when -->
+          <button v-if="!voebbStatus.maintenance" type="button" class="btn btn-md btn-secondary mt-3" @click="retry()">Erneut versuchen</button>
         </div>
 
         <div v-else-if="data.data.availability.length === 0" class="text-gray-500 p-4 text-center">
