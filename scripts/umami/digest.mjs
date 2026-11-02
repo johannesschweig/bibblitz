@@ -6,7 +6,7 @@ import { readFile, writeFile, readdir, mkdir } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
-// Event name -> feature, mirrors the "Feature inventory" in CLAUDE.md. Add new events here.
+// Event name -> feature, mirrors the "Feature inventory" in docs/analytics.md. Add new events here.
 export const FEATURES = {
   'search-started': 'Text / ISBN search',
   'search-quick': 'Quick-search chips',
@@ -44,7 +44,7 @@ export const LAUNCH_DATE = '2026-06-15'
 export const VOEBB_TRACKING_DATE = '2026-10-09'
 export const LIBRARY_OUTBOUND_TRACKING_DATE = '2026-10-17'
 
-// Decision on the language filter (CLAUDE.md, feature inventory): keep it with at least this many
+// Decision on the language filter (docs/analytics.md, feature inventory): keep it with at least this many
 // `filter-language` events from at least this many sessions, otherwise remove the language chips.
 export const LANGUAGE_FILTER_DECISION = { since: '2026-10-27', due: '2026-12-22', needsEvents: 8, needsSessions: 5 }
 

@@ -46,8 +46,8 @@ Branches are regular branches in this checkout: `git switch -c <short-name>`. Ne
 
 ## 6. Build
 
-- Keep to the picked option. Follow `CLAUDE.md`: German UI copy, English code comments and test names, WCAG AA text contrast (run `scripts/contrast-audit.js` for UI changes), a test for the behaviour (real records go into the existing unit test files), no change to the tracking script's `data-domains`.
-- A new tracking event: use `useUmami().track(...)`, add it to `FEATURES` in `scripts/umami/digest.mjs` and the feature table in `CLAUDE.md`.
+- Keep to the picked option. Follow `CLAUDE.md`: German UI copy, English code comments and test names, WCAG AA text contrast (run `scripts/contrast-audit.js` for UI changes, see `docs/accessibility.md`), a test for the behaviour (real records go into the existing unit test files), no change to the tracking script's `data-domains`.
+- A new tracking event: use `useUmami().track(...)`, add it to `FEATURES` in `scripts/umami/digest.mjs` and the feature table in `docs/analytics.md`.
 - Run `npm test`; all must pass.
 - Do not commit yet.
 
