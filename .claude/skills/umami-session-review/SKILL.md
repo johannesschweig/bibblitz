@@ -1,6 +1,6 @@
 ---
 name: umami-session-review
-description: Pull fresh Umami data, read the visitor journeys (visits) that no earlier review has looked at, find UX problems in them, check them on localhost, and add them to the BibBlitz TODO.md problem table. Use when the user asks for a session review, "review the latest sessions", "any new UX problems in the data" or "next review". Not for aggregate questions (use umami-review) and not for fixing items (use next-todo).
+description: Pull fresh Umami data, read the visitor journeys (visits) that no earlier review has looked at, find UX problems in them, check them on localhost, and add them to the BibBlitz TODO.md problem table. Use when the user asks for a session review, "review the latest sessions", "any new UX problems in the data" or "next review". Not for aggregate usage questions (read the digest from `npm run umami`) and not for fixing items (use next-todo).
 ---
 
 # Session review: unreviewed journeys -> UX problems -> TODO

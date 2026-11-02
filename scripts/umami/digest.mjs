@@ -1,5 +1,5 @@
 // Turns a raw Umami snapshot (written by fetch.mjs) into a small, deterministic digest.
-// Counting, dedup and funnels happen here in code; interpreting the numbers is left to Claude (see .claude/skills/umami-review).
+// Counting, dedup and funnels happen here in code; interpreting the numbers is left to Claude.
 //
 // CLI: node scripts/umami/digest.mjs [snapshot-dir]   (default: newest dir in data/umami)
 import { readFile, writeFile, readdir, mkdir } from 'node:fs/promises'

@@ -11,7 +11,8 @@
     "test": "vitest run",
     "umami": "node --env-file-if-exists=.env scripts/umami/fetch.mjs",
     "umami:digest": "node scripts/umami/digest.mjs",
-    "umami:journeys": "node --env-file-if-exists=.env scripts/umami/journeys.mjs"
+    "umami:journeys": "node --env-file-if-exists=.env scripts/umami/journeys.mjs",
+    "libraries:check": "node scripts/libraries/check.mjs"
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.143",

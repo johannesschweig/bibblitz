@@ -7,7 +7,7 @@
     "lon": 13.3476131,
     "phone": "(030) / 9018 33025",
     "email": "Fahrbibliothek@ba-mitte.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-mitte/bibliotheken/fahrbibliothek/",
+    "website": "https://www.berlin.de/stadtbibliothek-mitte/bibliotheken-und-besuch/fahrbibliothek/",
     "service_hours": null
   },
   {
@@ -19,7 +19,7 @@
     "district": "Mitte",
     "phone": "030 / 9018 33025",
     "email": "service.loesche@ba-mitte.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-mitte/bibliotheken/bruno-loesche-bibliothek/",
+    "website": "https://www.berlin.de/stadtbibliothek-mitte/bibliotheken-und-besuch/bruno-loesche-bibliothek/",
     "opening_hours": {
       "monday": "10:00-19:30",
       "tuesday": "10:00-19:30",
@@ -39,7 +39,7 @@
     "district": "Mitte",
     "phone": "(030) / 9018 32156",
     "email": "Hansabibliothek@ba-mitte.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-mitte/bibliotheken/hansabibliothek/",
+    "website": "https://www.berlin.de/stadtbibliothek-mitte/bibliotheken-und-besuch/hansabibliothek/",
     "opening_hours": {
       "monday": "13:00-19:30",
       "tuesday": "12:00-18:00",
@@ -60,7 +60,7 @@
     "district": "Mitte",
     "phone": "(030) / 39480264",
     "email": "tucholsky@ba-mitte.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-mitte/bibliotheken/kurt-tucholsky-bibliothek/",
+    "website": "https://www.berlin.de/stadtbibliothek-mitte/bibliotheken-und-besuch/kurt-tucholsky-bibliothek/",
     "opening_hours": {
       "monday": "12:30-18:00",
       "tuesday": "12:30-18:00",
@@ -80,7 +80,14 @@
     "district": "Mitte",
     "phone": "(030) / 23003088",
     "email": "tiergarten-sued@stb-mitte.de",
-    "website": "http://www.berlin.de/stadtbibliothek-mitte/bibliotheken/bibliothek-tiergarten-sued/",
+    "website": "https://www.berlin.de/stadtbibliothek-mitte/bibliotheken-und-besuch/bibliothek-tiergarten-sued/",
+    "opening_hours": {
+      "monday": "12:30-18:00",
+      "tuesday": "12:30-18:00",
+      "wednesday": "12:30-18:00",
+      "thursday": "12:30-18:00",
+      "friday": "12:30-18:00"
+    },
     "service_hours": null
   },
   {
@@ -92,7 +99,7 @@
     "district": "Mitte",
     "phone": "030 / 9018 24444",
     "email": "Stadtbibliothek-Service@ba-mitte.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-mitte/bibliotheken/bezirkszentralbibliothek-philipp-schaeffer/",
+    "website": "https://www.berlin.de/stadtbibliothek-mitte/bibliotheken-und-besuch/philipp-schaeffer-bibliothek/",
     "opening_hours": {
       "monday": "10:00-19:30",
       "tuesday": "10:00-19:30",
@@ -112,7 +119,7 @@
     "district": "Mitte",
     "phone": "(030) / 9018 45683",
     "email": "schiller@stb-mitte.de",
-    "website": "http://www.berlin.de/stadtbibliothek-mitte/bibliotheken/schiller-bibliothek-mit-hugojugendmedienetage/",
+    "website": "https://www.berlin.de/stadtbibliothek-mitte/bibliotheken-und-besuch/schiller-bibliothek/",
     "opening_hours": {
       "monday": "10:00-19:30",
       "tuesday": "10:00-19:30",
@@ -133,7 +140,7 @@
     "district": "Tempelhof-Schöneberg",
     "phone": "030 / 90277 6398",
     "email": "stabi-ks@ba-ts.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-tempelhof-schoeneberg/bibliotheken/stadtteilbibliothek-schoeneberg-nord/",
+    "website": "https://www.berlin.de/stadtbibliothek-tempelhof-schoeneberg/gertrud-kolmar-bibliothek/",
     "service_hours": null
   },
   {
@@ -145,7 +152,7 @@
     "district": "Mitte",
     "phone": "030 / 90226-401",
     "email": "info@zlb.de",
-    "website": "https://www.zlb.de/standorte/berliner-stadtbibliothek/",
+    "website": "https://www.zlb.de/standorte/",
     "opening_hours": {
       "monday": "10:00-21:00",
       "tuesday": "10:00-21:00",
@@ -171,7 +178,7 @@
     "district": "Zentral- und Landesbibliothek (ZLB)",
     "phone": "030 / 90226-477 Auskunft, 90226-477 Mikrofilmbereich",
     "email": "berlinsammlungen@zlb.de",
-    "website": "http://www.zlb.de",
+    "website": "https://www.zlb.de/standorte/",
     "opening_hours": {
       "monday": "10:00-19:00",
       "tuesday": "10:00-19:00",
@@ -197,7 +204,7 @@
     "district": "Zentral- und Landesbibliothek (ZLB)",
     "phone": "030 / 90226-401",
     "email": "info@zlb.de",
-    "website": "http://www.zlb.de",
+    "website": "https://www.zlb.de/standorte/",
     "opening_hours": {
       "monday": "10:00-21:00",
       "tuesday": "10:00-21:00",
@@ -224,7 +231,7 @@
     "district": "Zentral- und Landesbibliothek (ZLB)",
     "phone": "030 / 90226-401",
     "email": "info@zlb.de",
-    "website": "http://www.zlb.de",
+    "website": "https://www.zlb.de/standorte/",
     "opening_hours": {
       "monday": "10:00-21:00",
       "tuesday": "10:00-21:00",
@@ -244,7 +251,7 @@
     "district": "Tempelhof-Schöneberg",
     "phone": "030 / 90277 6496",
     "email": "stabi-ks@ba-ts.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-tempelhof-schoeneberg/bibliotheken/thomas-dehler-bibliothek/",
+    "website": "https://www.berlin.de/stadtbibliothek-tempelhof-schoeneberg/thomas-dehler-bibliothek/",
     "opening_hours": {
       "monday": null,
       "tuesday": "15:00-19:00",
@@ -264,7 +271,7 @@
     "district": "Zentral- und Landesbibliothek (ZLB)",
     "phone": "+49/(30) / 90226-103",
     "email": "jubi@zlb.de",
-    "website": "http://www.zlb.de/kijubi/portal.html",
+    "website": "https://www.zlb.de/eltern-kinder/",
     "opening_hours": {
       "monday": "13:00-19:00",
       "tuesday": "13:00-19:00",
@@ -285,14 +292,14 @@
     "district": "Charlottenburg-Wilmersdorf",
     "phone": "030 / 9029 12217",
     "email": "stadtbibliothek@charlottenburg-wilmersdorf.de",
-    "website": "https://www.berlin.de/ba-charlottenburg-wilmersdorf/verwaltung/aemter/weiterbildung-und-kultur/bibliotheken/heinrichschulzbibliothek-203398.php",
+    "website": "https://www.berlin.de/ba-charlottenburg-wilmersdorf/verwaltung/aemter/weiterbildung-und-kultur/stadtbibliothek/heinrichschulzbibliothek-203398.php",
     "opening_hours": {
       "monday": "10:00-19:00",
       "tuesday": "10:00-19:00",
       "wednesday": "10:00-19:00",
       "thursday": "10:00-19:00",
       "friday": "10:00-19:00",
-      "saturday": "11:00-19:00",
+      "saturday": "10:00-19:00",
       "sunday": "12:00-18:00"
     },
     "service_hours": null
@@ -306,7 +313,7 @@
     "district": "Tempelhof-Schöneberg",
     "phone": "030 / 90277 4574",
     "email": "stabi-ks@ba-ts.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-tempelhof-schoeneberg/bibliotheken/mittelpunktbibliothek-schoeneberg/",
+    "website": "https://www.berlin.de/stadtbibliothek-tempelhof-schoeneberg/bibliothek-schoeneberg/",
     "opening_hours": {
       "monday": "10:00-19:00",
       "tuesday": "10:00-19:00",
@@ -327,7 +334,7 @@
     "district": "Mitte",
     "phone": "030 / 9018 45611",
     "email": "ServLuisenbad@ba-mitte.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-mitte/bibliotheken/bibliothek-am-luisenbad/",
+    "website": "https://www.berlin.de/stadtbibliothek-mitte/bibliotheken-und-besuch/bibliothek-am-luisenbad/",
     "opening_hours": {
       "monday": "10:00-19:30",
       "tuesday": "10:00-19:30",
@@ -348,7 +355,7 @@
     "district": "Mitte",
     "phone": "(030) / 9018 45680",
     "email": "fahrbibliothek@ba-mitte.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-mitte/bibliotheken/fahrbibliothek/",
+    "website": "https://www.berlin.de/stadtbibliothek-mitte/bibliotheken-und-besuch/fahrbibliothek/",
     "service_hours": null
   },
   {
@@ -360,7 +367,7 @@
     "district": "Mitte",
     "phone": "(030) / 9018 45680",
     "email": "fahrbibliothek@ba-mitte.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-mitte/bibliotheken/fahrbibliothek/",
+    "website": "https://www.berlin.de/stadtbibliothek-mitte/bibliotheken-und-besuch/fahrbibliothek/",
     "service_hours": null
   },
   {
@@ -372,7 +379,7 @@
     "district": "Mitte",
     "phone": "(030) / 9018 45680",
     "email": "fahrbibliothek@ba-mitte.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-mitte/bibliotheken/fahrbibliothek/",
+    "website": "https://www.berlin.de/stadtbibliothek-mitte/bibliotheken-und-besuch/fahrbibliothek/",
     "service_hours": null
   },
   {
@@ -384,14 +391,15 @@
     "district": "Charlottenburg-Wilmersdorf",
     "phone": "030 / 9029 15900",
     "email": "stadtbibliothek@charlottenburg-wilmersdorf.de",
-    "website": "https://www.berlin.de/ba-charlottenburg-wilmersdorf/verwaltung/aemter/weiterbildung-und-kultur/bibliotheken/dietrichbonhoefferbibliothek-201474.php",
+    "website": "https://www.berlin.de/ba-charlottenburg-wilmersdorf/verwaltung/aemter/weiterbildung-und-kultur/stadtbibliothek/dietrichbonhoefferbibliothek-201474.php",
     "opening_hours": {
       "monday": "10:00-19:00",
       "tuesday": "10:00-19:00",
       "wednesday": "10:00-19:00",
       "thursday": "10:00-19:00",
       "friday": "10:00-19:00",
-      "saturday": "11:00-16:00"
+      "saturday": "10:00-16:00",
+      "sunday": "12:00-16:00"
     },
     "service_hours": null
   },
@@ -410,8 +418,8 @@
       "tuesday": "13:00-19:00",
       "wednesday": "11:00-17:00",
       "thursday": "13:00-19:00",
-      "friday": "11:00-17:00",
-      "saturday": null,
+      "friday": "11:00-19:00",
+      "saturday": "11:00-16:00",
       "sunday": null
     },
     "service_hours": null
@@ -425,7 +433,7 @@
     "district": "Reinickendorf",
     "phone": "030 / 902945974",
     "email": "Bibliothek.Schaefersee@reinickendorf.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-reinickendorf/bibliotheken/bibliothek-am-schaefersee/artikel.336756.php",
+    "website": "https://www.berlin.de/stadtbibliothek-reinickendorf/bibliotheken/bibliothek-am-schaefersee/artikel.336756.php",
     "opening_hours": {
       "monday": "12:00-18:00",
       "tuesday": "12:00-18:00",
@@ -450,8 +458,8 @@
       "tuesday": "11:00-19:00",
       "wednesday": "11:00-19:00",
       "thursday": "11:00-19:00",
-      "friday": "11:00-17:00",
-      "saturday": null,
+      "friday": "11:00-19:00",
+      "saturday": "11:00-19:00",
       "sunday": null
     },
     "service_hours": null
@@ -486,7 +494,7 @@
     "district": "Charlottenburg-Wilmersdorf",
     "phone": "030 / 9029 25284",
     "email": "stadtbibliothek@charlottenburg-wilmersdorf.de",
-    "website": "https://www.berlin.de/ba-charlottenburg-wilmersdorf/verwaltung/aemter/weiterbildung-und-kultur/bibliotheken/stadtteilbibliothekhalemweg-203397.php",
+    "website": "https://www.berlin.de/ba-charlottenburg-wilmersdorf/verwaltung/aemter/weiterbildung-und-kultur/stadtbibliothek/stadtteilbibliothekhalemweg-203397.php",
     "opening_hours": {
       "monday": "12:00-16:00",
       "tuesday": "12:00-16:00",
@@ -505,7 +513,7 @@
     "district": "Charlottenburg-Wilmersdorf",
     "phone": "030 / 9029 24313",
     "email": "stadtbibliothek@charlottenburg-wilmersdorf.de",
-    "website": "https://www.berlin.de/ba-charlottenburg-wilmersdorf/verwaltung/aemter/weiterbildung-und-kultur/bibliotheken/ingeborg-bachmann-bibliothek-194044.php",
+    "website": "https://www.berlin.de/ba-charlottenburg-wilmersdorf/verwaltung/aemter/weiterbildung-und-kultur/stadtbibliothek/ingeborg-bachmann-bibliothek-194044.php",
     "opening_hours": {
       "monday": "14:00-18:00",
       "tuesday": "12:00-18:00",
@@ -597,7 +605,7 @@
     "district": "Reinickendorf",
     "phone": "030 / 902945954",
     "email": "fahrbibliothek@reinickendorf.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-reinickendorf/bibliotheken/kleiner-buecherbus/artikel.336924.php",
+    "website": "https://www.berlin.de/stadtbibliothek-reinickendorf/bibliotheken/artikel.899939.php",
     "opening_hours": {
       "monday": null,
       "tuesday": null,
@@ -622,8 +630,8 @@
       "tuesday": "10:00-15:00",
       "wednesday": "13:00-18:00",
       "thursday": "13:00-18:00",
-      "friday": "10:00-15:00",
-      "saturday": null,
+      "friday": "13:00-18:00",
+      "saturday": "11:00-13:00",
       "sunday": null
     },
     "service_hours": null
@@ -658,7 +666,7 @@
     "district": "Reinickendorf",
     "phone": "030 / 902945950",
     "email": "bibliothek-west@reinickendorf.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-reinickendorf/bibliotheken/stadtteilbibliothek-reinickendorf-west/artikel.336767.php",
+    "website": "https://www.berlin.de/stadtbibliothek-reinickendorf/bibliotheken/stadtteilbibliothek-reinickendorf-west/artikel.1191834.php",
     "opening_hours": {
       "monday": "11:00-17:00",
       "tuesday": "13:00-17:00",
@@ -677,7 +685,7 @@
     "district": "Charlottenburg-Wilmersdorf",
     "phone": "030 / 9029 27803",
     "email": "stadtbibliothek@charlottenburg-wilmersdorf.de",
-    "website": "https://www.berlin.de/ba-charlottenburg-wilmersdorf/verwaltung/aemter/weiterbildung-und-kultur/bibliotheken/johanna-moosdorf-bibliothek-194063.php",
+    "website": "https://www.berlin.de/ba-charlottenburg-wilmersdorf/verwaltung/aemter/weiterbildung-und-kultur/stadtbibliothek/johanna-moosdorf-bibliothek-194063.php",
     "opening_hours": {
       "monday": null,
       "tuesday": "14:00-18:00",
@@ -696,7 +704,7 @@
     "district": "Charlottenburg-Wilmersdorf",
     "phone": "030 / 9029 22392",
     "email": "stadtbibliothek@charlottenburg-wilmersdorf.de",
-    "website": "https://www.berlin.de/ba-charlottenburg-wilmersdorf/verwaltung/aemter/weiterbildung-und-kultur/bibliotheken/adolf-reichwein-bibliothek-201473.php",
+    "website": "https://www.berlin.de/ba-charlottenburg-wilmersdorf/verwaltung/aemter/weiterbildung-und-kultur/stadtbibliothek/adolf-reichwein-bibliothek-201473.php",
     "opening_hours": {
       "monday": "12:00-16:00",
       "tuesday": "14:00-18:00",
@@ -715,7 +723,7 @@
     "district": "Tempelhof-Schöneberg",
     "phone": "030 / 90277 2516",
     "email": "stabi-ks@ba-ts.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-tempelhof-schoeneberg/bibliotheken/bezirkszentralbibliothek/",
+    "website": "https://www.berlin.de/stadtbibliothek-tempelhof-schoeneberg/bibliothek-tempelhof/",
     "opening_hours": {
       "monday": "10:00-19:00",
       "tuesday": "10:00-19:00",
@@ -736,7 +744,7 @@
     "district": "Tempelhof-Schöneberg",
     "phone": "030 / 90277 2361",
     "email": "stabi-ks@ba-ts.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-tempelhof-schoeneberg/bibliotheken/fahrbibliothek/",
+    "website": "https://www.berlin.de/stadtbibliothek-tempelhof-schoeneberg/buecherbus-makerbike/",
     "opening_hours": {
       "monday": "15:30-18:30",
       "tuesday": "16:00-18:00",
@@ -755,13 +763,13 @@
     "district": "Neukölln",
     "phone": "030 / 90239 4313",
     "email": "info@stadtbibliothek-neukoelln.de",
-    "website": "http://www.berlin.de/stadtbibliothek-neukoelln",
+    "website": "https://www.berlin.de/stadtbibliothek-neukoelln/bibliotheken/bezirkszentralbibliothek-helene-nathan-bibliothek/",
     "opening_hours": {
-      "monday": "09:00-18:00",
-      "tuesday": "09:00-18:00",
-      "wednesday": "09:00-18:00",
-      "thursday": "09:00-18:00",
-      "friday": "09:00-18:00",
+      "monday": "11:00-18:00",
+      "tuesday": "11:00-20:00",
+      "wednesday": "11:00-18:00",
+      "thursday": "11:00-20:00",
+      "friday": "11:00-18:00",
       "saturday": "10:00-13:00"
     },
     "service_hours": null
@@ -775,12 +783,12 @@
     "district": "Charlottenburg-Wilmersdorf",
     "phone": "030 / 9029 17061",
     "email": "stadtbibliothek@charlottenburg-wilmersdorf.de",
-    "website": "https://www.berlin.de/ba-charlottenburg-wilmersdorf/verwaltung/aemter/weiterbildung-und-kultur/bibliotheken/eberhard-alexander-burgh-bibliothek-201477.php",
+    "website": "https://www.berlin.de/ba-charlottenburg-wilmersdorf/verwaltung/aemter/weiterbildung-und-kultur/stadtbibliothek/eberhard-alexander-burgh-bibliothek-201477.php",
     "opening_hours": {
-      "monday": "13:00-17:00",
+      "monday": null,
       "tuesday": "14:00-18:00",
-      "wednesday": null,
-      "thursday": "13:00-17:00",
+      "wednesday": "14:00-18:00",
+      "thursday": "14:00-18:00",
       "friday": "14:00-18:00"
     },
     "service_hours": null
@@ -821,8 +829,8 @@
       "tuesday": "10:00-19:00",
       "wednesday": "10:00-19:00",
       "thursday": "10:00-19:00",
-      "friday": "10:00-17:00",
-      "saturday": "10:00-15:00",
+      "friday": "10:00-19:00",
+      "saturday": "10:00-19:00",
       "sunday": "10:00-19:00"
     },
     "service_hours": null
@@ -847,7 +855,7 @@
     "district": "Steglitz-Zehlendorf",
     "phone": "030 / 90299 5098",
     "email": "fahrbibliothek@ba-sz.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-steglitz-zehlendorf",
+    "website": "https://www.berlin.de/stadtbibliothek-steglitz-zehlendorf/bibliotheken/fahrbibliothek/",
     "opening_hours": {
       "monday": "09:00-18:30",
       "tuesday": "09:00-19:00",
@@ -872,7 +880,7 @@
       "tuesday": "10:00-17:00",
       "wednesday": "13:00-19:00",
       "thursday": "10:00-19:00",
-      "friday": "10:00-17:00",
+      "friday": "10:00-19:00",
       "saturday": "10:00-16:00",
       "sunday": "10:00-16:00"
     },
@@ -906,7 +914,7 @@
     "district": "Steglitz-Zehlendorf",
     "phone": "030 / 90299 2410",
     "email": "info-bibliothek@ba-sz.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-steglitz-zehlendorf",
+    "website": "https://www.berlin.de/stadtbibliothek-steglitz-zehlendorf/bibliotheken/ingeborg-drewitz-bibliothek/",
     "opening_hours": {
       "monday": "11:00-19:00",
       "tuesday": "11:00-19:00",
@@ -943,8 +951,8 @@
       "wednesday": "13:00-18:00",
       "thursday": "10:00-18:00",
       "friday": "10:00-18:00",
-      "saturday": null,
-      "sunday": null
+      "saturday": "09:00-19:00",
+      "sunday": "09:00-19:00"
     },
     "service_hours": null
   },
@@ -957,7 +965,7 @@
     "district": "Spandau",
     "phone": "030 / 90279 8690/8693",
     "email": "bibliothek-haselhorst@ba-spandau.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-spandau/bibliotheken/haselhorst/stadtteilbibliothek-haselhorst-182097.phpn.index.html",
+    "website": "https://www.berlin.de/stadtbibliothek-spandau/bibliotheken/haselhorst/stadtteilbibliothek-haselhorst-182097.php",
     "opening_hours": {
       "monday": "13:00-19:00",
       "tuesday": "13:00-17:00",
@@ -984,7 +992,7 @@
       "thursday": "09:00-18:00",
       "friday": "09:00-18:00",
       "saturday": "09:00-19:00",
-      "sunday": null
+      "sunday": "09:00-19:00"
     },
     "service_hours": null
   },
@@ -1026,7 +1034,7 @@
     "district": "Reinickendorf",
     "phone": "030 / 902945921",
     "email": "Humboldt-Bibliothek@reinickendorf.berlin.de",
-    "website": "https://www.berlin.de/stadtbibliothek-reinickendorf/",
+    "website": "https://www.berlin.de/stadtbibliothek-reinickendorf/bibliotheken/humboldt-bibliothek/artikel.1173280.php",
     "opening_hours": {
       "monday": "11:00-19:00",
       "tuesday": "11:00-19:00",
@@ -1046,7 +1054,7 @@
     "district": "Neukölln",
     "phone": "030 / 627277727",
     "email": "info@museum-neukoelln.de",
-    "website": "http://www.museum-neukoelln.de",
+    "website": "https://schloss-gutshof-britz.de/museum-neukoelln",
     "opening_hours": {
       "monday": "11:00-17:00",
       "tuesday": "11:00-17:00",
@@ -1067,7 +1075,7 @@
     "district": "Spandau",
     "phone": "030 / 90279-5530 oder 3539-4719",
     "email": "fahrbibliothek@ba-spandau.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-spandau/bibliotheken/fahrbibliothek/",
+    "website": "https://www.berlin.de/stadtbibliothek-spandau/bibliotheken/fahrbibliothek/",
     "opening_hours": {
       "monday": "11:30-19:00",
       "tuesday": "11:30-19:00",
@@ -1086,15 +1094,15 @@
     "district": "Spandau",
     "phone": "030 / 90279-5501/5534",
     "email": "bibliothek@ba-spandau.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-spandau/",
+    "website": "https://www.berlin.de/stadtbibliothek-spandau/bibliotheken/bezirkszentralbibliothek/",
     "opening_hours": {
       "monday": "10:00-19:00",
       "tuesday": "10:00-19:00",
       "wednesday": "10:00-19:00",
       "thursday": "10:00-19:00",
       "friday": "10:00-19:00",
-      "saturday": "10:00-15:00",
-      "sunday": null
+      "saturday": "10:00-18:00",
+      "sunday": "10:00-18:00"
     },
     "service_hours": null
   },
@@ -1107,10 +1115,10 @@
     "district": "Reinickendorf",
     "phone": "030 / 902943833",
     "email": "bibliothek-mv@reinickendorf.berlin.de",
-    "website": "https://www.berlin.de/stadtbibliothek-reinickendorf/bibliotheken/bibliothek-im-maerkischen-viertel/artikel.336916.php",
+    "website": "https://www.berlin.de/stadtbibliothek-reinickendorf/bibliotheken/bibliothek-im-maerkischen-viertel/bibliothek-im-maerkischen-viertel-im-fontane-haus-336916.php",
     "opening_hours": {
       "monday": "13:00-19:00",
-      "tuesday": "11:00-17:00",
+      "tuesday": "11:00-19:00",
       "wednesday": "11:00-17:00",
       "thursday": "13:00-19:00",
       "friday": "11:00-17:00"
@@ -1126,9 +1134,9 @@
     "district": "Steglitz-Zehlendorf",
     "phone": "030 / 90299 3870",
     "email": "stb.lankwitz@ba-sz.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-steglitz-zehlendorf",
+    "website": "https://www.berlin.de/stadtbibliothek-steglitz-zehlendorf/bibliotheken/stadtteilbibliothek-lankwitz/",
     "opening_hours": {
-      "monday": "12:00-16:00",
+      "monday": "12:00-18:00",
       "tuesday": null,
       "wednesday": "11:00-16:00",
       "thursday": "12:00-18:00",
@@ -1157,13 +1165,13 @@
     "district": "Neukölln",
     "phone": "030 / 90239 1223",
     "email": "margarete.kubicka@stadtbibliothek-neukoelln.de",
-    "website": "http://www.berlin.de/stadtbibliothek-neukoelln/bibliotheken/margarete-kubicka-bibliothek/",
+    "website": "https://www.berlin.de/stadtbibliothek-neukoelln/bibliotheken/margarete-kubicka-bibliothek/",
     "opening_hours": {
-      "monday": "12:00-18:00",
-      "tuesday": "12:00-18:00",
-      "wednesday": null,
-      "thursday": "10:00-16:00",
-      "friday": "12:00-18:00"
+      "monday": "13:00-18:00",
+      "tuesday": "13:00-18:00",
+      "wednesday": "11:00-16:00",
+      "thursday": "13:00-18:00",
+      "friday": "11:00-16:00"
     },
     "service_hours": null
   },
@@ -1176,7 +1184,7 @@
     "district": "Steglitz-Zehlendorf",
     "phone": "030 / 90299 5458",
     "email": "stb.zehlendorf@ba-sz.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-steglitz-zehlendorf",
+    "website": "https://www.berlin.de/stadtbibliothek-steglitz-zehlendorf/bibliotheken/gottfried-benn-bibliothek/",
     "opening_hours": {
       "monday": "11:00-19:00",
       "tuesday": "11:00-19:00",
@@ -1197,7 +1205,7 @@
     "district": "Spandau",
     "phone": "030 / 60400687",
     "email": "bibliothek@ba-spandau.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-spandau/bibliotheken/falkenhagener-feld/artikel.182168.php",
+    "website": "https://www.berlin.de/stadtbibliothek-spandau/bibliotheken/falkenhagener-feld/artikel.182168.php",
     "opening_hours": {
       "monday": "13:00-19:00",
       "tuesday": "12:00-17:00",
@@ -1217,6 +1225,15 @@
     "phone": "030 / 512 2102",
     "email": "bodo.uhse.bibliothek@lichtenberg.berlin.de",
     "website": "https://www.berlin.de/stadtbibliothek-lichtenberg/standorte/bodo-uhse-bibliothek/",
+    "opening_hours": {
+      "monday": "09:00-19:00",
+      "tuesday": "09:00-19:00",
+      "wednesday": "13:00-19:00",
+      "thursday": "09:00-18:00",
+      "friday": "09:00-18:00",
+      "saturday": "09:00-19:00",
+      "sunday": "09:00-19:00"
+    },
     "service_hours": null
   },
   {
@@ -1235,7 +1252,7 @@
       "wednesday": "13:00-19:00",
       "thursday": "09:00-18:00",
       "friday": "09:00-18:00",
-      "saturday": null
+      "saturday": "09:00-19:00"
     },
     "service_hours": null
   },
@@ -1268,7 +1285,7 @@
     "lon": 13.4627589,
     "district": "Neukölln",
     "email": "gemeinschaftshaus@stadtbibliothek-neukoelln.de",
-    "website": "http://www.berlin.de/stadtbibliothek-neukoelln/bibliotheken/gertrud-junge-bibliothek/",
+    "website": "https://www.berlin.de/stadtbibliothek-neukoelln/bibliotheken/gertrud-junge-bibliothek/",
     "opening_hours": {
       "monday": "11:00-15:00",
       "tuesday": "13:00-19:00",
@@ -1287,7 +1304,7 @@
     "district": "Tempelhof-Schöneberg",
     "phone": "030 / 90277 - 4144 / 4138",
     "email": "stabi-ks@ba-ts.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-tempelhof-schoeneberg/bibliotheken/stadtteilbibliothek-marienfelde/",
+    "website": "https://www.berlin.de/stadtbibliothek-tempelhof-schoeneberg/bibliothek-marienfelde/",
     "opening_hours": {
       "monday": "10:00-15:00",
       "tuesday": "12:00-18:00",
@@ -1308,7 +1325,7 @@
     "district": "Marzahn-Hellersdorf",
     "phone": "030 / 542 9251",
     "email": "bibl.service@ba-mh.berlin.de",
-    "website": "https://www.berlin.de/bibliotheken-mh/bibliotheken/stadtteilbibliothek-erich-weinert/",
+    "website": "https://www.berlin.de/bibliotheken-mh/bibliotheken/erich-weinert-bibliothek/",
     "opening_hours": {
       "monday": "11:00-18:00",
       "tuesday": "11:00-18:00",
@@ -1327,7 +1344,7 @@
     "district": "Marzahn-Hellersdorf",
     "phone": "030 / 54704-144",
     "email": "bibl.service@ba-mh.berlin.de",
-    "website": "https://www.berlin.de/bibliotheken-mh/bibliotheken/bezirkszentralbibliothek-mark-twain/",
+    "website": "https://www.berlin.de/bibliotheken-mh/bibliotheken/mark-twain-bibliothek/",
     "opening_hours": {
       "monday": "10:00-19:30",
       "tuesday": "10:00-19:30",
@@ -1367,7 +1384,7 @@
     "district": "Reinickendorf",
     "phone": "030 / 902945968",
     "email": "bibliothek-frohnau@reinickendorf.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-reinickendorf/bibliotheken/stadtteilbibliothek-frohnau/artikel.336740.php",
+    "website": "https://www.berlin.de/stadtbibliothek-reinickendorf/bibliotheken/stadtteilbibliothek-frohnau/artikel.336740.php",
     "opening_hours": {
       "monday": "13:00-19:00",
       "tuesday": "13:00-17:00",
@@ -1386,7 +1403,7 @@
     "district": "Neukölln",
     "phone": "030 / 90239-1940",
     "email": "rudow@stadtbibliothek-neukoelln.de",
-    "website": "http://www.berlin.de/stadtbibliothek-neukoelln/bibliotheken/gertrud-hass-bibliothek/",
+    "website": "https://www.berlin.de/stadtbibliothek-neukoelln/bibliotheken/gertrud-hass-bibliothek/",
     "opening_hours": {
       "monday": "11:00-18:00",
       "tuesday": "11:00-18:00",
@@ -1405,7 +1422,7 @@
     "district": "Spandau",
     "phone": "030 / 3631091",
     "email": "bibliothek-heerstrasse@ba-spandau.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-spandau/bibliotheken/heerstrasse/stadtteilbibliothek-heerstrasse-182099.php",
+    "website": "https://www.berlin.de/stadtbibliothek-spandau/bibliotheken/heerstrasse/stadtteilbibliothek-heerstrasse-182099.php",
     "opening_hours": {
       "monday": "12:00-19:00",
       "tuesday": "12:00-17:00",
@@ -1424,7 +1441,7 @@
     "district": "Tempelhof-Schöneberg",
     "phone": "030 / 90277 8286",
     "email": "stabi-ks@ba-ts.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-tempelhof-schoeneberg/bibliotheken/stadtteilbibliothek-lichtenrade/",
+    "website": "https://www.berlin.de/stadtbibliothek-tempelhof-schoeneberg/bibliothek-lichtenrade/",
     "opening_hours": {
       "monday": "11:00-18:00",
       "tuesday": "11:00-18:00",
@@ -1462,7 +1479,7 @@
     "district": "Marzahn-Hellersdorf",
     "phone": "030 / 99 895 26",
     "email": "bibl.service@ba-mh.berlin.de",
-    "website": "https://www.berlin.de/bibliotheken-mh/bibliotheken/mittelpunktbibliothek-ehm-welk/",
+    "website": "https://www.berlin.de/bibliotheken-mh/bibliotheken/ehm-welk-bibliothek/",
     "opening_hours": {
       "monday": "13:00-19:00",
       "tuesday": "13:00-19:00",
@@ -1502,7 +1519,7 @@
     "district": "Marzahn-Hellersdorf",
     "phone": "030 / 567 6866",
     "email": "bibl.service@ba-mh.berlin.de",
-    "website": "https://www.berlin.de/bibliotheken-mh/bibliotheken/stadtteilbibliothek-mahlsdorf/",
+    "website": "https://www.berlin.de/bibliotheken-mh/bibliotheken/bibliothek-mahlsdorf/",
     "opening_hours": {
       "monday": "13:00-17:00",
       "tuesday": "13:00-19:00",
@@ -1521,7 +1538,7 @@
     "district": "Marzahn-Hellersdorf",
     "phone": "030 / 933 9380",
     "email": "bibl.service@ba-mh.berlin.de",
-    "website": "https://www.berlin.de/bibliotheken-mh/bibliotheken/stadtteilbibliothek-heinrich-von-kleist/",
+    "website": "https://www.berlin.de/bibliotheken-mh/bibliotheken/heinrich-von-kleist-bibliothek/",
     "opening_hours": {
       "monday": "13:00-18:00",
       "tuesday": "13:00-18:00",
@@ -1540,7 +1557,7 @@
     "district": "Treptow-Köpenick",
     "phone": "030 / 902973418",
     "email": "stadtbibliothek-altermarktkoepenick@ba-tk.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-treptow-koepenick/bibliotheken/mittelpunktbibliothek-koepenick/",
+    "website": "https://www.berlin.de/stadtbibliothek-treptow-koepenick/bibliotheken/mittelpunktbibliothek-koepenick/",
     "opening_hours": {
       "monday": "10:00-19:00",
       "tuesday": "10:00-19:00",
@@ -1632,7 +1649,7 @@
     "district": "Marzahn-Hellersdorf",
     "phone": "030 / 563 6705",
     "email": "bibl.service@ba-mh.berlin.de",
-    "website": "https://www.berlin.de/bibliotheken-mh/bibliotheken/stadtteilbibliothek-kaulsdorf-nord/",
+    "website": "https://www.berlin.de/bibliotheken-mh/bibliotheken/bibliothek-kaulsdorf/",
     "opening_hours": {
       "monday": "12:00-19:00",
       "tuesday": "12:00-19:00",
@@ -1651,7 +1668,7 @@
     "district": "Spandau",
     "phone": "030 / 81615889",
     "email": "bibliothek-kladow@ba-spandau.berlin.de",
-    "website": "http://www.berlin.de/stadtbibliothek-spandau/bibliotheken/kladow/stadtteilbibliothek-kladow-182136.php",
+    "website": "https://www.berlin.de/stadtbibliothek-spandau/bibliotheken/kladow/stadtteilbibliothek-kladow-182136.php",
     "opening_hours": {
       "monday": "13:00-19:00",
       "tuesday": "13:00-17:00",

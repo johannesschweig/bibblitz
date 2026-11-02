@@ -28,7 +28,7 @@ Lead with the user problem and who is affected (Johannes works in B2B/UX: proble
 Verify before you claim. The TODO's cause is a hypothesis; a diagnosis in an earlier review was wrong (P1 first read as "false empty", it was failed fetches), so reproduce or measure it.
 
 - Read the code paths involved. Reproduce in the browser pane on the dev server (`preview_start` `dev`, port 3210) or with a script in the session scratchpad. VÖBB is flaky under parallel requests, so measure sequentially and repeat.
-- For usage questions load the data with the `umami-review` skill, or the raw journeys (`npm run umami -- --from <date> --out <dir outside data/umami>`).
+- For usage questions run `npm run umami` and read `data/umami/latest/digest.json`, or the raw journeys (`npm run umami -- --from <date> --out <dir outside data/umami>`).
 - Correct the TODO text in your report where the investigation disagrees with it, and say so plainly.
 - Stay read-only here: no edits to app code, and do not start the build.
 
