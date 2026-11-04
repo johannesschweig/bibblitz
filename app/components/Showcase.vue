@@ -8,7 +8,7 @@ import MediaItem from '~/components/MediaItem.vue'
 const showcase = {
   ids: [
     '34112359',
-    '01392424',
+    '01354361',
     '07235286'
   ]
 }
