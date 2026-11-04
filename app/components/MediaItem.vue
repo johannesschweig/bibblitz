@@ -4,6 +4,7 @@ import CoverImage from '~/components/CoverImage.vue'
 import MediaTitle from '~/components/MediaTitle.vue'
 import { useItemCacheStore } from '~/stores/itemCacheStore'
 import { getMediaTypeConfig } from '../../utils/mediaTypeMapping'
+import { coverIdFor } from '../../utils/cover'
 
 const props = defineProps<{
   mediaId: string
@@ -13,13 +14,15 @@ const itemCacheStore = useItemCacheStore()
 
 const item = computed(() => itemCacheStore.items[props.mediaId])
 const config = computed(() => getMediaTypeConfig(item.value?.mediaType ?? ''))
+// A search row has the cover id; a row that was only loaded through the detail route (showcase) has the ISBN
+const coverId = computed(() => item.value ? coverIdFor(item.value) : undefined)
 </script>
 
 <template>
   <li class="group bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md hover:border-gray-300 transition-all">
     <div class="p-2 md:p-3">
       <NuxtLink :to="`/media/${props.mediaId}`" class="flex gap-3 min-w-0">
-        <CoverImage :cover-id="item?.coverId" :media-type="item?.mediaType ?? ''" size="s" class="w-14 h-20 md:w-16 md:h-24" />
+        <CoverImage :cover-id="coverId":media-type="item?.mediaType ?? ''" size="s" class="w-14 h-20 md:w-16 md:h-24" />
         <div class="flex flex-col min-w-0 flex-1">
           <p class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">
             <Icon :name="config.icon" class="size-3.5" />{{ config.label }}

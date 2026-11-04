@@ -119,6 +119,24 @@ describe('Result row', () => {
     expect(wrapper.find('img[data-testid="cover-image"]').attributes('src')).toBe('/api/cover/9783257056082?size=s')
   })
 
+  it('finds the cover through the ISBN when the row only has the detail data (showcase on the home page)', async () => {
+    useItemCacheStore().setBasicData({ id: '4', title: 'Dune', mediaType: 'Buch', isbn: '978-3-257-05608-2', availability: [] })
+
+    const wrapper = await mountSuspended(MediaItem, { props: { mediaId: '4' } })
+
+    expect(wrapper.find('img[data-testid="cover-image"]').attributes('src')).toBe('/api/cover/9783257056082?size=s')
+  })
+
+  it('shows a cover once the details of a showcase row arrive', async () => {
+    const wrapper = await mountSuspended(MediaItem, { props: { mediaId: '5' } })
+    expect(wrapper.find('img[data-testid="cover-image"]').exists()).toBe(false)
+
+    useItemCacheStore().items['5'] = { id: '5', title: 'Dune', mediaType: 'Buch', isbn: '978-3-257-05608-2', availability: [] }
+    await flushPromises()
+
+    expect(wrapper.find('img[data-testid="cover-image"]').attributes('src')).toBe('/api/cover/9783257056082?size=s')
+  })
+
   it('shows the tile for a result without a cover', async () => {
     useItemCacheStore().setBasicData({ id: '2', title: 'Tatort', mediaType: 'DVD' })
 
