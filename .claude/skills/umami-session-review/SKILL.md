@@ -11,7 +11,7 @@ Review history and the cutoff live in `scripts/umami/review-state.json` (`review
 
 ## 1. Prepare
 
-1. Read `TODO.md` completely: the scoring legend (reach, severity, effort, score), the table, the detail blocks, `# DONE` and `# DROPPED`. You need it to recognise known problems and to write new items in the same format.
+1. Read `TODO.md` completely: the three lanes under `# Priorities` (Trust, Friction, Bets) with their legends, the detail blocks, `# DONE` and `# DROPPED`. You need it to recognise known problems and to write new items in the same format.
 2. Read `scripts/umami/review-state.json`. Tell the user the window you will review ("after 29.10. 08:24Z, review 4").
 3. Read the "Feature inventory" in `docs/analytics.md` so you know what each event means and when it was introduced (an event that does not exist in the window cannot show anything).
 
@@ -75,8 +75,8 @@ Edit `TODO.md` in the format it already uses. Match the style of the neighbourin
 - **Known problem seen again**: add to the existing item's `evidence:` (pool the counts, say which review), correct reach if the picture changed, update `status:`. Do not create a duplicate. If a problem from `# DONE` or `# DROPPED` came back, say so in the item and in your report. Decisions marked as final stay final (for example the logo clears the results on purpose, P3).
 - **New UX problem** (something visitors hit): next free `P<n>` under `## Problems`, with the labels that apply: `evidence:` (counts as "n of N visits", example queries or record IDs, review number and date), `cause:` (mark hypotheses), `repro:`, `plan:` / `ideas:`, `effort:` (why this size, the risk), `open:`, `status:`.
 - **New idea or observation without a hit in the data**: next free `I<n>` under `# Contemplating / Ideas`.
-- **Table row** for every new or changed item: reach (share of visits in the review window, `*` if unobserved), severity (1 convenience, 2 dead end or wasted effort, 3 wrong information), effort (S/M/L), score = reach x severity / effort with S=1, M=2, L=4. Re-sort the table by score, keep a confirmed severity-3 bug on top, keep the "Scored on" line current (date and which reviews), and re-score existing rows whose counts changed.
-- Keep ids unique. (Check with `grep -o '^| [PI][0-9]*' TODO.md | sort | uniq -d`; two rows currently share I16.)
+- **Table row** for every new or changed item, in the lane it belongs to. Wrong or stale information (a confirmed bug, a record the scraper gets wrong, data that went out of date) is **Trust**: no score, give it a `decay:` line (how we notice it rotting again) and place it by judgement. Something visitors hit but that shows no wrong information is **Friction**: raw reach ("n of N visits") and tier (3 = 5% or more of visits, 2 = 2-4%, 1 = below or no data), severity (1 convenience, 2 dead end or wasted effort), build (1 = one session of about 1 h, 2 = a few sessions, 4 = more than a day or a decision first), carry (`-`, `watch`, `chore`), score = tier x severity / build; re-score the existing Friction rows whose counts changed and re-sort. An idea without a hit in the data is a **Bet**: no score, evidence/source, build, carry. Never promote a Bet on your own: only say in the report that session data now supports it, and move it to Friction if it does. Keep the sample sizes in the Friction legend current.
+- Keep ids unique. (Check with `grep -o '^| [PI][0-9]*' TODO.md | sort | uniq -d`.)
 - No visitor identifiers in TODO.md: no session or visit ids, no ZIPs, no IP data. Short quoted search terms as examples are fine (past reviews did this); do not paste lists of queries.
 - Do not touch `# DONE` for review findings, do not change code, `libraries.json`, or tracking.
 
@@ -87,10 +87,10 @@ Edit `TODO.md` in the format it already uses. Match the style of the neighbourin
 3. Do not commit unless the user asks (commit rules in `CLAUDE.md`: one short lowercase subject line).
 4. Report in chat, plain and short:
    - window, number of visits and searches, anything unusual about the traffic
-   - **new problems** (id, one-line user problem, reach, severity, effort, score, verified / unverified)
+   - **new problems** (id, lane, one-line user problem, reach, severity, build, score for Friction, verified / unverified)
    - **known problems** with changed numbers, **fixes that worked**, and what you looked for but did not find
    - what you could not check and why
-   - the top of the queue after re-scoring, and a pointer to `next-todo` for working on it
+   - the top of the Trust lane, the active bet and the top of Friction after re-scoring, and a pointer to `next-todo` for working on it
    - if the sample is small (single-digit counts), say so: one visit is a hint, not evidence
 
 ## Don'ts
