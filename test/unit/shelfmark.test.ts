@@ -36,6 +36,17 @@ describe('parseAccess', () => {
     expect(parseAccess(undefined)).toBeUndefined()
   })
 
+  it('detects the Außenmagazin variant', () => {
+    expect(parseAccess('4 Wochen - Außenmagazin, bestellbar')).toBe('order-only')
+  })
+
+  it('does not read "nicht bestellbar" or "Bestellbar ohne Transport" as a Magazin copy, real cells of SAK34806868 and SAK34887579', () => {
+    expect(parseAccess('Tagesausleihe - nicht bestellbar')).toBeUndefined()
+    expect(parseAccess('4 Wochen / Nicht bestellbar - Keine Bestellung möglich')).toBeUndefined()
+    expect(parseAccess('4 Wochen / Bestellbar ohne Transport / Max. 20 Ausleihen - Vormerkung möglich')).toBeUndefined()
+    expect(parseAccess('4 Wochen / Bestellbar ohne Transport / Max. 20 Ausleihen - Vormerkung möglich - 2x')).toBeUndefined()
+  })
+
   it('lets the reading room win over order-only', () => {
     expect(parseAccess('Nur Lesesaal - Magazin, bestellbar, nur Lesesaal')).toBe('reading-room')
   })

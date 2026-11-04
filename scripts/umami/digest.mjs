@@ -16,7 +16,6 @@ export const FEATURES = {
   'filter-media-type': 'Filter page: a media type was applied',
   'filter-reset': 'Filter page: reset',
   'search-next-page': 'Pagination',
-  'search-load-more': 'Pagination (old event name)',
   'zip-save': 'ZIP entry',
   'showcase-click': 'Showcase',
   'toggle-faq': 'FAQ accordion',

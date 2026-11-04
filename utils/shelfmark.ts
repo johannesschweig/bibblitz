@@ -17,12 +17,14 @@ export function parseShelfmark(standort: string | undefined): string | undefined
 /**
  * Reads the restriction from a Bestellmöglichkeit cell: "Nur Lesesaal - Magazin, nur Lesesaal" or
  * "2 Wochen - Magazin, bestellbar". Ordinary cells ("4 Wochen - Bestellwunsch möglich",
- * "4 Wochen - Vormerkung möglich", "4 Wochen - Keine Bestellung möglich") have none.
+ * "4 Wochen - Vormerkung möglich", "4 Wochen - Keine Bestellung möglich") have none, and neither do
+ * "Tagesausleihe - nicht bestellbar" (day loan at the desk) or "4 Wochen / Bestellbar ohne Transport / ..."
+ * (reservable at the owning branch): "bestellbar" only means a Magazin copy after a comma ("Magazin, bestellbar").
  */
 export function parseAccess(orderCell: string | undefined): CopyAccess | undefined {
   if (!orderCell) return undefined;
   if (/lesesaal/i.test(orderCell)) return 'reading-room';
-  if (/\bbestellbar\b/i.test(orderCell)) return 'order-only';
+  if (/,\s*bestellbar\b/i.test(orderCell)) return 'order-only';
   return undefined;
 }
 
