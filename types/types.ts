@@ -19,6 +19,8 @@ export interface MediaItem {
   year?: string;
   platform?: string;
   isbn?: string;
+  // ISBN-13/EAN of the cover VÖBB shows in the result row (see utils/cover.ts)
+  coverId?: string;
   // "Sprache" from the detail page
   languages?: string[];
   mediaType: string;

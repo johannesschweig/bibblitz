@@ -10,6 +10,7 @@ import { isMaintenancePage, parseMaintenanceUntil } from '../../utils/maintenanc
 import { parseFilterParam, parseMediaTypeParam } from '../../utils/filters';
 import { LANGUAGE_OPTIONS, MEDIA_TYPE_OPTIONS } from '../../utils/filterOptions';
 import { parseFacet, isFilterActive, resolveFilterIds } from '../utils/facets';
+import { coverIdOfRow } from '../utils/cover';
 
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36';
 
@@ -64,7 +65,8 @@ function parseResultsPage($: cheerio.CheerioAPI, responseUrl: string) {
       platform,
       author: cleanAuthor(clean(rowContainer.find('.rList_name').text())),
       year: parseYear(rowContainer.find('.rList_jahr').text()),
-      mediaType
+      mediaType,
+      coverId: coverIdOfRow(rowContainer)
     });
   });
 

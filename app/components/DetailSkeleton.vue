@@ -1,17 +1,25 @@
+<script setup lang="ts">
+// `cover`: reserve the cover slot of the header (off when the search row already showed there is no cover)
+withDefaults(defineProps<{ cover?: boolean }>(), { cover: true })
+</script>
+
 <template>
   <!-- Same boxes as pages/media/[id].vue (header, ZIP row, branch list). Keep both in sync when the page changes. -->
   <div class="animate-pulse" aria-hidden="true">
-    <header class="mb-10">
-      <div class="h-4 mb-2 flex items-center"><div class="h-3 w-1/4 rounded bg-gray-100"></div></div>
-      <!-- Title plus stacked subtitle, which most records have (73 px mobile, 86 px from md) -->
-      <div class="h-[73px] md:h-[86px] flex flex-col justify-center gap-3">
-        <div class="h-8 md:h-9 w-3/4 rounded bg-gray-200"></div>
-        <div class="h-5 md:h-6 w-1/2 rounded bg-gray-100"></div>
+    <header class="mb-10 flex items-start gap-4 md:gap-6">
+      <div v-if="cover" data-testid="skeleton-cover" class="shrink-0 w-20 h-30 sm:w-28 sm:h-42 md:w-32 md:h-48 rounded bg-gray-100"></div>
+      <div class="min-w-0 flex-1">
+        <div class="h-4 mb-2 flex items-center"><div class="h-3 w-1/4 rounded bg-gray-100"></div></div>
+        <!-- Title plus stacked subtitle, which most records have (73 px mobile, 86 px from md) -->
+        <div class="h-[73px] md:h-[86px] flex flex-col justify-center gap-3">
+          <div class="h-8 md:h-9 w-3/4 rounded bg-gray-200"></div>
+          <div class="h-5 md:h-6 w-1/2 rounded bg-gray-100"></div>
+        </div>
+        <div class="h-7 mt-3 flex items-center"><div class="h-5 w-1/3 rounded bg-gray-100"></div></div>
+        <div class="h-5 mt-2 flex items-center"><div class="h-3.5 w-1/4 rounded bg-gray-100"></div></div>
+        <div class="h-5 mt-1 flex items-center"><div class="h-3.5 w-1/3 rounded bg-gray-100"></div></div>
+        <div class="h-[42px] w-24 rounded-xl bg-gray-200 mt-6"></div>
       </div>
-      <div class="h-7 mt-3 flex items-center"><div class="h-5 w-1/3 rounded bg-gray-100"></div></div>
-      <div class="h-5 mt-2 flex items-center"><div class="h-3.5 w-1/4 rounded bg-gray-100"></div></div>
-      <div class="h-5 mt-1 flex items-center"><div class="h-3.5 w-1/3 rounded bg-gray-100"></div></div>
-      <div class="h-[42px] w-24 rounded-xl bg-gray-200 mt-6"></div>
     </header>
 
     <div class="h-7 mb-4 flex items-center"><div class="h-6 w-28 rounded bg-gray-200"></div></div>

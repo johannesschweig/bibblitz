@@ -47,6 +47,7 @@ export const useMediaStore = defineStore('media', {
             author: item.author,
             year: item.year,
             platform: item.platform,
+            coverId: item.coverId,
             mediaType: item.mediaType || 'Unbekannt',
           });
         });
@@ -80,6 +81,7 @@ export const useMediaStore = defineStore('media', {
               author: item.author,
               year: item.year,
               platform: item.platform,
+              coverId: item.coverId,
               mediaType: item.mediaType || 'Unbekannt',
             });
           });

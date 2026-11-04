@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AvailabilityBadge from '~/components/AvailabilityBadge.vue'
+import CoverImage from '~/components/CoverImage.vue'
 import MediaTitle from '~/components/MediaTitle.vue'
 import { useItemCacheStore } from '~/stores/itemCacheStore'
 import { getMediaTypeConfig } from '../../utils/mediaTypeMapping'
@@ -17,8 +18,9 @@ const config = computed(() => getMediaTypeConfig(item.value?.mediaType ?? ''))
 <template>
   <li class="group bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md hover:border-gray-300 transition-all">
     <div class="p-2 md:p-3">
-      <NuxtLink :to="`/media/${props.mediaId}`" class="block min-w-0">
-        <div class="flex flex-col min-w-0">
+      <NuxtLink :to="`/media/${props.mediaId}`" class="flex gap-3 min-w-0">
+        <CoverImage :cover-id="item?.coverId" :media-type="item?.mediaType ?? ''" size="s" class="w-14 h-20 md:w-16 md:h-24" />
+        <div class="flex flex-col min-w-0 flex-1">
           <p class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">
             <Icon :name="config.icon" class="size-3.5" />{{ config.label }}
           </p>

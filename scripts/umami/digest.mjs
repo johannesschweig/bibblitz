@@ -23,6 +23,7 @@ export const FEATURES = {
   'branches-expand': 'Expand far branches',
   'voebb-click': 'VÖBB link (closest to a conversion)',
   'isbn-click': 'ISBN click',
+  'cover-click': 'Cover click on the detail page (enlarge wish?)',
   'back-click': 'Navbar "Zurück" (from, had_history: 0 = direct landing, fell back)',
   'logo-click': 'Logo click, clears the results (from, had_results)',
   'author-click': 'Author click',

@@ -12,6 +12,8 @@ import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import ZipCode from '~/components/ZipCode.vue'
 import StatusPill from '~/components/StatusPill.vue'
 import MediaTitle from '~/components/MediaTitle.vue'
+import CoverImage from '~/components/CoverImage.vue'
+import { coverIdFor } from '../../../utils/cover'
 import { getMediaTypeConfig } from '../../../utils/mediaTypeMapping'
 import { splitSubtitle } from '../../../utils/catalogText'
 import { formatLanguageLine } from '../../../utils/language'
@@ -25,9 +27,23 @@ const voebbStatus = useVoebbStatusStore()
 const showAllBranches = ref(false)
 
 const { data, pending, error, refresh } = useAsyncData(`detail-${mediaId}`, async () => {
+  // A record from the search already has its cover id: start loading the cover now instead of after
+  // the slow detail scrape. A direct visit only learns the ISBN from the scrape.
+  const rowCoverId = itemCacheStore.items[mediaId]?.coverId
+  const early = rowCoverId ? coverAvailable(rowCoverId, 'm') : undefined
   const details = await itemCacheStore.fetchDetails(mediaId)
   if (!details) throw new Error('Details konnten nicht geladen werden')
-  return { success: true, data: details }
+  // Settled before the header renders, so a missing cover does not make the text jump afterwards
+  const coverId = coverIdFor(details)
+  const hasCover = await (early && coverId === rowCoverId ? early : coverAvailable(coverId, 'm'))
+  return { success: true, data: details, hasCover }
+})
+
+// Whether the skeleton should reserve the cover slot: unless the cached record already says there is
+// nothing to look up (no cover id, no ISBN). A direct visit has no record yet, and most are books.
+const coverExpected = computed(() => {
+  const known = itemCacheStore.items[mediaId]
+  return known ? !!coverIdFor(known) : true
 })
 
 const displayedBranches = computed(() => {
@@ -101,6 +117,9 @@ const metaLine = computed(() => {
   return [type, item.platform, item.year].filter(Boolean).join(' · ')
 })
 
+// The search row's cover id, or the ISBN when the page was opened directly
+const coverId = computed(() => data.value?.data && data.value.hasCover ? coverIdFor(data.value.data) : undefined)
+
 // "Deutsch · Englisch"
 const languageLine = computed(() => formatLanguageLine(data.value?.data?.languages))
 
@@ -132,6 +151,11 @@ function isbnClicked() {
   track('isbn-click')
 }
 
+// Measures whether people click the (not clickable) cover, i.e. whether they want to enlarge it
+function coverClicked() {
+  track('cover-click')
+}
+
 function authorClicked() {
   track('author-click', { query: data.value?.data.author ?? '' })
 }
@@ -142,7 +166,7 @@ function authorClicked() {
     <!-- Loading state -->
     <div v-if="pending">
       <p role="status" class="sr-only">Suche Medien-Details …</p>
-      <DetailSkeleton />
+      <DetailSkeleton :cover="coverExpected" />
     </div>
 
     <!-- Direct visit during maintenance: there is no title to show, the banner above explains why -->
@@ -159,8 +183,10 @@ function authorClicked() {
 
     <!-- Data display -->
     <div v-else-if="data?.data">
-      <!-- Title & metadata: text only, no icon -->
-      <header class="mb-10">
+      <!-- Cover beside the title & metadata -->
+      <header class="mb-10 flex items-start gap-4 md:gap-6">
+        <CoverImage :cover-id="coverId" :media-type="data.data.mediaType" size="m" :fallback="false" @click="coverClicked()" class="w-20 h-30 sm:w-28 sm:h-42 md:w-32 md:h-48" />
+        <div class="min-w-0 flex-1">
         <p v-if="metaLine" class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">{{ metaLine }}</p>
         <h1 class="text-3xl md:text-4xl font-bold leading-tight tracking-tight text-gray-900 text-pretty break-words">
           <MediaTitle :title="data.data.title" stacked />
@@ -173,6 +199,7 @@ function authorClicked() {
           VÖBB
           <Icon name="lucide:arrow-up-right" class="size-4" />
         </a>
+        </div>
       </header>
 
       <!-- Availability list -->
