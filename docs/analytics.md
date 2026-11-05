@@ -8,6 +8,8 @@ Pipeline scripts and the feature inventory with usage numbers. Read it for `/uma
 
 `npm run umami:journeys -- --out <dir outside data/umami>` (`scripts/umami/journeys.mjs`) exports the visits after `reviewedUntil` in `scripts/umami/review-state.json` as readable journeys with flags (one API call per custom event for its properties). The `/umami-session-review` skill uses it: it reads the unreviewed journeys, verifies suspected UX problems on localhost, adds them to the `TODO.md` problem table and moves `reviewedUntil` forward.
 
+`npm run umami:campaigns` (`scripts/umami/campaigns.mjs`, registry `scripts/umami/campaigns.json`) builds the marketing report `docs/campaigns.md` from the `?ref=` tag on the entry page; see the `campaign-report` skill.
+
 ## Feature inventory & usage (Umami)
 
 Umami snapshot taken 09.10.2026 (dashboard "bibblitz", range "Last 90 days" = 11.07.–09.10.2026; `date=all` and custom `date=a:b` ranges crash Umami's UI, use `date=90day`). Overall: 373 visitors, 432 visits, 1.65k views, bounce 53%. Of these only 159 visitors fired at least one custom event (843 events). Re-check around **06.11.2026** and decide which features/events to keep or kill.

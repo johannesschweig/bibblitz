@@ -1,0 +1,46 @@
+{
+  "_comment": "Registry for scripts/umami/campaigns.mjs. Key = the value of ?ref= (lowercase). Fill in since/cost/note when you launch a campaign; label and channel are shown in docs/campaigns.md. Typos in links go into aliases. ignore = refs of test links or dropped campaigns, dropped from every number.",
+  "campaigns": {
+    "reddit": {
+      "label": "Reddit",
+      "channel": "social",
+      "since": "2026-07-01",
+      "note": "posts on 01.07. and 01.11."
+    },
+    "weddingweiser": {
+      "label": "Weddingweiser blog",
+      "channel": "blog",
+      "since": "2026-10-27",
+      "note": "guest article on weddingweiser.de 27.10.; Instagram and Facebook posts by Weddingweiser about 29.10."
+    },
+    "nebenan": {
+      "label": "Nebenan.de",
+      "channel": "community",
+      "since": "2026-07-07",
+      "note": "first post 07.07.; update post 'BibBlitz: Update nach zwei Monaten' 23.09. (19 replies, discussion 27.-28.10.)"
+    },
+    "sticker": {
+      "label": "Sticker",
+      "channel": "offline"
+    },
+    "slack": {
+      "label": "Slack",
+      "channel": "messenger"
+    },
+    "loky": {
+      "label": "loky.news",
+      "channel": "newsletter",
+      "since": "2026-11-05",
+      "note": "pitch mailed to redaktion@loky.news 05.11.; no mention confirmed yet"
+    }
+  },
+  "aliases": {
+    "nebenana": "nebenan"
+  },
+  "ignore": [
+    "test",
+    "flyer",
+    "oneltr",
+    "facebook"
+  ]
+}

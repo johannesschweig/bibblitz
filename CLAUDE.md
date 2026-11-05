@@ -49,6 +49,7 @@ Details that only matter for one kind of work live in `docs/`. Read the file fir
 - Contrast rules in detail, how to run the audit and which states to cover → `docs/accessibility.md`
 - Open design items (tokens, flat list style, covers, wordmark) → `docs/design-backlog.md`
 - `libraries.json` (hours, service hours, website links), `npm run libraries:check`, the plan for a monthly Pi job → `docs/library-data.md`
+- Marketing campaigns (`?ref=` links), report `npm run umami:campaigns`, refresh with the `campaign-report` skill → `docs/campaigns.md`
 - Umami pipeline, feature inventory, usage numbers, keep/kill decisions, adding a tracking event → `docs/analytics.md`
 
 ## Accessibility: text contrast
