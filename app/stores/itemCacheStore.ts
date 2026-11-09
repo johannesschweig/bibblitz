@@ -67,12 +67,14 @@ export const useItemCacheStore = defineStore('itemCache', {
             useVoebbStatusStore().report(response.until);
           } else if (response.success && response.data) {
             useVoebbStatusStore().clear();
-            // Merge the data into the cache. The search result's author and year win: the detail
-            // page only knows the author from the title and has no year.
+            // Merge the data into the cache. The search result's title, author and year win: the
+            // detail page only knows the author from the title and has no year, and a title that
+            // changes under the user's eyes looks like a bug.
             const known = this.items[id]
             this.items[id] = {
               ...known,
               ...response.data,
+              title: known?.title ?? response.data.title,
               author: known?.author ?? response.data.author,
               year: known?.year ?? response.data.year,
               platform: known?.platform ?? response.data.platform

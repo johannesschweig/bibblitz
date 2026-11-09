@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { cleanTitle, splitSubtitle, cleanAuthor, cleanContributors, parseYear } from '../../utils/catalogText'
+import { cleanTitle, cleanPartTitle, splitSubtitle, cleanAuthor, cleanContributors, parseYear } from '../../utils/catalogText'
 
 // All strings below are real VÖBB records (scraped 12.10.2026)
 
@@ -57,6 +57,43 @@ describe('cleanTitle', () => {
 
   it('does not cut at a slash for search titles', () => {
     expect(cleanTitle('Tag / Nacht').title).toBe('Tag / Nacht')
+  })
+})
+
+describe('cleanPartTitle', () => {
+  // Parts of a multi-part work (scraped 09.11.2026): main title, "Gesamtwerk" row, "Band" row
+  it('builds "Gesamtwerk - Band. Titel" like the result row', () => {
+    expect(cleanPartTitle('Die komplette sechste Staffel', 'Game of thrones : [DVD-Video] / Alan Taylor [Regie] ; George R. R. Martin [Drehbuch]', '6. Staffel, Episoden 1-10').title)
+      .toBe('Game of thrones - 6. Staffel, Episoden 1-10. Die komplette sechste Staffel')
+    expect(cleanPartTitle('Harry Potter und der Feuerkelch', 'Harry Potter - Complete collection : [DVD-Video] / J. K. Rowling Textverfasser/in', 'Jahr 4').title)
+      .toBe('Harry Potter - Complete collection - Jahr 4. Harry Potter und der Feuerkelch')
+    expect(cleanPartTitle('Asterix legionarius', 'Asterix : [Comic] / composuit et pinxit Uderzo', '[13]').title)
+      .toBe('Asterix : Comic - 13. Asterix legionarius')
+  })
+
+  it('leaves out a uniform title in front of the work', () => {
+    // Der Herr der Ringe 03324957
+    expect(cleanPartTitle('Der Herr der Ringe: Die Gefährten : [DVD Video] / Regie: Peter Jackson', '[Tolkien, J. R. R. <1892-1973>. ¬The¬ lord of the rings] Der Herr der Ringe : [DVD-Video] / Peter Jackson [Regie].', '1').title)
+      .toBe('Der Herr der Ringe - 1. Der Herr der Ringe: Die Gefährten')
+  })
+
+  it('uses the whole work when the part has no title of its own', () => {
+    // Monk 07196338: only a format note
+    expect(cleanPartTitle(': [DVD Video]', 'Monk. Staffel 2 : [DVD Video] / Tony Shalhoub [Darst.]', 'Disc 1'))
+      .toMatchObject({ title: 'Monk. Staffel 2 - Disc 1', responsibility: 'Tony Shalhoub [Darst.]' })
+    // Downton Abbey 34210124: empty main title
+    expect(cleanPartTitle('', 'Downton Abbey : [DVD-Video] / Julian Fellowes [Vorl.]. Hugh Bonneville [Darst.]', '1. Staffel').title)
+      .toBe('Downton Abbey - 1. Staffel')
+  })
+
+  it('takes the responsibility from the part first, then from the work', () => {
+    // Der deutsche Film 15455542 has no "Band" row
+    expect(cleanPartTitle('Heller Wahn : [DVD-Video] / Margarethe von Trotta [Regie, Drehbuch]', 'Der deutsche Film : [DVD-Video]'))
+      .toMatchObject({ title: 'Der deutsche Film - Heller Wahn', responsibility: 'Margarethe von Trotta [Regie, Drehbuch]' })
+  })
+
+  it('leaves records outside a multi-part work alone', () => {
+    expect(cleanPartTitle('Monk : Pilotfilm zur Serie : [DVD Video] / Tony Shalhoub')).toMatchObject({ title: 'Monk : Pilotfilm zur Serie', responsibility: 'Tony Shalhoub' })
   })
 })
 

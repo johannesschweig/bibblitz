@@ -71,6 +71,31 @@ export function cleanTitle(raw: string, opts: { withResponsibility?: boolean } =
 }
 
 /**
+ * Detail title of one part of a multi-part work (TV seasons, film boxes, numbered audio plays).
+ * The detail page's main title is only the part's own title ("Die komplette sechste Staffel"),
+ * often just a format note (": [DVD Video]") or nothing at all. The result row shows
+ * "Gesamtwerk - Band. Titel" ("Game of thrones - 6. Staffel, Episoden 1-10. Die komplette sechste
+ * Staffel"), so this builds the same from the "Gesamtwerk" and "Band" rows.
+ */
+export function cleanPartTitle(raw: string, work?: string, part?: string): CleanTitle & { responsibility?: string } {
+  const own = cleanTitle(raw, { withResponsibility: true })
+  if (!work) return own
+
+  // A leading uniform title ("[Tolkien, J. R. R. <1892-1973>. ¬The¬ lord of the rings] Der Herr der
+  // Ringe") is a cataloguer's addition that the result row leaves out as well
+  const whole = cleanTitle(work.replace(/^\[[^\[\]]*(?:<\d{4}|¬)[^\[\]]*\]\s*/, ''), { withResponsibility: true })
+  const hasOwnTitle = /[\p{L}\p{N}]/u.test(own.title.replace(/\[[^\[\]]*\]/g, ''))
+  const number = part?.trim().replace(/^\[([^\[\]]+)\]$/, '$1') // "[13]"
+  const head = [whole.title, number].filter(Boolean).join(' - ').replace(/[\s.]+$/, '')
+  return {
+    // Without a part number the result row joins with a dash: "Der deutsche Film - Heller Wahn"
+    title: hasOwnTitle ? `${head}${number ? '. ' : ' - '}${own.title}` : head,
+    platform: own.platform ?? whole.platform,
+    responsibility: own.responsibility ?? whole.responsibility
+  }
+}
+
+/**
  * Display helper: the text before the first " : " and the text after it.
  * The UI renders both, only with different weight, so a wrong guess loses nothing.
  */

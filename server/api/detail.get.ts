@@ -1,7 +1,7 @@
 import { defineEventHandler, getQuery, createError } from 'h3';
 import * as cheerio from 'cheerio';
 import { filterAndEnrichBranches } from '../../utils/availability';
-import { cleanTitle, cleanAuthor, cleanContributors, parseYear } from '../../utils/catalogText';
+import { cleanPartTitle, cleanAuthor, cleanContributors, parseYear } from '../../utils/catalogText';
 import { parseIsbn } from '../../utils/isbn';
 import { parseLanguages } from '../../utils/language';
 import { parseAvailabilityTable } from '../../utils/shelfmark';
@@ -56,6 +56,9 @@ export default defineEventHandler(async (event) => {
     let author: string | undefined = undefined;
     let isbn: string | undefined = undefined;
     let year: string | undefined = undefined;
+    // Multi-part works (e.g. the discs of a TV season)
+    let work: string | undefined = undefined;
+    let part: string | undefined = undefined;
     let languages: string[] = [];
 
     $('#R06 table.gi tr').each((_, el) => {
@@ -74,6 +77,14 @@ export default defineEventHandler(async (event) => {
       else if (leftText === 'Veröffentlichung') {
         year = parseYear(rightText, { last: true });
       }
+      // The same label also holds series statements in parentheses ("(¬Die¬ drei ??? ; 65)",
+      // "(Panini books)"), which are not part of the title. Nested works: the first row is the closest.
+      else if (leftText === 'Gesamtwerk' && !work && !rightText.startsWith('(')) {
+        work = rightText;
+      }
+      else if (leftText === 'Band' && !part) {
+        part = rightText;
+      }
       else if (leftText.includes('ISBN')) {
         isbn = parseIsbn(rightText);
       }
@@ -83,15 +94,19 @@ export default defineEventHandler(async (event) => {
       }
     });
 
-    let titleText = $('.adis-maintitle .html_div, #results h2 .html_div').first().text().trim();
-    if (!titleText) {
+    const mainTitle = $('.adis-maintitle .html_div, #results h2 .html_div').first();
+    let titleText = mainTitle.text().trim();
+    // Parts of a multi-part work can have an empty main title: then the h1 would give the page
+    // name "Vollanzeige", and cleanPartTitle builds the title from the "Gesamtwerk" row instead
+    if (!titleText && !(mainTitle.length && work)) {
       titleText = $('#results h2, h1').first().text().replace(/Aktuelle Seite:\s*/gi, '').trim();
     }
-    titleText = titleText.replace(/[\n\t\r]+/g, ' ').replace(/\s+/g, ' ') || 'Unknown Title';
+    titleText = titleText.replace(/[\n\t\r]+/g, ' ').replace(/\s+/g, ' ');
 
     // The detail title ends in "/ Autor ; Übersetzer", which is more reliable than the contributor
     // list (that one can start with the translator)
-    const { title: cleanedTitle, platform, responsibility } = cleanTitle(titleText, { withResponsibility: true });
+    const { title: partTitle, platform, responsibility } = cleanPartTitle(titleText, work, part);
+    const cleanedTitle = partTitle || 'Unknown Title';
 
     // https://www.voebb.de/aDISWeb/app/prod00?sp=SAK<id>
     const permanentUrl = $('.aDISListe a:contains("Kopierlink"), a.permalink-unclicked').first().attr('href') || targetUrl;

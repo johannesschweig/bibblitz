@@ -2,6 +2,16 @@
 
 @source "../../utils/**/*.ts";
 
+/* The layout background is semi-transparent (bg-slate-50/50). Chrome paints white behind it, but
+   embedded browsers (e.g. app web views) can show their own grey through, so set the base explicitly.
+   The site is light-only, so no dark canvas, scrollbars or form controls either. */
+@layer base {
+  html {
+    @apply bg-white;
+    color-scheme: light;
+  }
+}
+
 @layer components {
 
   /* ── Base button ─────────────────────────────────────────── */
