@@ -2,7 +2,9 @@
 FROM node:24-slim AS build
 WORKDIR /app
 COPY . .
-RUN npm ci --no-audit --no-fund
+# npm install, not npm ci: a lockfile written on macOS misses Linux-only optional packages (@emnapi/*),
+# which npm ci on Linux rejects
+RUN npm install --no-audit --no-fund
 RUN npm test
 RUN NITRO_PRESET=node-server npm run build
 
