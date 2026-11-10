@@ -29,7 +29,7 @@ npm install
 npm run dev
 ```
 
-The dev server runs without Vercel. Optional settings go into a `.env` file (gitignored):
+Optional settings go into a `.env` file (gitignored):
 
 | Variable | Purpose |
 |---|---|
@@ -54,7 +54,7 @@ Contributors and AI coding tools should read [CLAUDE.md](CLAUDE.md) first; it de
 
 ## Deployment
 
-Deployed on Vercel. Server routes have to stay within the function time limit of about 10 seconds, so the detail fetch uses a short timeout.
+Runs on [Fly.io](https://fly.io) in Frankfurt as a plain Node server (`Dockerfile`, `fly.toml`): one always-on 256 MB machine. A push to `main` runs the tests and deploys through GitHub Actions (`.github/workflows/deploy.yml`); by hand: `fly deploy`.
 
 ## Feedback
 

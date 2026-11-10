@@ -24,7 +24,6 @@ export default defineEventHandler(async (event) => {
   const targetUrl = `https://www.voebb.de/aDISWeb/app?service=direct/0/Home/$DirectLink&sp=SPROD00&sp=SAK${id}`;
 
   try {
-    // Native Nuxt $fetch call, runs reliably as ESM on Vercel
     const htmlContent = await $fetch<string>(targetUrl, {
       method: 'GET',
       headers: {
@@ -36,7 +35,7 @@ export default defineEventHandler(async (event) => {
       // Nuxt handles retries automatically in the background
       retry: 1,
       retryDelay: 300,
-      timeout: 4500 // Stays safely below Vercel's hard 10-second limit
+      timeout: 4500 // With one retry a slow VÖBB keeps the visitor waiting at most about 9 s
     });
 
     if (isMaintenancePage(htmlContent)) {

@@ -38,18 +38,16 @@ useHead({ title: 'Datenschutz – BibBlitz' })
     </section>
 
     <section class="space-y-4 mt-8">
-      <h2 class="text-xl font-semibold">Hosting (Vercel)</h2>
-      <p class="m-0">Wir hosten unsere Website bei Vercel. Dienstanbieter ist Vercel Inc., 340 S Lemon Ave #4133,
-        Walnut, CA 91789, USA.</p>
-      <p class="m-0">Beim Aufruf dieser Website erfasst Vercel automatisch Daten über den Server-Zugriff, darunter
-        IP-Adresse, Datum und Uhrzeit des Abrufs, übertragene Datenmenge, Browsertyp und Betriebssystem sowie
-        Referrer-URL.</p>
+      <h2 class="text-xl font-semibold">Hosting (Fly.io)</h2>
+      <p class="m-0">Wir hosten unsere Website bei Fly.io. Dienstanbieter ist Fly.io, Inc., 2261 Market Street #4990,
+        San Francisco, CA 94114, USA. Die Website läuft auf einem Server in Frankfurt am Main (Deutschland).</p>
+      <p class="m-0">Beim Aufruf dieser Website erfasst Fly.io automatisch Daten über den Server-Zugriff, darunter
+        IP-Adresse, Datum und Uhrzeit des Abrufs, Browsertyp sowie Referrer-URL.</p>
       <p class="m-0">Rechtsgrundlage: Die Verarbeitung dieser Daten erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO
         (Berechtigtes Interesse). Unser berechtigtes Interesse liegt in der technisch fehlerfreien, performanten und
         sicheren Bereitstellung unserer Web-App.</p>
-      <p class="m-0">Datenübertragung: Vercel Inc. ist unter dem EU-US Data Privacy Framework zertifiziert. Zudem werden
-        EU-Standardvertragsklauseln genutzt, um ein europäisches Datenschutzniveau beim Datentransfer in die USA zu
-        garantieren.</p>
+      <p class="m-0">Datenübertragung: Fly.io, Inc. ist unter dem EU-US Data Privacy Framework zertifiziert, das ein
+        angemessenes Datenschutzniveau beim Datentransfer in die USA sicherstellt (Art. 45 DSGVO).</p>
     </section>
 
     <section class="space-y-4 mt-8">

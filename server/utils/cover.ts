@@ -11,7 +11,7 @@ export function coverIdOfRow(rowContainer: Cheerio<AnyNode>): string | undefined
 // VÖBB's cover service answers 403 unless the Referer is an aDISWeb page (hotlink protection); with
 // one it needs no cookies. Every other case (no Referer, the bare host) is refused.
 const REFERER = 'https://www.voebb.de/aDISWeb/app/prod00';
-// Stays below Vercel's 10 s function limit; a cover is small, VÖBB answers in about 0.2 s
+// A cover is small and VÖBB answers in about 0.2 s, so a slow answer is not worth waiting for
 const TIMEOUT_MS = 4000;
 
 export type CoverResult =

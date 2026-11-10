@@ -54,7 +54,7 @@ describe('fetchCover', () => {
     expect(await fetchCover('9783257056082', 's', get)).toEqual({ status: 'error' })
   })
 
-  it('gives up before the Vercel function limit', async () => {
+  it('gives up on a slow VÖBB after a few seconds', async () => {
     const get = vi.fn().mockResolvedValue(answer(200, 'image/jpeg', jpeg))
 
     await fetchCover('9783257056082', 's', get)

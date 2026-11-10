@@ -74,9 +74,10 @@ Not scored: no session can ask for what it has never seen, and the value is appe
 | I14 | Standort column in availability | VideLibri comparison | 2 | - | backlog |
 | I5 | Sort by publication date | none | 2 | - | backlog |
 | I6 | Wildcard search with `*` | none; not sure VÖBB supports it | 2 | - | backlog |
-| I26 | Move hosting from Vercel to a Hetzner VPS | Johannes 04.11.; Vercel 10 s limit, US host in the privacy text, cost at scale | 3 | chore: OS patches, uptime watch, own CDN cache | backlog; first the Hetzner IP spike, after the covers bet |
-| I29 | Vercel quota nearly used up: cache pages and `/api/detail` (Hobby: 3 h 45 min of 4 h Active CPU, 28% is bibblitz) | Johannes 06.11.; Vercel observability, 12 h | 1 | watch: cached availability is up to 5 min old | **urgent**, open |
+| I26 | Move hosting from Vercel to a Hetzner VPS | Johannes 04.11.; Vercel 10 s limit, US host in the privacy text, cost at scale | 3 | chore: OS patches, uptime watch, own CDN cache | **done 10.11.** on Fly.io instead of Hetzner, see block |
+| I29 | Vercel quota nearly used up: cache pages and `/api/detail` (Hobby: 3 h 45 min of 4 h Active CPU, 28% is bibblitz) | Johannes 06.11.; Vercel observability, 12 h | 1 | watch: cached availability is up to 5 min old | **obsolete 10.11.**: moved to Fly.io (I26), no CPU quota there |
 | I30 | Dark mode (today the browser darkens the page itself and breaks contrast) | Fabian's screenshot 07.11. (DuckDuckGo, Android) | 3 | watch: every UI change in two themes, contrast audit twice | backlog; stopgap first, see block |
+| I31 | Cover cache on the server: off Vercel nothing caches `/api/cover` at a CDN, so every cover a browser has not cached yet is a request to VÖBB | Johannes 10.11. (move to Fly.io) | 1-2 | watch: memory on the 256 MB machine | backlog, see block |
 | I28 | Monetisation: tip jar, book affiliate links, funding, Pro mode, sponsors, libraries as customers | Johannes 05.11. | 1-4 per option | see block | backlog, not scored; first the legal and plan checks |
 | I7 | Rare finds / most borrowed media for a newspaper article | marketing | | | not scored |
 
@@ -386,6 +387,11 @@ Details per item (labels, use the ones that apply): `evidence:` counts, queries,
   - effort: S, an id swap plus a look at the new records; the risk is that availability changes daily, so a good tile can turn bad
   - status: open
 - **I26** move hosting from Vercel to a cheaper, more scalable host (Hetzner VPS), idea 04.11.2026
+  - **done 10.11.2026 (Johannes), on Fly.io instead of Hetzner.** Trigger: the Vercel Hobby quota ran out (I29). Options compared that day: Vercel Pro ($20/month, lifts the pause), a second Hobby account (against Vercel's fair-use rules), Hetzner (cheap CX/CAX not orderable for new customers since 06/2026, next size €19.99), Sliplane (€10.71, German), Webdock / netcup (~€2, raw VPS), Fly.io. Fly won because the account already existed with the legacy free allowance (third 256 MB machine next to foto-bot and helix-bot), so it costs €0.
+    - spike result (10.11.): VÖBB answers from Fly's Frankfurt address without problems, 12 searches, details and covers each plus 4 "load more", 0 failures, and faster than Vercel in Washington (search median 2.27 s vs 3.38 s, detail 1.72 vs 2.52, cover 0.23 vs 0.45, load more 0.77 vs 1.65). Memory: ~100 MB idle, 228 MB peak at 16 parallel requests (locally), 139 MB on Fly after the test; 512 MB swap as safety net.
+    - setup: `Dockerfile` (tests, then `node-server` build), `fly.toml` (fra, always on, health check on `/robots.txt`), GitHub Action deploy on push to `main`, `server/middleware/canonical-host.ts` (bare domain → www, as on Vercel), DNS at Namecheap switched 10.11. ~09:50 (A/AAAA + `www` CNAME + `_acme-challenge` CNAME for the certificate), privacy page now names Fly.io (DPF active, checked 10.11.), `vercel.json` and the `vercel` package removed (that also re-synced the lockfile). Vercel project paused, not deleted, as rollback.
+    - **covers bet read-out:** detail and search got faster on 10.11. through the move; take that date into account when comparing the before/after weeks of I2.
+    - open: the cover CDN cache is gone (I31); Fly's legacy allowance has no published end date (check the Fly bill once a month); fungio stays on Vercel Hobby and alone uses about 3 h of the 4 h.
   - user problem: none visible to visitors today; this is an operator item (cost, limits, privacy text). Visitors would only notice a faster or more reliable search if the 10 s cap and the region are part of today's trouble.
   - **how tightly the code is tied to Vercel (checked 04.11.2026): barely.** No Vercel preset, KV, edge functions, ISR or `routeRules`; the server routes are plain h3 + axios/`$fetch` + cheerio, there is no database (Supabase is unused) and no state on disk, so the server is disposable. Nitro picks the `vercel` preset only because it detects the Vercel build; elsewhere `nuxt build` gives the `node-server` preset (`node .output/server/index.mjs`, port from `PORT`). What does touch Vercel:
     - `vercel.json`: `buildCommand: npm test && npm run build`, i.e. the test gate runs inside the deploy; it has to move into CI or a Docker build stage
@@ -455,7 +461,7 @@ Details per item (labels, use the ones that apply): `evidence:` counts, queries,
     - whether the covers bet read-out is disturbed: caching changes latency of the detail page, so take the bet's "before" week as it is and note the release date of this change next to it.
     - relation to I26: `s-maxage` and ISR are honoured by Vercel only; on a Hetzner VPS the same caching needs Nitro `cachedEventHandler` or a Caddy cache (already noted there for covers). Doing this first is not wasted: the `routeRules` carry over to Nitro's own cache.
   - effort: S-M, build 1-2. Assumptions: two small changes (`routeRules`, one header in `detail.get.ts`) plus a test that the failure and maintenance answers are not cacheable; Johannes needs to check the Vercel usage page before and after. Risk: a cached page that renders something per user, and 5-minute-old availability.
-  - status: open, urgent; analysis only, no code changed
+  - status: **obsolete 10.11.2026.** The quota did run out (4 h 10 min of 4 h in 30 days; fungio 2 h 55 min, bibblitz 1 h 15 min; Vercel announced a pause for 10.11.), and BibBlitz moved to Fly.io the same day (I26), where there is no CPU quota. Page and detail caching is no longer needed for cost; the detail cache idea stays useful for VÖBB load and speed if traffic grows.
 - **I30** dark mode (Fabian's bug report with screenshot, 07.11.2026)
   - user problem: visitors with a dark phone theme get a page their browser darkened by itself. Fabian's screenshot (`Screenshot_…_DuckDuckGo.png`, Android) shows it: the site has no dark styles, so the browser inverted the colours ("algorithmic darkening" in Android browsers and WebViews). The result is not designed and partly unreadable: the "Zurück" arrow and the location icon are dark blue on near-black, the VÖBB link arrow almost disappears, the blue ZIP text turns purple. That breaks the WCAG AA rule in `CLAUDE.md` for exactly these visitors.
   - evidence: one screenshot. Reach unknown: how many visitors get a forced-dark page is not measurable from Umami (it does not record the colour scheme); a rough proxy would be a `prefers-color-scheme: dark` flag on an existing event.
@@ -465,6 +471,11 @@ Details per item (labels, use the ones that apply): `evidence:` counts, queries,
   - carry: every later UI change needs checking in both themes; `scripts/contrast-audit.js` has to run for the dark theme too (`docs/accessibility.md` lists the states).
   - suggested order: 1 now (cheap, fixes the contrast bug), 2 when the design tokens are done.
   - status: backlog, nothing built
+- **I31** cover cache on the server (10.11.2026, after the move to Fly.io)
+  - problem: on Vercel, `coverCacheHeaders` (`s-maxage=30d`) let the CDN answer repeated cover requests; on Fly there is no CDN, so every cover a browser has not cached yet (`max-age=7d`) goes to VÖBB. Visitors notice nothing (0.23 s per cover from Frankfurt), but VÖBB gets more requests and a block there would hit covers first.
+  - options: (1) Nitro `cachedEventHandler` / `routeRules` cache with filesystem storage (survives until the next deploy, no volume needed; keep it out of memory on the 256 MB machine); (2) a Fly volume for a persistent cache (whether the legacy allowance covers volume space is not checked); (3) Cloudflare free plan in front of the domain (CDN again, but DNS moves to Cloudflare and visitors' IPs pass through another US company, so the privacy page grows).
+  - effort: S for option 1 plus a test that failures (`status: 'error'`) are not cached
+  - status: backlog
 
 # Competitors
 

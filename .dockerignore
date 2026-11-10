@@ -1,0 +1,14 @@
+node_modules
+.output
+.nuxt
+.nitro
+.data
+.cache
+.vercel
+.git
+.env
+.env.*
+data
+res
+legacy-cli
+*.log
