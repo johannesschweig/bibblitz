@@ -22,10 +22,15 @@ describe('calculateBranchStatus', () => {
   })
 
   it('shows days to wait on loan and handles due today / overdue', () => {
-    expect(calculateBranchStatus(branch({ status: 'Fällig am: 01.01.', daysToWait: 6 }), false)).toEqual({ label: '6 Tage', tone: 'wait' })
-    expect(calculateBranchStatus(branch({ daysToWait: 1 }), false).label).toBe('1 Tag')
-    expect(calculateBranchStatus(branch({ daysToWait: 0 }), false).label).toBe('Rückgabe heute fällig')
-    expect(calculateBranchStatus(branch({ daysToWait: -3 }), false).label).toBe('Rückgabe überfällig')
+    const due = 'Ausgeliehen - Fällig am: 01.01.2027'
+    expect(calculateBranchStatus(branch({ status: due, daysToWait: 6 }), false)).toEqual({ label: 'Verfügbar in 6 Tagen', tone: 'wait' })
+    expect(calculateBranchStatus(branch({ status: due, daysToWait: 1 }), false).label).toBe('Verfügbar in 1 Tag')
+    expect(calculateBranchStatus(branch({ status: due, daysToWait: 0 }), false).label).toBe('Rückgabe heute fällig')
+    expect(calculateBranchStatus(branch({ status: due, daysToWait: -3 }), false).label).toBe('Rückgabe überfällig')
+  })
+
+  it('shows the VÖBB state instead of the flat estimate for reserved copies', () => {
+    expect(calculateBranchStatus(branch({ status: 'Vorbestellt', daysToWait: 14 }), false)).toEqual({ label: 'Vorbestellt', tone: 'wait' })
   })
 
   it('falls back to a neutral pill with the raw status for unknown states', () => {
@@ -45,8 +50,21 @@ describe('calculateStatusInfo', () => {
   })
 
   it('counts a copy due back today as on loan, not as hard to get', () => {
-    const info = calculateStatusInfo([branch({ status: 'Fällig', daysToWait: 0 })], NEXT_TO_BRANCH, false)
-    expect(info).toEqual({ label: 'Ausgeliehen (heute fällig)', tone: 'wait' })
+    const info = calculateStatusInfo([branch({ status: 'Ausgeliehen - Fällig am: 10.11.2026', daysToWait: 0 })], NEXT_TO_BRANCH, false)
+    expect(info).toEqual({ label: 'Rückgabe heute fällig', tone: 'wait' })
+  })
+
+  it('says when a copy on loan is available again, using the earliest due date', () => {
+    const info = calculateStatusInfo([
+      branch({ status: 'Ausgeliehen - Fällig am: 20.11.2026', daysToWait: 10 }),
+      branch({ status: 'Ausgeliehen - Fällig am: 12.11.2026', daysToWait: 2 })
+    ], NEXT_TO_BRANCH, false)
+    expect(info).toEqual({ label: 'Verfügbar in 2 Tagen', tone: 'wait' })
+  })
+
+  it('shows no number for reserved copies, their 14 days are only an estimate', () => {
+    const info = calculateStatusInfo([branch({ status: 'Vorbestellt', daysToWait: 14 })], NEXT_TO_BRANCH, false)
+    expect(info).toEqual({ label: 'Ausgeliehen', tone: 'wait' })
   })
 
   it('keeps hard-to-get as its own tone', () => {

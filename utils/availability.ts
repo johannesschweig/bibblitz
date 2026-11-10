@@ -118,8 +118,20 @@ function calculateDaysToWait(status: string): number {
   return 999 // Unknown / lost / not on the shelf
 }
 
+/**
+ * True when the status carries a real due date. Reserved copies get a flat
+ * estimate in calculateDaysToWait, which must not be shown as a number.
+ */
+function hasDueDate(status: string): boolean {
+  const { state, due } = parseStatus(status)
+  return /\d{1,2}\.\d{1,2}\./.test(`${state} ${due ?? ''}`)
+}
+
+// Label for a copy on loan with a known due date ("Verfügbar in 2 Tagen")
 function formatDays(days: number): string {
-  return days === 0 ? 'heute fällig' : days === 1 ? '1 Tag' : `${days} Tage`
+  if (days < 0) return 'Rückgabe überfällig'
+  if (days === 0) return 'Rückgabe heute fällig'
+  return days === 1 ? 'Verfügbar in 1 Tag' : `Verfügbar in ${days} Tagen`
 }
 
 /**
@@ -136,8 +148,9 @@ export function calculateBranchStatus(
     return { label: parseStatus(branch.status).state, tone: isNear ? 'near' : 'good' }
   }
   if (days === undefined || days === 999) return { label: parseStatus(branch.status).state, tone: 'neutral' }
-  if (days < 0) return { label: 'Rückgabe überfällig', tone: 'wait' }
-  return { label: days === 0 ? 'Rückgabe heute fällig' : formatDays(days), tone: 'wait' }
+  // Reserved without a date: show VÖBB's own state, not the estimate
+  if (!hasDueDate(branch.status)) return { label: parseStatus(branch.status).state, tone: 'wait' }
+  return { label: formatDays(days), tone: 'wait' }
 }
 
 /**
@@ -179,7 +192,13 @@ export function calculateStatusInfo(
     const available = validBranches.filter(b => b.daysToWait === -999)
     // daysToWait 0 = due back today, still counts as on loan
     const borrowed = validBranches.filter(b => b.daysToWait !== undefined && b.daysToWait >= 0 && b.daysToWait !== 999)
-    const minDays = (branches: AvailabilityInfo[]) => Math.min(...branches.map(b => b.daysToWait as number))
+    // Only real due dates give a number; reserved copies (flat estimate) just say "Ausgeliehen"
+    const borrowedLabel = (branches: AvailabilityInfo[]) => {
+      const dated = branches.filter(b => hasDueDate(b.status))
+      return dated.length > 0
+        ? formatDays(Math.min(...dated.map(b => b.daysToWait as number)))
+        : 'Ausgeliehen'
+    }
 
     // -------------------------------------------------------------
     // PRIO 1: available & close (< NEAR_KM)
@@ -213,7 +232,7 @@ export function calculateStatusInfo(
     // -------------------------------------------------------------
     const closeBorrowed = borrowed.filter(b => getDist(b) < NEAR_KM)
     if (closeBorrowed.length > 0) {
-      return { label: `Ausgeliehen (${formatDays(minDays(closeBorrowed))})`, tone: 'wait' }
+      return { label: borrowedLabel(closeBorrowed), tone: 'wait' }
     }
 
     // -------------------------------------------------------------
@@ -221,7 +240,7 @@ export function calculateStatusInfo(
     // -------------------------------------------------------------
     const farBorrowed = borrowed.filter(b => getDist(b) >= NEAR_KM && getDist(b) < 7)
     if (farBorrowed.length > 0) {
-      return { label: `Ausgeliehen (${formatDays(minDays(farBorrowed))})`, tone: 'wait' }
+      return { label: borrowedLabel(farBorrowed), tone: 'wait' }
     }
 
     // -------------------------------------------------------------
