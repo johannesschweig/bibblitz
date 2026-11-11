@@ -26,6 +26,11 @@ const faqs = [
     answer: 'BibBlitz lädt aus Performancegründen erstmal nur die erste Ergebnisseite. Mit „Weitere Treffer laden“ holst du dir bei Bedarf mehr.'
   },
   {
+    id: 'e-media',
+    question: 'Warum fehlen E-Books und andere E-Medien?',
+    answer: 'BibBlitz zeigt, wo physische Medien gerade verfügbar sind, deshalb erscheinen E-Medien nicht in den Ergebnissen. E-Books und E-Audios suchst du am besten direkt auf <a href="https://voebb.overdrive.com" target="_blank" rel="noopener" class="underline text-blue-700">voebb.overdrive.com</a>.'
+  },
+  {
     id: 'app-store',
     question: 'Gibt es eine App für den App Store?',
     answer: 'Nein, aber du kannst BibBlitz im Browser über das „Teilen“-Menü einfach zum Startbildschirm hinzufügen. Es verhält sich dann genau wie eine native App.'
