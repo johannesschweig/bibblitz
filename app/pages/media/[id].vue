@@ -115,6 +115,8 @@ function trackDetailView() {
     ...(nearestFree.length && { nearest_available_km: Math.min(...nearestFree) }),
     zip_default: userStore.userZipDefault ? 1 : 0
   })
+  // The visit from an alert mail of the Wecker (its link carries ?ref=wecker): was a copy still free on arrival?
+  if (route.query.ref === 'wecker') track('watch-return', { status, available_now: free.length })
 }
 watch(pending, trackDetailView)
 // nextTick: app.vue loads the saved ZIP in its own onMounted, which runs after the page's

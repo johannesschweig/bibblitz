@@ -14,7 +14,7 @@ import type { RecordResult } from './recordFetch'
 
 const HOUR = 60 * 60 * 1000
 export const CONFIRM_WINDOW_MS = 24 * HOUR
-export const ACTIVE_WINDOW_MS = 30 * 24 * HOUR
+export const ACTIVE_WINDOW_MS = 180 * 24 * HOUR
 const MAX_LIBRARIES = 20
 
 const KNOWN_LIBRARIES = new Set((libraryData as Array<{ id: string }>).map(library => library.id))

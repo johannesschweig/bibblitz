@@ -73,8 +73,8 @@ describe('Confirm page', () => {
     expect(calls).toEqual(['confirm:abc'])
     expect(wrapper.text()).toContain('Die Wartenden')
     expect(wrapper.text()).toContain('in einer deiner 3 Bibliotheken')
-    // No technical details: neither the 24 hours of the link nor the 30 days of the Wecker
-    expect(wrapper.text()).not.toMatch(/\b(24|30)\b/)
+    // No technical details: neither the 24 hours of the link nor the 180 days of the Wecker
+    expect(wrapper.text()).not.toMatch(/\b(24|30|180)\b/)
   })
 
   it('has a way to switch the Wecker off again, which needs no click on a second page', async () => {
@@ -92,7 +92,7 @@ describe('Confirm page', () => {
   ])('shows what the server answers for a %s token', async (token, heading) => {
     const wrapper = await mountSuspended(ConfirmPage, { route: `/watch/confirm?token=${token}&id=1` })
     await vi.waitFor(() => expect(wrapper.find('h1').text()).toBe(heading), { timeout: 3000 })
-    expect(wrapper.text()).not.toMatch(/\b(24|30)\b/)
+    expect(wrapper.text()).not.toMatch(/\b(24|30|180)\b/)
   })
 
   it.each([

@@ -85,7 +85,7 @@ useHead({ title: 'Datenschutz – BibBlitz' })
       <p class="m-0">Verarbeitet werden Ihre E-Mail-Adresse, die Nummer des Titels, die gewählten Bibliotheken sowie
         die Zeitpunkte von Anmeldung, Bestätigung und letzter Prüfung. Ihre Postleitzahl wird dafür nicht gespeichert.</p>
       <p class="m-0">Wir schicken Ihnen zuerst eine Bestätigungsmail (Double-Opt-In). Bestätigen Sie nicht, wird die
-        Anmeldung nach 24 Stunden gelöscht. Nach der Bestätigung läuft der Wecker höchstens 30 Tage. Sobald wir Ihnen
+        Anmeldung nach 24 Stunden gelöscht. Nach der Bestätigung läuft der Wecker höchstens sechs Monate. Sobald wir Ihnen
         die Benachrichtigung geschickt haben, löschen wir Ihre E-Mail-Adresse. Sie können den Wecker jederzeit über den
         Link in jeder Mail ausschalten, dann wird Ihre Adresse ebenfalls sofort gelöscht.</p>
       <p class="m-0">Ihre Adresse wird nur für diese Benachrichtigung verwendet, nicht für Werbung und nicht
@@ -96,6 +96,10 @@ useHead({ title: 'Datenschutz – BibBlitz' })
         auf Servern in London (Vereinigtes Königreich). Für das Vereinigte Königreich besteht ein
         Angemessenheitsbeschluss der EU-Kommission (Art. 45 DSGVO). Die E-Mails verschickt Brevo (Sendinblue SAS,
         Frankreich). Mit beiden Anbietern besteht ein Vertrag zur Auftragsverarbeitung nach Art. 28 DSGVO.</p>
+      <p class="m-0">Die E-Mails enthalten ein Zählpixel und umgeschriebene Links, über die Brevo zählt, wie oft Mails
+        geöffnet und Links angeklickt werden. Diese Zählung ist anonymisiert und wird keiner Person zugeordnet. Brevo
+        speichert Versandprotokolle mit der Empfängeradresse einen Monat lang, Vorschauen der Mails speichert es
+        nicht.</p>
     </section>
 
     <section class="space-y-4 mt-8">

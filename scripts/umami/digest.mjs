@@ -32,6 +32,7 @@ export const FEATURES = {
   'watch-open': 'Wecker: sheet opened (libraries, nothing_free_near, zip_default)',
   'watch-submit': 'Wecker: submitted (libraries, preselected_unchanged, zip_default)',
   'watch-confirm': 'Wecker: confirmed from the mail (the return visit)',
+  'watch-return': 'Wecker: visit from an alert mail (?ref=wecker; status, available_now)',
   'watch-stop': 'Wecker: switched off from a mail'
 }
 

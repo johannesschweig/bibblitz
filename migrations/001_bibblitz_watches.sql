@@ -16,7 +16,7 @@ create table if not exists public.bibblitz_watches (
   status        text not null default 'pending' check (status in ('pending', 'active')),
   created_at    timestamptz not null default now(),
   confirmed_at  timestamptz,
-  -- pending: the confirmation link is valid until then (24 h); active: the Wecker runs until then (30 days)
+  -- pending: the confirmation link is valid until then (24 h); active: the Wecker runs until then (180 days)
   expires_at    timestamptz not null,
   last_checked_at timestamptz,
   unique (email, media_id)

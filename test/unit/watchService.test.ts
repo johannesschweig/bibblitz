@@ -164,7 +164,7 @@ describe('confirm and stop', () => {
     return { row: row!, token: makeWatchToken(SECRET, row!.id) }
   }
 
-  it('confirming switches the watch on for 30 days, and a second click says it already runs', async () => {
+  it('confirming switches the watch on for 180 days, and a second click says it already runs', async () => {
     const { row, token } = await pending()
     expect(await confirmWatch(deps, token)).toBe('ok')
     const after = store.rows.get(row.id)!

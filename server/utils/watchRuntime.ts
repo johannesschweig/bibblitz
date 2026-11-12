@@ -20,12 +20,12 @@ let supabase: { key: string, store: WatchStore } | undefined
 let brevo: { key: string, send: SendMail } | undefined
 
 /** The feature is on in dev and in production only with NUXT_PUBLIC_WATCH_ENABLED=true. */
-export function watchEnabled(event: H3Event): boolean {
+export function watchEnabled(event?: H3Event): boolean {
   return import.meta.dev || String(useRuntimeConfig(event).public.watchEnabled) === 'true'
 }
 
-/** Null when something is not configured: the routes then answer 503 instead of half working. */
-export function getWatchDeps(event: H3Event): WatchDeps | null {
+/** Null when something is not configured: the routes then answer 503 instead of half working. The timer calls it without an event. */
+export function getWatchDeps(event?: H3Event): WatchDeps | null {
   const config = useRuntimeConfig(event).watch
   const dev = import.meta.dev
 
@@ -52,7 +52,7 @@ export function getWatchDeps(event: H3Event): WatchDeps | null {
   const secret = config.secret || (dev ? 'dev-secret' : '')
   if (!store || !sendMail || !secret) return null
 
-  const siteUrl = (config.siteUrl || (dev ? getRequestURL(event).origin : 'https://www.bibblitz.de')).replace(/\/$/, '')
+  const siteUrl = (config.siteUrl || (dev && event ? getRequestURL(event).origin : 'https://www.bibblitz.de')).replace(/\/$/, '')
   return { store, sendMail, fetchRecord, secret, siteUrl }
 }
 

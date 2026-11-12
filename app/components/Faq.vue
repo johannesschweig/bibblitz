@@ -18,7 +18,7 @@ const faqs = [
   {
     id: 'data-storage',
     question: 'Wo werden meine Daten gespeichert?',
-    answer: 'Deine PLZ liegt nur lokal in deinem Browser (localStorage). Stellst du einen Wecker, speichern wir deine E-Mail-Adresse, bis die Mail verschickt ist oder du ihn ausschaltest, höchstens 30 Tage. <a href="/data-privacy" class="underline text-blue-700">Mehr im Datenschutz</a>.'
+    answer: 'Deine PLZ liegt nur lokal in deinem Browser (localStorage). Stellst du einen Wecker, speichern wir deine E-Mail-Adresse, bis die Mail verschickt ist oder du ihn ausschaltest, höchstens sechs Monate. <a href="/data-privacy" class="underline text-blue-700">Mehr im Datenschutz</a>.'
   },
   {
     id: 'fewer-results',
