@@ -17,6 +17,8 @@ import { coverIdFor } from '../../../utils/cover'
 import { getMediaTypeConfig } from '../../../utils/mediaTypeMapping'
 import { splitSubtitle } from '../../../utils/catalogText'
 import { formatLanguageLine } from '../../../utils/language'
+import WatchSheet from '~/components/WatchSheet.vue'
+import { groupWatchLibraries, watchableLibraries, nothingFreeNear } from '../../../utils/watch'
 
 const { track } = useUmami()
 const route = useRoute()
@@ -71,6 +73,26 @@ const sortedBranches = computed(() => {
 
   return sortBranchesByDistance(data.value.data.availability, userStore.userCoords)
 })
+
+// Shelf watch (docs/shelf-watch.md): one entry per library, and whether there is anything to wait for
+const watchEnabled = useWatchEnabled()
+const watchOpen = ref(false)
+const watchLibraries = computed(() => groupWatchLibraries(sortedBranches.value))
+// What the sheet offers: libraries without a free copy
+const watchChoices = computed(() => watchableLibraries(watchLibraries.value))
+const canWatch = computed(() => watchEnabled && watchChoices.value.length > 0)
+// With a saved ZIP and nothing free nearby the page points at the watch itself, instead of the small button
+const watchPrompt = computed(() => canWatch.value && nothingFreeNear(watchLibraries.value, userStore.userZipDefault))
+
+// Measures who opens the Wecker, from the small button or from the prompt (docs/shelf-watch.md)
+function openWatch() {
+  track('watch-open', {
+    libraries: watchChoices.value.length,
+    nothing_free_near: watchPrompt.value ? 1 : 0,
+    zip_default: userStore.userZipDefault ? 1 : 0
+  })
+  watchOpen.value = true
+}
 
 // Measures once per page view what the user sees on the detail page (errors, availability, default ZIP).
 // `failed`: the record is known (e.g. from the search row) but its copies could not be fetched, `empty`:
@@ -204,7 +226,14 @@ function authorClicked() {
 
       <!-- Availability list -->
       <section>
-        <h2 class="text-xl font-bold mb-4">Standorte</h2>
+        <div class="mb-4 flex items-center justify-between gap-3">
+          <h2 class="text-xl font-bold">Standorte</h2>
+          <button v-if="canWatch && !watchPrompt" type="button" class="btn btn-sm btn-secondary" data-testid="watch-open"
+            @click="openWatch()">
+            <Icon name="lucide:alarm-clock" class="size-4" />
+            Wecker stellen
+          </button>
+        </div>
 
         <div v-if="!data.data.availability" class="text-gray-500 p-4 text-center">
           <p>{{ voebbStatus.maintenance ? 'Standorte sind während der VÖBB-Wartung nicht abrufbar.' : 'Standorte konnten nicht geladen werden.' }}</p>
@@ -218,6 +247,17 @@ function authorClicked() {
 
         <div v-else>
           <ZipCode v-model="userStore.userZip" class="mb-2" />
+          <div v-if="watchPrompt" class="mb-4 flex flex-col gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 sm:flex-row sm:items-center sm:justify-between"
+            data-testid="watch-prompt">
+            <p class="text-sm text-blue-900">
+              <span class="font-semibold">Nichts frei in deiner Nähe.</span>
+              Stell dir einen Wecker: Wir mailen, sobald es da ist.
+            </p>
+            <button type="button" class="btn btn-md btn-accent shrink-0" data-testid="watch-open" @click="openWatch()">
+              <Icon name="lucide:alarm-clock" class="size-4" />
+              Wecker stellen
+            </button>
+          </div>
           <ul class="divide-y divide-gray-200 border-b border-gray-200">
             <li v-for="(item, index) in displayedBranches" :key="index">
               <!-- ?media lets the library page show which copy the user is after -->
@@ -254,7 +294,8 @@ function authorClicked() {
         </div>
       </section>
 
-
+      <WatchSheet v-if="canWatch" :open="watchOpen" :media-id="String(mediaId)" :title="data.data.title"
+        :libraries="watchChoices" :zip-default="userStore.userZipDefault" @close="watchOpen = false" />
     </div>
   </div>
 </template>

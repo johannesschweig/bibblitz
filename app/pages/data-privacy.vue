@@ -79,6 +79,26 @@ useHead({ title: 'Datenschutz – BibBlitz' })
     </section>
 
     <section class="space-y-4 mt-8">
+      <h2 class="text-xl font-semibold">Wecker (Benachrichtigung per E-Mail)</h2>
+      <p class="m-0">Wenn Sie bei einem Titel einen Wecker stellen, schreiben wir Ihnen einmalig eine E-Mail, sobald ein
+        Exemplar in einer von Ihnen gewählten Bibliothek verfügbar ist.</p>
+      <p class="m-0">Verarbeitet werden Ihre E-Mail-Adresse, die Nummer des Titels, die gewählten Bibliotheken sowie
+        die Zeitpunkte von Anmeldung, Bestätigung und letzter Prüfung. Ihre Postleitzahl wird dafür nicht gespeichert.</p>
+      <p class="m-0">Wir schicken Ihnen zuerst eine Bestätigungsmail (Double-Opt-In). Bestätigen Sie nicht, wird die
+        Anmeldung nach 24 Stunden gelöscht. Nach der Bestätigung läuft der Wecker höchstens 30 Tage. Sobald wir Ihnen
+        die Benachrichtigung geschickt haben, löschen wir Ihre E-Mail-Adresse. Sie können den Wecker jederzeit über den
+        Link in jeder Mail ausschalten, dann wird Ihre Adresse ebenfalls sofort gelöscht.</p>
+      <p class="m-0">Ihre Adresse wird nur für diese Benachrichtigung verwendet, nicht für Werbung und nicht
+        weitergegeben.</p>
+      <p class="m-0">Rechtsgrundlage: Ihre Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO, die Sie jederzeit durch das
+        Ausschalten des Weckers widerrufen können.</p>
+      <p class="m-0">Dienstleister: Die Daten werden in einer Datenbank bei Supabase (Supabase Inc., USA) gespeichert,
+        auf Servern in London (Vereinigtes Königreich). Für das Vereinigte Königreich besteht ein
+        Angemessenheitsbeschluss der EU-Kommission (Art. 45 DSGVO). Die E-Mails verschickt Brevo (Sendinblue SAS,
+        Frankreich). Mit beiden Anbietern besteht ein Vertrag zur Auftragsverarbeitung nach Art. 28 DSGVO.</p>
+    </section>
+
+    <section class="space-y-4 mt-8">
       <h2 class="text-xl font-semibold">Hinweise zur Datensicherheit</h2>
       <p class="m-0">Die Betreiber dieser Seiten nehmen den Schutz Ihrer Daten ernst und behandeln personenbezogene
         Daten vertraulich sowie entsprechend der gesetzlichen Datenschutzvorschriften.</p>

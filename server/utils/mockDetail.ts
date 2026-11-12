@@ -69,6 +69,40 @@ const fixtures: Record<string, Fixture> = {
       { libraryName: 'Mitte: Hansabibliothek', status: 'Verfügbar', shelfmark: 'Hörbuch' }
     ]
   },
+  // Shelf watch (sheet with the library picker): many libraries, nothing free near Prenzlauer Berg
+  // (ZIP 10435). On loan, overdue, ordered and a lost copy, plus free copies further away and a
+  // library with two copies (one free, one on loan). Without a saved ZIP everything looks equally far.
+  '00000003': {
+    title: 'Die Wartenden : Roman',
+    mediaType: 'Buch',
+    author: 'Erika Mustermann',
+    year: '2025',
+    languages: ['Deutsch'],
+    availability: [
+      { libraryName: 'Pankow: Bibliothek am Wasserturm', status: `Ausgeliehen - ${due(3)}`, shelfmark: 'Roman Must' },
+      { libraryName: 'Pankow: Bettina-von-Arnim-Bibliothek', status: `Ausgeliehen - ${due(-2)}`, shelfmark: 'Roman Must' },
+      { libraryName: 'Pankow: Kurt-Tucholsky-Bibliothek (Pankow)', status: `Ausgeliehen - ${due(14)}`, shelfmark: 'Roman Must' },
+      { libraryName: 'Pankow: Janusz-Korczak-Bibliothek', status: `Ausgeliehen - ${due(9)}`, shelfmark: 'Roman Must' },
+      { libraryName: 'Mitte: Bezirkszentralbibliothek Philipp Schaeffer', status: 'Bestellt', shelfmark: 'Roman Must' },
+      { libraryName: 'Mitte: Bibliothek am Luisenbad', status: `Ausgeliehen - ${due(1)}`, shelfmark: 'Roman Must' },
+      { libraryName: 'Friedrichshain-Kreuzberg: Mittelpunktbibliothek Wilhelm Liebknecht / Namik Kemal', status: 'Verfügbar', shelfmark: 'Roman Must' },
+      { libraryName: 'ZLB: Amerika-Gedenkbibliothek (AGB)', status: 'Verfügbar', shelfmark: '108/000 270 755' },
+      { libraryName: 'ZLB: Amerika-Gedenkbibliothek (AGB)', status: `Ausgeliehen - ${due(7)}`, shelfmark: 'L 782 Must 50 f' },
+      { libraryName: 'Spandau: Hauptbibliothek Spandau', status: 'Verfügbar', shelfmark: 'Roman Must' },
+      { libraryName: 'Neukoelln: Helene-Nathan-Bibliothek', status: 'Verloren', shelfmark: 'Roman Must' }
+    ]
+  },
+  // Shelf watch: every copy is free, so there is nothing to wait for and no bell
+  '00000004': {
+    title: 'Ein Titel, der überall da ist',
+    mediaType: 'Buch',
+    author: 'Erika Mustermann',
+    year: '2021',
+    availability: [
+      { libraryName: 'Mitte: Hansabibliothek', status: 'Verfügbar', shelfmark: 'Roman Must' },
+      { libraryName: 'Pankow: Kurt-Tucholsky-Bibliothek (Pankow)', status: 'Verfügbar', shelfmark: 'Roman Must' }
+    ]
+  },
   // Edge case: nothing found
   '00000001': {
     title: 'Ein Titel ohne Exemplare',

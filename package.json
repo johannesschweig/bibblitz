@@ -18,8 +18,8 @@
   "dependencies": {
     "@iconify-json/lucide": "^1.2.143",
     "@nuxt/icon": "^2.5.1",
-    "@nuxtjs/supabase": "^2.0.9",
     "@pinia/nuxt": "^0.11.3",
+    "@supabase/supabase-js": "^2.119.0",
     "@tailwindcss/vite": "^4.3.2",
     "@types/leaflet": "^1.9.21",
     "axios": "^1.18.1",

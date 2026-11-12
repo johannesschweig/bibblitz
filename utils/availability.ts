@@ -128,6 +128,14 @@ function hasDueDate(status: string): boolean {
 }
 
 // Label for a copy on loan with a known due date ("Verfügbar in 2 Tagen")
+/**
+ * A copy that is not on the shelf and not on loan either (lost, missing): it never becomes available
+ */
+export function isLostCopy(status: string): boolean {
+  const lower = status.toLowerCase()
+  return lower.includes('nicht im regal') || lower.includes('verloren') || lower.includes('vermisst')
+}
+
 function formatDays(days: number): string {
   if (days < 0) return 'Rückgabe überfällig'
   if (days === 0) return 'Rückgabe heute fällig'
@@ -164,10 +172,7 @@ export function calculateStatusInfo(
 
   const sortedAvailability = sortBranchesByDistance(availability, userCoords)
   // 1. Filter out invalid/lost copies
-  const validBranches = sortedAvailability?.filter(item => {
-    const lower = item.status.toLowerCase()
-    return !lower.includes('nicht im regal') && !lower.includes('verloren') && !lower.includes('vermisst')
-  }) || []
+  const validBranches = sortedAvailability?.filter(item => !isLostCopy(item.status)) || []
 
   // Fallback: no valid branches left
   if (validBranches.length === 0) {

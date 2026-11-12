@@ -28,7 +28,11 @@ export const FEATURES = {
   'logo-click': 'Logo click, clears the results (from, had_results)',
   'author-click': 'Author click',
   'library-maps-click': 'Library: Google Maps',
-  'library-website-click': 'Library: website'
+  'library-website-click': 'Library: website',
+  'watch-open': 'Wecker: sheet opened (libraries, nothing_free_near, zip_default)',
+  'watch-submit': 'Wecker: submitted (libraries, preselected_unchanged, zip_default)',
+  'watch-confirm': 'Wecker: confirmed from the mail (the return visit)',
+  'watch-stop': 'Wecker: switched off from a mail'
 }
 
 // Events of removed features: still show up in old data, are not "unknown".

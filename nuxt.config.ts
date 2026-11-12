@@ -26,8 +26,23 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   runtimeConfig: {
+    // Shelf watch (docs/shelf-watch.md), server only. Set as Fly secrets / .env: NUXT_WATCH_SUPABASE_URL,
+    // NUXT_WATCH_SUPABASE_SERVICE_KEY, NUXT_WATCH_BREVO_API_KEY, NUXT_WATCH_SECRET (signs the links in the mails),
+    // NUXT_WATCH_RUN_SECRET (protects the checker), optional NUXT_WATCH_MAIL_FROM, NUXT_WATCH_MAIL_FROM_NAME, NUXT_WATCH_SITE_URL
+    watch: {
+      supabaseUrl: '',
+      supabaseServiceKey: '',
+      brevoApiKey: '',
+      mailFrom: 'wecker@bibblitz.de',
+      mailFromName: 'BibBlitz',
+      secret: '',
+      runSecret: '',
+      siteUrl: ''
+    },
     public: {
-      cartoApiKey: process.env.CARTO_API_KEY
+      cartoApiKey: process.env.CARTO_API_KEY,
+      // Shelf watch (docs/shelf-watch.md): off in production until NUXT_PUBLIC_WATCH_ENABLED=true; always on in dev
+      watchEnabled: false
     }
   },
   modules: ['@pinia/nuxt', '@nuxt/icon'],
