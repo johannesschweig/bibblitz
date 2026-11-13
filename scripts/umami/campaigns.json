@@ -1,5 +1,5 @@
 {
-  "_comment": "Registry for scripts/umami/campaigns.mjs. Key = the value of ?ref= (lowercase). Fill in since/cost/note when you launch a campaign; label and channel are shown in docs/campaigns.md. Typos in links go into aliases. ignore = refs of test links or dropped campaigns, dropped from every number.",
+  "_comment": "Registry for scripts/umami/campaigns.mjs. Key = the value of ?ref= (lowercase). Fill in since/cost/note when you launch a campaign; label and channel are shown in docs/campaigns.md. Typos in links go into aliases. ignore = refs of test links, dropped campaigns and product links that are not marketing, dropped from every number (wecker: the link in the Wecker alert mail, tracked as the feature event watch-return, see docs/analytics.md).",
   "campaigns": {
     "reddit": {
       "label": "Reddit",
@@ -30,17 +30,19 @@
     "loky": {
       "label": "loky.news",
       "channel": "newsletter",
-      "since": "2026-11-05",
-      "note": "pitch mailed to redaktion@loky.news 05.11.; no mention confirmed yet"
+      "since": "2026-11-13",
+      "note": "pitch mailed to redaktion@loky.news 05.11.; newsletter with the link `?ref=loky.news` went out on 13.11. (about 06:00 local time)"
     }
   },
   "aliases": {
-    "nebenana": "nebenan"
+    "nebenana": "nebenan",
+    "loky.news": "loky"
   },
   "ignore": [
     "test",
     "flyer",
     "oneltr",
-    "facebook"
+    "facebook",
+    "wecker"
   ]
 }
