@@ -12,7 +12,7 @@ describe('confirmMail', () => {
   const mail = confirmMail({ title: 'Die Wartenden', count: 5, confirmUrl: 'https://x.de/watch/confirm?token=a&id=1', stopUrl: 'https://x.de/watch/stop?token=a' })
 
   it('has the subject and a button that is the confirm link', () => {
-    expect(mail.subject).toBe('Bitte bestätigen: Wecker für „Die Wartenden“')
+    expect(mail.subject).toBe('Noch ein Klick: Wecker für „Die Wartenden“ bestätigen')
     expect(mail.html).toContain('href="https://x.de/watch/confirm?token=a&amp;id=1"')
     expect(mail.html).toContain('Wecker bestätigen')
   })

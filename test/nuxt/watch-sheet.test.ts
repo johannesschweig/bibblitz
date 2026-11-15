@@ -158,6 +158,7 @@ describe('Form', () => {
     expect(requests[0]).toMatchObject({ mediaId: '1', libraryIds: ['near1', 'near2'], email: 'name@beispiel.de', website: '' })
     expect(wrapper.text()).toContain('name@beispiel.de')
     expect(wrapper.text()).toContain('Fast da')
+    expect(wrapper.find('[data-testid="watch-sent-hint"]').text()).toContain('Spam')
     expect(wrapper.text()).toContain('Bibliothek near1')
     expect(wrapper.text()).toContain('Bibliothek near2')
     expect(wrapper.text()).not.toContain('Bibliothek far')

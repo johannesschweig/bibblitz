@@ -70,10 +70,10 @@ function fineprint(text: string): string {
 export function confirmMail(params: { title: string, count: number, confirmUrl: string, stopUrl: string }): MailContent {
   const { title, count, confirmUrl, stopUrl } = params
   const where = librariesPhrase(count)
-  const subject = `Bitte bestätigen: Wecker für „${title}“`
+  const subject = `Noch ein Klick: Wecker für „${title}“ bestätigen`
 
   const text = [
-    'Bitte bestätigen',
+    'Noch ein Klick nötig',
     '',
     `Du hast einen Wecker für „${title}“ gestellt. Wir mailen dir einmal, sobald ein Exemplar ${where} verfügbar ist.`,
     '',
@@ -85,7 +85,7 @@ export function confirmMail(params: { title: string, count: number, confirmUrl: 
   ].join('\n')
 
   const html = layout({
-    heading: 'Bitte bestätigen',
+    heading: 'Noch ein Klick nötig',
     stopUrl,
     body: [
       paragraph(`Du hast einen Wecker für <strong>${escapeHtml(title)}</strong> gestellt. Wir mailen dir einmal, sobald ein Exemplar ${escapeHtml(where)} verfügbar ist.`),

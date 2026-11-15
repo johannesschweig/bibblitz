@@ -173,10 +173,10 @@ The feature is called **Wecker**: button "Wecker stellen", state "Wecker läuft"
 | Sheet line | Wir mailen dir einmal, sobald es in deinen Bibliotheken verfügbar ist. |
 | Count, e-mail label | 5 gewählt / Keine gewählt, E-Mail |
 | Errors | Wähle mindestens eine Bibliothek. / Das ist keine gültige Adresse. / Bitte stimme zu. / Hat nicht geklappt. Nochmal? / Zu viele Versuche. Kurz warten. |
-| Sent | **Fast da.** Bestätigungsmail an … ist raus. Link anklicken, dann läuft der Wecker. |
+| Sent | **Fast da.** Bestätigungsmail an … ist raus. Link anklicken, dann läuft der Wecker. Darunter (since 15.11.2026): "Nichts angekommen? Schau im Spam-Ordner nach. Absender ist wecker@bibblitz.de." |
 | Confirm page (the link in the mail lands here, no button) | **Wecker läuft.** Wir mailen dir, sobald … in einer deiner 5 Bibliotheken verfügbar ist. [Zum Titel] [Ausschalten] |
 | Stop page (opens and switches off by itself) | **Wecker aus.** Deine Adresse ist gelöscht. Wir mailen dir nichts mehr zu … |
-| Mail 1, confirmation (mocked) | Betreff "Bitte bestätigen: Wecker für „<Titel>“". Text: Du hast einen Wecker für <Titel> gestellt. Wir mailen dir einmal, sobald ein Exemplar in einer deiner 5 Bibliotheken verfügbar ist. Button **Wecker bestätigen**. "Nicht von dir? Dann ignoriere diese Mail." |
+| Mail 1, confirmation (mocked) | Betreff "Noch ein Klick: Wecker für „<Titel>“ bestätigen" (was "Bitte bestätigen: …" until 15.11.2026; the Brevo log showed one confirmation mail never opened and one expired). Text: Du hast einen Wecker für <Titel> gestellt. Wir mailen dir einmal, sobald ein Exemplar in einer deiner 5 Bibliotheken verfügbar ist. Button **Wecker bestätigen**. "Nicht von dir? Dann ignoriere diese Mail." |
 | Footer of both mails | "Nicht mehr nötig? **Wecker ausschalten**" (link to `/watch/stop`), plus the `List-Unsubscribe` headers (one-click), which mail programs show as "Abbestellen" next to the sender. In mail 2 the address is deleted already, so the stop page answers "Diesen Wecker gibt es nicht mehr". |
 | Mail 2, Wecker klingelt (mocked) | Betreff "Wecker: „<Titel>“ ist verfügbar". Text: **Dein Wecker klingelt.** <Titel> ist jetzt verfügbar: the libraries with distance and Signatur. Button **Zum Titel** (`/media/<id>?ref=wecker`). "Das kann schnell weg sein. Das war's: Wir haben deine Adresse gelöscht." |
 

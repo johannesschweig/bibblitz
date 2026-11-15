@@ -163,11 +163,18 @@ const inputBase = 'w-full rounded-xl border bg-white px-3 py-2.5 text-base text-
           <div class="flex size-11 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-800">
             <Icon name="lucide:mail-check" class="text-2xl" />
           </div>
-          <p class="text-base text-gray-900">
+          <p class="pt-2.5 text-base text-gray-900">
             Bestätigungsmail an <strong class="font-semibold wrap-anywhere">{{ email.trim() }}</strong> ist raus.
-            Link anklicken, dann läuft der Wecker.
           </p>
         </div>
+        <!-- The one thing left to do, so it reads as a task -->
+        <div class="flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-blue-900" data-testid="watch-sent-todo">
+          <Icon name="lucide:square" class="shrink-0 text-2xl" />
+          <p class="text-lg font-semibold">Link anklicken, dann läuft der Wecker.</p>
+        </div>
+        <p class="text-sm text-gray-700" data-testid="watch-sent-hint">
+          Nichts angekommen? Schau im Spam-Ordner nach. Absender ist wecker@bibblitz.de.
+        </p>
 
         <section aria-labelledby="watch-sent-libraries">
           <h3 id="watch-sent-libraries" class="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">Der Wecker gilt für</h3>

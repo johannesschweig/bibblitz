@@ -43,7 +43,7 @@ registerEndpoint('/api/watch/dev-mail', (event) => {
   if (getQuery(event).to === 'nobody@beispiel.de') throw createError({ statusCode: 404 })
   return {
     to: 'name@beispiel.de',
-    subject: 'Bitte bestätigen: Wecker für „Die Wartenden“',
+    subject: 'Noch ein Klick: Wecker für „Die Wartenden“ bestätigen',
     html: '<!doctype html><html><head><title>x</title></head><body><a href="https://www.bibblitz.de/watch/confirm?token=t&id=1">Wecker bestätigen</a></body></html>',
     unsubscribeUrl: 'https://www.bibblitz.de/api/watch/stop?token=t'
   }
@@ -133,7 +133,7 @@ describe('Mail preview', () => {
     await vi.waitFor(() => expect(wrapper.find('[data-testid="mail-subject"]').exists()).toBe(true))
 
     expect(wrapper.find('[data-testid="mail-to"]').text()).toBe('name@beispiel.de')
-    expect(wrapper.find('[data-testid="mail-subject"]').text()).toContain('Bitte bestätigen')
+    expect(wrapper.find('[data-testid="mail-subject"]').text()).toContain('Noch ein Klick')
     expect(frame(wrapper)).toContain('Wecker bestätigen')
     expect(frame(wrapper)).toContain('<base target="_top">')
     // The mail program's "Abbestellen" goes to the stop page, not to the API

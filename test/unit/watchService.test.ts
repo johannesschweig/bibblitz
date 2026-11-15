@@ -104,7 +104,7 @@ describe('subscribe', () => {
     expect(mails).toHaveLength(1)
     const mail = mails[0]!
     expect(mail.to).toBe('anna@beispiel.de')
-    expect(mail.subject).toBe('Bitte bestätigen: Wecker für „Die Wartenden“')
+    expect(mail.subject).toBe('Noch ein Klick: Wecker für „Die Wartenden“ bestätigen')
     const token = makeWatchToken(SECRET, row!.id)
     expect(mail.html).toContain(`https://www.bibblitz.de/watch/confirm?token=${encodeURIComponent(token)}&amp;id=35408557&amp;n=2`)
     expect(mail.html).toContain('/watch/stop?token=')
