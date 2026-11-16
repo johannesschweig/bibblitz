@@ -24,6 +24,7 @@ BibBlitz (bibblitz.de) — a Nuxt 4 / Vue 3 / Tailwind 4 front end for the Berli
 - `detail.get.ts` — fetches one record by numeric ID (`SAK<id>` direct link) and parses metadata (media type, author, ISBN) and per-branch availability, then runs it through `utils/availability.ts`. It also reads the `Sprache` row (`languages`), shown as a line under the ISBN (the `Sprache Original` row is deliberately not shown).
 - Maintenance: while VÖBB is switched off, every aDISWeb URL redirects to a static `/wartung/` page. `utils/maintenance.ts` detects it (and reads the end of the window); `search`/`detail` then return `{ success: false, maintenance: true, until }` and `status.get.ts` (cached 60 s) lets `voebbStatusStore` show a banner (`MaintenanceNotice.vue`) before anyone searches. Any new scraper route must check `isMaintenancePage` first.
 - `server/api/watch/` — the Wecker (shelf watch, e-mail alert when a copy is free): subscribe, confirm, stop, the checker `run` and `health`. Logic in `server/utils/watch*.ts`, mails in `utils/watchMail.ts`, table in `migrations/001_bibblitz_watches.sql` (Supabase; Claude cannot run DDL, the SQL is pasted into the SQL editor). Secrets `NUXT_WATCH_*`, flag `NUXT_PUBLIC_WATCH_ENABLED`; everything fails closed. Full description, the checker by hand and the keep-awake call: `docs/shelf-watch.md`.
+- `cover/[id].get.ts` — cover proxy: the browser asks us, we fetch the image from VÖBB with an aDISWeb `Referer` (without it VÖBB answers 403) so the visitor's IP never reaches voebb.de; the id is read from the result rows by `search.get.ts`. Details and the open legal question in `docs/covers.md`.
 - `server/routes/sitemap.xml.ts`, `robots.txt.ts` — SEO routes; sitemap is generated from `app/assets/libraries.json`.
 - axios + cookiejar packages are force-inlined in `nuxt.config.ts` (`nitro.externals.inline`) so they bundle into the self-contained `.output` (the Docker runtime stage has no `node_modules`) — keep this when touching those deps.
 
@@ -48,7 +49,8 @@ Details that only matter for one kind of work live in `docs/`. Read the file fir
 
 - Search route filters (`?lang=` / `?type=`), `FilterPage.vue`, `mediaStore` filter state, filter lists → `docs/search-and-filters.md`
 - Contrast rules in detail, how to run the audit and which states to cover → `docs/accessibility.md`
-- Open design items (tokens, flat list style, covers, wordmark) → `docs/design-backlog.md`
+- Covers (cover proxy `/api/cover/<id>`, VÖBB Referer workaround, `CoverImage`, caching, open legal question, I2 bet) → `docs/covers.md`
+- Open design items (tokens, flat list style, wordmark) → `docs/design-backlog.md`
 - `libraries.json` (hours, service hours, website links), `npm run libraries:check`, the plan for a monthly Pi job → `docs/library-data.md`
 - Marketing campaigns (`?ref=` links), report `npm run umami:campaigns`, refresh with the `campaign-report` skill → `docs/campaigns.md`
 - Returning visitors who re-check a record or search, watch/bell lists, notifications, recent searches, Merkliste or list views (TODO I18, merged with I8, I10, I17) → `docs/shelf-watch.md`
