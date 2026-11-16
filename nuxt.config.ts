@@ -1,4 +1,5 @@
 import tailwindcss from '@tailwindcss/vite'
+import { umamiBeforeSend } from './utils/umamiBeforeSend.mjs'
 
 export default defineNuxtConfig({
   app: {
@@ -13,11 +14,15 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }
       ],
       script: [
+        // Must exist before Umami's first send, so it is an inline script, not a plugin (those run after hydration).
+        // Strips the secret Wecker `token` from the URL and referrer, I33 (docs/analytics.md)
+        { innerHTML: `window.umamiBeforeSend=${umamiBeforeSend.toString()}` },
         {
           src: 'https://cloud.umami.is/script.js',
           'data-website-id': '67a667ea-94a2-4aa6-a4d6-edcee1bbb7ca',
           // Umami only tracks on these hostnames, so localhost and preview deployments never send data
           'data-domains': 'bibblitz.de,www.bibblitz.de',
+          'data-before-send': 'umamiBeforeSend',
           defer: true
         }
       ]

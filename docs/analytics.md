@@ -8,6 +8,8 @@ Pipeline scripts and the feature inventory with usage numbers. Read it for `/uma
 
 `npm run umami:journeys -- --out <dir outside data/umami>` (`scripts/umami/journeys.mjs`) exports the visits after `reviewedUntil` in `scripts/umami/review-state.json` as readable journeys with flags (one API call per custom event for its properties). The `/umami-session-review` skill uses it: it reads the unreviewed journeys, verifies suspected UX problems on localhost, adds them to the `TODO.md` problem table and moves `reviewedUntil` forward.
 
+**No secrets in recorded URLs (I33).** Umami records the full page URL and the referrer, so the secret `token` of the Wecker links (`/watch/confirm`, `/watch/stop`) is removed in the browser: `utils/umamiBeforeSend.mjs` is written into an inline `<head>` script by `nuxt.config.ts` (before the Umami script, a plugin would run too late) and named in `data-before-send`. It removes only `token`, from `url` and `referrer`; `?ref=` and `?q=` stay. Decay check: `journeys.mjs` flags `token-in-url` (`scripts/umami/tokenLeak.mjs`) and prints a warning, so read the flag counts of every review. A new page with a secret in its URL needs the same treatment. Tokens recorded before 16.11.2026 stay in Umami.
+
 `npm run umami:campaigns` (`scripts/umami/campaigns.mjs`, registry `scripts/umami/campaigns.json`) builds the marketing report `docs/campaigns.md` from the `?ref=` tag on the entry page; see the `campaign-report` skill.
 
 ## Feature inventory & usage (Umami)

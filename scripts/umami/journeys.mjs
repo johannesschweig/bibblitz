@@ -16,6 +16,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { parseArgs } from 'node:util'
+import { hasTokenInUrl } from './tokenLeak.mjs'
 
 const SHARE_URL = process.env.UMAMI_SHARE_URL
 const BASE = process.env.UMAMI_API_URL ?? 'https://cloud.umami.is/analytics/eu/api'
@@ -134,6 +135,8 @@ function describe(e, t0) {
 function flags(items) {
   const f = []
   const ev = (name) => items.filter((i) => i.name === name)
+  // I33: the Wecker token must be stripped in the browser; a hit here means that stopped working
+  if (items.some((i) => hasTokenInUrl(i.e))) f.push('token-in-url')
   const searches = ev('search-started')
   const queries = searches.map((s) => String(s.props.query ?? s.props.q ?? ''))
   if (searches.some((s) => s.props.results === 0 && !s.props.error)) f.push('zero-hit-search')
@@ -208,4 +211,5 @@ const summary = {
 }
 await writeFile(join(out, 'summary.json'), JSON.stringify(summary, null, 2))
 console.log(JSON.stringify(summary, null, 2))
+if (summary.flags['token-in-url']) console.log(`\n!! ${summary.flags['token-in-url']} visit(s) have a secret Wecker token in a recorded URL (flag token-in-url, I33). The Umami before-send hook is not stripping it.\n`)
 console.log(`journeys: ${join(out, 'journeys.md')}`)
