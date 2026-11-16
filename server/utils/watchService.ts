@@ -11,6 +11,7 @@ import { makeWatchToken, verifyWatchToken } from './watchToken'
 import type { WatchStore, WatchRow } from './watchStore'
 import type { SendMail } from './watchMailer'
 import type { RecordResult } from './recordFetch'
+import { describeConfirmNotification, type SendNotification } from './watchNotify'
 
 const HOUR = 60 * 60 * 1000
 export const CONFIRM_WINDOW_MS = 24 * HOUR
@@ -27,7 +28,19 @@ export interface WatchDeps {
   secret: string
   // https://www.bibblitz.de, no trailing slash
   siteUrl: string
+  // Optional message to the owner's phone when a Wecker is confirmed (NUXT_WATCH_NTFY_TOPIC); never carries the address
+  notify?: SendNotification
   now?: () => Date
+}
+
+/** Fire and forget: a missing or failing ntfy must never hold up or fail a visitor's request. */
+function notifyOwner(deps: WatchDeps, build: () => Parameters<SendNotification>[0]) {
+  if (!deps.notify) return
+  try {
+    deps.notify(build()).catch(error => console.error('[watch] ntfy message failed:', (error as Error).message))
+  } catch (error) {
+    console.error('[watch] ntfy message failed:', (error as Error).message)
+  }
 }
 
 const clock = (deps: WatchDeps) => (deps.now ?? (() => new Date()))()
@@ -110,6 +123,7 @@ export async function confirmWatch(deps: WatchDeps, token: unknown): Promise<Con
   }
   if (row.status === 'active') return 'active'
   await deps.store.activate(row.id, new Date(now.getTime() + ACTIVE_WINDOW_MS).toISOString(), now.toISOString())
+  notifyOwner(deps, () => describeConfirmNotification({ title: row.mediaTitle, count: row.libraryIds.length, mediaId: row.mediaId, siteUrl: deps.siteUrl }))
   return 'ok'
 }
 

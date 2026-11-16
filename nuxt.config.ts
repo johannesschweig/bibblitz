@@ -35,7 +35,7 @@ export default defineNuxtConfig({
     // NUXT_WATCH_SUPABASE_SERVICE_KEY, NUXT_WATCH_BREVO_API_KEY, NUXT_WATCH_SECRET (signs the links in the mails),
     // NUXT_WATCH_RUN_SECRET (protects the checker), optional NUXT_WATCH_MAIL_FROM, NUXT_WATCH_MAIL_FROM_NAME, NUXT_WATCH_SITE_URL,
     // NUXT_WATCH_TIMER_TIMES (Berlin clock times of the daily checker runs in production, default 11:30,16:30; empty or off = no timer),
-    // NUXT_WATCH_NTFY_TOPIC (topic on ntfy.sh for the message after each run; the topic is the secret, empty = no message)
+    // NUXT_WATCH_NTFY_TOPIC (topic on ntfy.sh for the message after each run and when a Wecker is set or confirmed; the topic is the secret, empty = no message)
     watch: {
       supabaseUrl: '',
       supabaseServiceKey: '',

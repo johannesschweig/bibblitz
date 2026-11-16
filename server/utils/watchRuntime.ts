@@ -5,6 +5,7 @@ import { createRateLimiter } from './watchRateLimit'
 import { createMemoryStore, createSupabaseStore, type WatchStore } from './watchStore'
 import { createBrevoSender, createOutboxSender, type SendMail } from './watchMailer'
 import { fetchRecord } from './recordFetch'
+import { createNtfySender, type SendNotification } from './watchNotify'
 import type { WatchDeps } from './watchService'
 
 const HOUR = 60 * 60 * 1000
@@ -18,6 +19,7 @@ const devStore = createMemoryStore()
 const devSender = createOutboxSender()
 let supabase: { key: string, store: WatchStore } | undefined
 let brevo: { key: string, send: SendMail } | undefined
+let ntfy: { topic: string, send: SendNotification } | undefined
 
 /** The feature is on in dev and in production only with NUXT_PUBLIC_WATCH_ENABLED=true. */
 export function watchEnabled(event?: H3Event): boolean {
@@ -53,7 +55,15 @@ export function getWatchDeps(event?: H3Event): WatchDeps | null {
   if (!store || !sendMail || !secret) return null
 
   const siteUrl = (config.siteUrl || (dev && event ? getRequestURL(event).origin : 'https://www.bibblitz.de')).replace(/\/$/, '')
-  return { store, sendMail, fetchRecord, secret, siteUrl }
+  // Optional message to the owner's phone for new and confirmed Weckers; the same topic as the timer's messages
+  const topic = String(config.ntfyTopic ?? '').trim()
+  let notify: SendNotification | undefined
+  if (topic) {
+    if (ntfy?.topic !== topic) ntfy = { topic, send: createNtfySender(topic) }
+    notify = ntfy.send
+  }
+
+  return { store, sendMail, fetchRecord, secret, siteUrl, notify }
 }
 
 /** Fly sets Fly-Client-IP; the forwarded header is the fallback behind other proxies. */

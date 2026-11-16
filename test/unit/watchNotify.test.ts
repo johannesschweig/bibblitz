@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { describeRunNotification, describeFailureNotification, createNtfySender } from '../../server/utils/watchNotify'
+import { describeRunNotification, describeFailureNotification, describeConfirmNotification, createNtfySender } from '../../server/utils/watchNotify'
 import type { RunReport } from '../../server/utils/watchService'
 
 const SITE = 'https://www.bibblitz.de'
@@ -117,5 +117,19 @@ describe('createNtfySender', () => {
     const promise = createNtfySender('geheim-topic', fetchMock as unknown as typeof fetch)(notification)
     await expect(promise).rejects.toThrow('ntfy answered 429')
     await expect(promise).rejects.not.toThrow(/geheim/)
+  })
+})
+
+describe('describeConfirmNotification', () => {
+  it('names the title and the number of libraries, ASCII title for the header', () => {
+    const confirm = describeConfirmNotification({ title: 'Die Wartenden', count: 3, mediaId: '35408557', siteUrl: SITE })
+    expect(confirm.message).toBe('Die Wartenden, 3 libraries.\nThe Wecker is on.')
+    expect(confirm.click).toBe(`${SITE}/media/35408557`)
+    expect(confirm.title).toMatch(/^[\x20-\x7e]+$/)
+  })
+
+  it('shortens a very long title', () => {
+    const n = describeConfirmNotification({ title: 'x'.repeat(300), count: 2, mediaId: '1', siteUrl: SITE })
+    expect(n.message.split(',')[0]!.length).toBeLessThanOrEqual(100)
   })
 })

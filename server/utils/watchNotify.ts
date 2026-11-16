@@ -1,5 +1,5 @@
-// The ntfy message after each timer run of the shelf watch: how many records were checked and whether a copy was
-// free. For the owner's phone only. Counts and titles, never an e-mail address (not even masked). The topic is the
+// The ntfy messages of the shelf watch: after each timer run (how many records were checked, whether a copy was
+// free) and when someone confirms a Wecker. For the owner's phone only. Counts and titles, never an e-mail address (not even masked). The topic is the
 // only secret, same as the Pi jobs (docs/library-data.md): NUXT_WATCH_NTFY_TOPIC.
 import type { RunReport } from './watchService'
 
@@ -60,6 +60,19 @@ export function describeRunNotification(report: RunReport, siteUrl: string): Not
     priority: sent > 0 || sendFailed > 0 ? 4 : broken || recordFailed > 0 ? 3 : 2,
     tags,
     click: single ? `${siteUrl}/media/${single}` : undefined
+  }
+}
+
+const shortTitle = (title: string) => (title.length > 100 ? `${title.slice(0, 99)}…` : title)
+
+/** The Wecker is switched on (the visitor clicked the link in the mail). */
+export function describeConfirmNotification(params: { title: string, count: number, mediaId: string, siteUrl: string }): Notification {
+  return {
+    title: 'BibBlitz Wecker: confirmed',
+    message: `${shortTitle(params.title)}, ${plural(params.count, 'library', 'libraries')}.\nThe Wecker is on.`,
+    priority: 3,
+    tags: ['alarm_clock'],
+    click: `${params.siteUrl}/media/${params.mediaId}`
   }
 }
 

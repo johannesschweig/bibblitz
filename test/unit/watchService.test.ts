@@ -9,6 +9,7 @@ import {
 } from '../../server/utils/watchService'
 import type { OutgoingMail } from '../../server/utils/watchMailer'
 import type { RecordResult } from '../../server/utils/recordFetch'
+import type { Notification } from '../../server/utils/watchNotify'
 
 const SECRET = 'test-secret'
 const NOW = new Date('2026-11-12T10:00:00Z')
@@ -195,6 +196,51 @@ describe('confirm and stop', () => {
     expect(await stopWatch(deps, token)).toBe('ok')
     expect(store.rows.has(row.id)).toBe(false)
     expect(await stopWatch(deps, token)).toBe('gone')
+  })
+})
+
+describe('ntfy message when a Wecker is confirmed', () => {
+  let pushes: Notification[]
+  beforeEach(() => {
+    pushes = []
+    deps.notify = async (notification) => { pushes.push(notification) }
+  })
+
+  it('sends nothing when a Wecker is only set, not confirmed yet', async () => {
+    await subscribe(deps, input())
+    await subscribe(deps, input())
+    await subscribe(deps, input({ email: 'nonsense' }))
+    expect(pushes).toHaveLength(0)
+  })
+
+  it('sends a message with a link to the record when the Wecker is confirmed, once', async () => {
+    await subscribe(deps, input())
+    const [row] = [...store.rows.values()]
+    const token = makeWatchToken(SECRET, row!.id)
+    expect(await confirmWatch(deps, token)).toBe('ok')
+    expect(await confirmWatch(deps, token)).toBe('active')
+    expect(pushes).toHaveLength(1)
+    expect(pushes[0]).toMatchObject({ title: 'BibBlitz Wecker: confirmed', priority: 3, click: 'https://www.bibblitz.de/media/35408557' })
+    expect(pushes[0]!.message).toContain('Die Wartenden, 2 libraries.')
+    expect(JSON.stringify(pushes)).not.toContain('anna')
+    expect(JSON.stringify(pushes)).not.toContain('beispiel')
+  })
+
+  it('sends nothing for an expired or forged link', async () => {
+    await subscribe(deps, input())
+    pushes = []
+    await confirmWatch(deps, 'forged')
+    expect(pushes).toHaveLength(0)
+  })
+
+  it('a failing ntfy neither breaks the request nor throws', async () => {
+    deps.notify = async () => { throw new Error('ntfy down') }
+    expect(await subscribe(deps, input())).toEqual({ ok: true })
+    const [row] = [...store.rows.values()]
+    expect(await confirmWatch(deps, makeWatchToken(SECRET, row!.id))).toBe('ok')
+    // A notifier that throws synchronously is covered too
+    deps.notify = (() => { throw new Error('boom') }) as unknown as WatchDeps['notify']
+    expect(await subscribe(deps, input({ email: 'bert@beispiel.de' }))).toEqual({ ok: true })
   })
 })
 
