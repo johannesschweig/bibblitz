@@ -12,6 +12,12 @@ Pipeline scripts and the feature inventory with usage numbers. Read it for `/uma
 
 `npm run umami:campaigns` (`scripts/umami/campaigns.mjs`, registry `scripts/umami/campaigns.json`) builds the marketing report `docs/campaigns.md` from the `?ref=` tag on the entry page; see the `campaign-report` skill.
 
+## Sharing data with third parties (ZLB, asked 19.11.2026)
+
+Rule: **share aggregates, never the raw export.** `data/umami/<date>/events.json` and the journeys are personal data in the GDPR sense for us as the controller (Recital 26: the session ID is a pseudonym, plus city, device, exact timestamps and free-text search terms, which can carry names or health topics). Handing that out needs a legal basis, a purpose that fits the privacy page (it names only our own statistics and campaign measurement) and a recipient entry in `app/pages/data-privacy.vue` (Art. 13). Aggregated numbers with small groups removed are anonymous, so the GDPR does not apply to them and the privacy page needs no change. The ZLB, a public body, gets nothing it could re-identify. Not legal advice; for raw data or a regular feed ask a data-protection officer first.
+
+`npm run umami:share -- --out res/<name>` (`scripts/umami/shareExport.mjs`) builds such an export from the newest snapshot: CSVs only, no IDs, no exact timestamps, no city except Berlin, no `?ref=` names, no URLs with query strings (Wecker tokens), groups of fewer than 5 devices folded into "Other" or shown as `<5`, search terms only when at least 3 devices searched for them. It fetches the event data for search terms, availability and ZIP areas once and caches it in the snapshot. Write a README for the recipient next to the CSVs and read every file before sending. `res/` is gitignored.
+
 ## Feature inventory & usage (Umami)
 
 Umami snapshot taken 09.10.2026 (dashboard "bibblitz", range "Last 90 days" = 11.07.–09.10.2026; `date=all` and custom `date=a:b` ranges crash Umami's UI, use `date=90day`). Overall: 373 visitors, 432 visits, 1.65k views, bounce 53%. Of these only 159 visitors fired at least one custom event (843 events). Re-check around **06.11.2026** and decide which features/events to keep or kill.
@@ -82,6 +88,24 @@ How to read the "Umami indicator" column: **event** = custom event (Events tab, 
 | Watchlist / bookmarks / account sync | 19.05. → 22.07. | event `bookmark-button-clicked` (5), URL `/watchlist` (5 visitors still arrive, now a dead page) |
 | Share button | 13.07. → 09.10. | event `share-media` (2) |
 | Library click event | 09.07. → 13.07. | event `library-click` (20, only in the export, 4 sessions on 09.07.) |
+
+## Audience snapshot: what visitors open (18.11.2026)
+
+Umami records no media type for a record view, so the 841 distinct records opened in 1 Oct–18 Nov 2026 (606 visits, 1,159 record views, from `npm run umami:journeys`) were looked up one by one through `/api/detail` (real VÖBB, `MOCK_VOEBB=0`) and weighted by views. The shares say what people open, not who they are: Umami is anonymous, so gender and age cannot be derived from them.
+
+| Media | Share of views |
+|---|---|
+| Book (including 24% that VÖBB labels "Band", a volume of a multi-volume work) | 80% |
+| Film and series (DVD, Blu-ray) | 7% |
+| Board and card games, puzzles | 4% |
+| Console games | 3% |
+| Audio (CD, MP3, vinyl) | 3% |
+| Devices (Tonie figures, tablets) | 2% |
+
+- **Language** of the opened records: 83% German, 13% English.
+- **Book age**: roughly 45% from the last three-odd years, another 24% from 2015–21 and about 31% older.
+
+Caveats: the showcase tile 34112359 (a book) is 48 of the 1,159 views and changes the split by about one point. E-media are hidden on the page, so they are not in these numbers. Run the lookup one request at a time: two parallel requests made VÖBB return pages without a media type for about a quarter of the records.
 
 Caveats when re-reading the numbers:
 - **Traffic spike 26.–28.10.2026**: ~230 sessions in three days (146 on 27.10.) against 1–3 a day before; most of the 90-day total (430 sessions). 125 sessions were direct, 27 came from `forum.zlb.de` (a login-protected ZLB Discourse forum, so the post cannot be read; the referrer path is always `/`), 27 from google.com; 140 on mobile, 179 in Germany. Almost all data for the filter page (27.10.), `branches-expand` (24.10.), library outbound clicks (17.10.) and `showcase-click` comes from these first-time visitors, so it shows how new visitors behave, not a long-term baseline. Re-read after the spike has faded.

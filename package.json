@@ -13,6 +13,7 @@
     "umami:digest": "node scripts/umami/digest.mjs",
     "umami:campaigns": "node --env-file-if-exists=.env scripts/umami/campaigns.mjs",
     "umami:journeys": "node --env-file-if-exists=.env scripts/umami/journeys.mjs",
+    "umami:share": "node --env-file-if-exists=.env scripts/umami/shareExport.mjs",
     "libraries:check": "node scripts/libraries/check.mjs"
   },
   "dependencies": {

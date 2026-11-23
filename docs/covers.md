@@ -32,12 +32,11 @@ VÖBB itself sends `no-store`, so the caching is ours. On Vercel the `s-maxage` 
 ## What exists, what does not (spike 04.11.2026, 120 unique ids)
 
 - Rows with a cover id: 64% of 242 rows. Real images behind them: 45% of rows, almost only books. By media type: Buch 50 of 83, Band 36 of 43, E-Book 12 of 16, CD 4 of 13, **DVD 0 of 15, Tonies 0 of 23, Konsolenspiel 0 of 7** (ids exist, images do not), so those rows show the media-type tile.
-- **There is no fallback source.** The chain from the spike (VÖBB, then Google Books, then Open Library, 88% of ISBNs together) was not built; only VÖBB is used. Open Library alone covers 20-27%, Google Books needs a key or answers with a grey placeholder, DNB (`portal.dnb.de/opac/mvb/cover?isbn=<isbn13>`) holds the same 73% as VÖBB and needs no Referer.
+- **There is no fallback source (dropped 23.11.2026, stays that way).** The chain from the spike (VÖBB, then Google Books, then Open Library, 88% of ISBNs together) was not built; only VÖBB is used. Open Library alone covers 20-27%, Google Books needs a key or answers with a grey placeholder, DNB (`portal.dnb.de/opac/mvb/cover?isbn=<isbn13>`) holds the same 73% as VÖBB and needs no Referer.
 
-## Open
+## Decided (23.11.2026, Johannes) and open
 
-- **Legal, still not resolved.** Sending the aDISWeb Referer deliberately gets around VÖBB's hotlink protection. The spike said to ask VÖBB and check the VLB/DNB terms *before* building; the feature was built first and the check is still open. It weighs more once there is any income (I28, TODO "VÖBB terms and the cover sources"). The cleaner route would be DNB as the primary source, which removes the workaround (its terms of use were not read).
-- **I31:** no server-side cover cache on Fly, VÖBB gets every first request.
-- **P15:** the cover looks tappable and is not.
-- **The bet's read-out** (share of typed-search visits that open a record, bounce rate) is confounded by the move to Fly.io (10.11.) and the loky newsletter (13.-15.11.), see the I2 block. The "week before" baseline was not taken before the release; the reviews 6-7 numbers (69-71%) are the closest.
-- A missing id is cached for one day, a failed one never: if VÖBB changes the Referer rule, every cover turns into the tile at once (`error` is 502, no cache), and `cover-click` stays quiet. There is no counter for proxy failures; the `fly logs` carry nothing about covers (I32 first).
+- **Legal: decided, closed.** Sending the aDISWeb Referer deliberately gets around VÖBB's hotlink protection. We will not ask VÖBB for permission; the feature stays as it is and the risk is accepted. DNB as the primary source (no Referer needed, terms never read) is not pursued. Revisit only if income (I28) is picked up, see TODO "VÖBB terms and the cover sources".
+- **The bet (I2) is closed without a read-out**: people asked for covers and the list looks better, which is reason enough. The before/after numbers were confounded anyway (see the I2 block).
+- **Dropped (23.11.2026, Johannes), accepted as they are:** no server-side cover cache on Fly (I31, VÖBB gets every first request), no fallback source (see above), no counter for proxy failures (a missing id is cached for one day, a failed one never; if VÖBB changes the Referer rule every cover turns into the tile at once and nothing logs it).
+- **Still open:** P15, the cover looks tappable and is not.
