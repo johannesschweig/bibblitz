@@ -1,7 +1,7 @@
 // utils/availability.ts
 import libraryData from '~/assets/libraries.json'
 import { calculateHaversineDistance } from './distance'
-import type { AvailabilityInfo } from '../types/types'
+import type { AvailabilityInfo, NonPublicCopies } from '../types/types'
 
 // Interfaces
 // near = available close by (strongest green), good = available further away,
@@ -167,8 +167,14 @@ export function calculateBranchStatus(
 export function calculateStatusInfo(
   availability: AvailabilityInfo[] | undefined,
   userCoords: { lat: number; lon: number } | null | undefined,
-  userZipDefault: boolean
+  userZipDefault: boolean,
+  nonPublicCopies?: NonPublicCopies
 ): StatusBadgeConfig {
+
+  // The only copies are in a school library: not "Nicht im Bestand", VÖBB does list one
+  if (availability?.length === 0 && nonPublicCopies && nonPublicCopies.count > 0) {
+    return { label: 'Nur in Schulbibliothek', tone: 'neutral' }
+  }
 
   const sortedAvailability = sortBranchesByDistance(availability, userCoords)
   // 1. Filter out invalid/lost copies
@@ -276,8 +282,50 @@ export function filterAndEnrichBranches(rawAvailability: AvailabilityInfo[]): Av
     })
     // Keep only libraries that could be matched
     .filter(item => item.sortIndex !== -1)
-    // Remove the temporary helper field 'sortIndex'
-    .map(({ sortIndex, ...cleanItem }) => cleanItem)
+    // Remove the temporary helper field 'sortIndex' and the raw order cell (only needed for dropped rows)
+    .map(({ sortIndex, order, ...cleanItem }) => cleanItem)
+}
+
+// VÖBB marks libraries without public access in their name, spelled "(nicht oeffentlich)" for
+// Carlo Schmid and "(nicht öffentlich)" for the others
+const NON_PUBLIC_MARKER = /\(nicht (?:oeffentlich|öffentlich)\)/i
+
+/** True when the "Bestellmöglichkeit" cell offers an order ("4 Wochen - Bestellwunsch möglich"). */
+function isOrderable(order: string | undefined): boolean {
+  if (!order) return false
+  // "Nicht bestellbar - nicht bestellbar" (Humboldtschule) and "Keine Bestellung möglich" win over a later "möglich"
+  if (/nicht bestellbar|keine bestellung/i.test(order)) return false
+  return /bestellwunsch möglich|vormerkung möglich/i.test(order)
+}
+
+/**
+ * Looks at the rows filterAndEnrichBranches drops: copies in libraries without public access are
+ * counted (the detail page says so instead of "Keine Exemplare gefunden."), every other dropped
+ * name is returned as `unknown`, so a public library missing from libraries.json can be noticed.
+ */
+export function summarizeDroppedBranches(rawAvailability: AvailabilityInfo[]): { nonPublic?: NonPublicCopies, unknown: string[] } {
+  const dropped = rawAvailability.filter(item => !findMatchingLibrary(item.libraryName))
+  const nonPublic = dropped.filter(item => NON_PUBLIC_MARKER.test(item.libraryName))
+  const unknown = [...new Set(dropped.filter(item => !NON_PUBLIC_MARKER.test(item.libraryName)).map(item => item.libraryName))]
+  return {
+    ...(nonPublic.length > 0 && { nonPublic: { count: nonPublic.length, orderable: nonPublic.filter(item => isOrderable(item.order)).length } }),
+    unknown
+  }
+}
+
+/**
+ * The line for a record whose only copies are in libraries without public access. VÖBB's order
+ * cell decides whether we say "bestellbar": the school itself is closed to visitors, but a copy
+ * with "Bestellwunsch möglich" can be sent to another library.
+ */
+export function nonPublicNote(copies: NonPublicCopies | undefined): string | undefined {
+  if (!copies || copies.count === 0) return undefined
+  const where = copies.count === 1
+    ? 'Nur in einer Schulbibliothek ohne öffentlichen Zugang.'
+    : 'Nur in Schulbibliotheken ohne öffentlichen Zugang.'
+  return copies.orderable > 0
+    ? `${where} Laut VÖBB bestellbar, bitte im VÖBB-Katalog prüfen.`
+    : `${where} Nicht bestellbar.`
 }
 
 export function sortBranchesByDistance(availability: AvailabilityInfo[], userCoords: { lat: number; lon: number }): AvailabilityInfo[] {

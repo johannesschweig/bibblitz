@@ -3,7 +3,7 @@
 import { useRoute } from 'vue-router'
 import { useItemCacheStore } from '@/stores/itemCacheStore'
 import { getPermanentUrlFromId } from '../../../utils/index.ts'
-import { sortBranchesByDistance, calculateBranchStatus, parseStatus, splitLibraryName } from '../../../utils/availability'
+import { sortBranchesByDistance, calculateBranchStatus, parseStatus, splitLibraryName, nonPublicNote } from '../../../utils/availability'
 import { accessNote } from '../../../utils/shelfmark'
 import { formatDistance } from '../../../utils/distance'
 import { useUserStore } from '~/stores/userStore.js'
@@ -243,8 +243,8 @@ function authorClicked() {
           <button v-if="!voebbStatus.maintenance" type="button" class="btn btn-md btn-secondary mt-3" @click="retry()">Erneut versuchen</button>
         </div>
 
-        <div v-else-if="data.data.availability.length === 0" class="text-gray-500 p-4 text-center">
-          Keine Exemplare gefunden.
+        <div v-else-if="data.data.availability.length === 0" class="text-gray-500 p-4 text-center" data-testid="no-copies">
+          {{ nonPublicNote(data.data.nonPublicCopies) ?? 'Keine Exemplare gefunden.' }}
         </div>
 
         <div v-else>

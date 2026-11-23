@@ -60,11 +60,11 @@ describe('parseAvailabilityTable', () => {
     <tr>${td('Mitte: Hansabibliothek')}${td('Magazin 1 - Bereitstellung 1-3 Tage - Roman Garm')}${td('4 Wochen - Bestellwunsch möglich - 2x')}${td('<span>Verfügbar</span>')}</tr>
   </tbody></table>`
 
-  it('uses the Standort signature, not the Bestellmöglichkeit column', () => {
+  it('uses the Standort signature, not the Bestellmöglichkeit column, and keeps the raw order cell', () => {
     const $ = cheerio.load(html)
     expect(parseAvailabilityTable($, $('#resptable-1'))).toEqual([
-      { libraryName: 'Charlottenburg-Wilmersdorf: Dietrich-Bonhoeffer-Bibliothek', status: 'Nicht im Regal', shelfmark: 'Roman Garm' },
-      { libraryName: 'Mitte: Hansabibliothek', status: 'Verfügbar', shelfmark: 'Roman Garm' },
+      { libraryName: 'Charlottenburg-Wilmersdorf: Dietrich-Bonhoeffer-Bibliothek', status: 'Nicht im Regal', shelfmark: 'Roman Garm', order: '4 Wochen - Vormerkung möglich - 1x' },
+      { libraryName: 'Mitte: Hansabibliothek', status: 'Verfügbar', shelfmark: 'Roman Garm', order: '4 Wochen - Bestellwunsch möglich - 2x' },
     ])
   })
 

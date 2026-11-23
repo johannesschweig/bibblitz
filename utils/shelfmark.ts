@@ -53,11 +53,12 @@ export function parseAvailabilityTable($: CheerioAPI, table: Cheerio<AnyNode>): 
     const branchText = cellText(0);
     const shelfmark = signatureCol >= 0 ? cellText(signatureCol) : parseShelfmark(cellText(locationCol));
     // Without a header the column sits right before the status column
-    const access = parseAccess(cellText(orderCol >= 0 ? orderCol : cells.length - 2));
+    const order = cellText(orderCol >= 0 ? orderCol : cells.length - 2);
+    const access = parseAccess(order);
     const statusText = cells.last().text().trim().replace(/\s+/g, ' ');
     if (branchText.toLowerCase().includes('kopierlink') || branchText.toLowerCase().includes('[buch]')) return;
     if (branchText && statusText) {
-      availability.push({ libraryName: branchText, status: statusText, shelfmark: shelfmark || undefined, ...(access && { access }) });
+      availability.push({ libraryName: branchText, status: statusText, shelfmark: shelfmark || undefined, ...(access && { access }), ...(order && { order }) });
     }
   });
   return availability;

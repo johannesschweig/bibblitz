@@ -42,7 +42,7 @@ onMounted(() => {
 
 onUnmounted(() => { if (observer) observer.disconnect() })
 
-const statusInfo = computed(() => calculateStatusInfo(itemData.value?.availability, userStore.userCoords, userStore.userZipDefault))
+const statusInfo = computed(() => calculateStatusInfo(itemData.value?.availability, userStore.userCoords, userStore.userZipDefault, itemData.value?.nonPublicCopies))
 </script>
 
 <template>

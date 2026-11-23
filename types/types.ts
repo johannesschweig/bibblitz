@@ -8,8 +8,18 @@ export interface AvailabilityInfo {
   status: string;
   shelfmark?: string;
   access?: CopyAccess;
+  // Raw "Bestellmöglichkeit" cell; only used to judge dropped rows, removed from kept ones
+  order?: string;
   distance?: number;
   daysToWait?: number;
+}
+
+// Copies VÖBB lists in libraries without public access (school libraries, "(nicht öffentlich)"),
+// which are not in libraries.json and therefore not in `availability`
+export interface NonPublicCopies {
+  count: number;
+  // how many of them VÖBB says can be ordered ("Bestellwunsch möglich")
+  orderable: number;
 }
 
 export interface MediaItem {
@@ -25,6 +35,7 @@ export interface MediaItem {
   languages?: string[];
   mediaType: string;
   availability?: AvailabilityInfo[];
+  nonPublicCopies?: NonPublicCopies;
   loadingDetails?: boolean;
 }
 

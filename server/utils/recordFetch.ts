@@ -1,7 +1,7 @@
 // Fetches one record from voebb.de and parses it (metadata + per-branch availability). Used by the
 // /api/detail route and by the shelf watch (subscribe and checker), so both see the same data.
 import * as cheerio from 'cheerio';
-import { filterAndEnrichBranches } from '../../utils/availability';
+import { filterAndEnrichBranches, summarizeDroppedBranches } from '../../utils/availability';
 import { cleanPartTitle, cleanAuthor, cleanContributors, parseYear } from '../../utils/catalogText';
 import { parseIsbn } from '../../utils/isbn';
 import { parseLanguages } from '../../utils/language';
@@ -14,6 +14,9 @@ export type RecordResult =
   | { success: true, data: MediaItem }
   | { success: false, maintenance: true, until?: string }
   | { success: false, error: string, statusCode?: number };
+
+// Branch names already warned about, so one unknown library does not fill the log
+const warnedUnknown = new Set<string>();
 
 /** `id` is the numeric VÖBB record id, already validated by the caller. */
 export async function fetchRecord(id: string): Promise<RecordResult> {
@@ -114,6 +117,15 @@ export async function fetchRecord(id: string): Promise<RecordResult> {
 
     const processedAvailability = filterAndEnrichBranches(availability);
 
+    // Copies in school libraries are counted, any other dropped name is logged (once) so a public
+    // library missing from libraries.json does not go unnoticed
+    const dropped = summarizeDroppedBranches(availability);
+    for (const name of dropped.unknown) {
+      if (warnedUnknown.has(name)) continue;
+      warnedUnknown.add(name);
+      console.warn(`[availability] no libraries.json entry for "${name}", its copies are hidden`);
+    }
+
     return {
       success: true,
       data: {
@@ -125,7 +137,8 @@ export async function fetchRecord(id: string): Promise<RecordResult> {
         year,
         isbn,
         languages,
-        availability: processedAvailability
+        availability: processedAvailability,
+        ...(dropped.nonPublic && { nonPublicCopies: dropped.nonPublic })
       } as MediaItem
     };
 

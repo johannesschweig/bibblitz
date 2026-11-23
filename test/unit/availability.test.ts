@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { calculateStatusInfo, calculateBranchStatus, filterAndEnrichBranches, parseStatus, splitLibraryName } from '../../utils/availability'
+import { calculateStatusInfo, calculateBranchStatus, filterAndEnrichBranches, summarizeDroppedBranches, nonPublicNote, parseStatus, splitLibraryName } from '../../utils/availability'
 import type { AvailabilityInfo } from '../../types/types'
 import libraries from '../../app/assets/libraries.json'
 
@@ -153,5 +153,52 @@ describe('library matching', () => {
     for (const lib of libraries) {
       expect(match(`${lib.district}: ${lib.name}`), lib.name).toBe(lib.id)
     }
+  })
+})
+
+// Real rows of SAK35297029 (Deadpool box) and SAK00100325 ("Parzival"), read from voebb.de on 23.11.2026:
+// the only copy sits in a school library that is not in libraries.json
+describe('copies in libraries without public access', () => {
+  const carloSchmid = { libraryName: 'Spandau: Schulbibliothek Carlo Schmid (nicht oeffentlich)', status: 'Verfügbar', order: '2 Wochen - Bestellwunsch möglich' } as AvailabilityInfo
+  const humboldt = { libraryName: 'Humboldtschule (nicht öffentlich) - ist zurzeit geschlossen', status: 'Verfügbar', order: '4 Wochen / Nicht bestellbar - nicht bestellbar' } as AvailabilityInfo
+  const hansa = { libraryName: 'Mitte: Hansabibliothek', status: 'Verfügbar', order: '4 Wochen - Bestellwunsch möglich' } as AvailabilityInfo
+
+  it('counts the dropped school copies and whether VÖBB offers an order, both spellings of the marker', () => {
+    expect(summarizeDroppedBranches([carloSchmid]).nonPublic).toEqual({ count: 1, orderable: 1 })
+    expect(summarizeDroppedBranches([humboldt]).nonPublic).toEqual({ count: 1, orderable: 0 })
+    expect(summarizeDroppedBranches([carloSchmid, humboldt, hansa]).nonPublic).toEqual({ count: 2, orderable: 1 })
+  })
+
+  it('reports nothing for public libraries and names a dropped public library as unknown', () => {
+    expect(summarizeDroppedBranches([hansa])).toEqual({ unknown: [] })
+    const unknown = { libraryName: 'Mitte: Neue Bibliothek am Fluss', status: 'Verfügbar' } as AvailabilityInfo
+    expect(summarizeDroppedBranches([unknown, unknown, carloSchmid])).toEqual({ nonPublic: { count: 1, orderable: 1 }, unknown: ['Mitte: Neue Bibliothek am Fluss'] })
+  })
+
+  it('does not call an order-less copy orderable', () => {
+    for (const order of ['Keine Bestellung möglich', 'Tagesausleihe - nicht bestellbar', undefined]) {
+      expect(summarizeDroppedBranches([{ ...carloSchmid, order }]).nonPublic?.orderable).toBe(0)
+    }
+  })
+
+  it('keeps the raw order cell out of the kept branches', () => {
+    const [kept] = filterAndEnrichBranches([hansa, carloSchmid])
+    expect(kept.libraryId).toBe('hansabibliothek')
+    expect(kept).not.toHaveProperty('order')
+  })
+
+  it('words the detail line by what VÖBB says about ordering', () => {
+    expect(nonPublicNote({ count: 1, orderable: 0 })).toBe('Nur in einer Schulbibliothek ohne öffentlichen Zugang. Nicht bestellbar.')
+    expect(nonPublicNote({ count: 1, orderable: 1 })).toBe('Nur in einer Schulbibliothek ohne öffentlichen Zugang. Laut VÖBB bestellbar, bitte im VÖBB-Katalog prüfen.')
+    expect(nonPublicNote({ count: 2, orderable: 0 })).toContain('Nur in Schulbibliotheken')
+    expect(nonPublicNote(undefined)).toBeUndefined()
+  })
+
+  it('shows the school copy in the row badge only when no public copy exists', () => {
+    const copies = { count: 1, orderable: 1 }
+    expect(calculateStatusInfo([], null, true, copies)).toEqual({ label: 'Nur in Schulbibliothek', tone: 'neutral' })
+    expect(calculateStatusInfo([], null, true)).toEqual({ label: 'Nicht im Bestand', tone: 'bad' })
+    const lost = [branch({ status: 'Nicht im Regal', daysToWait: 999 })]
+    expect(calculateStatusInfo(lost, CENTER, true, copies).label).toBe('Nicht im Bestand')
   })
 })

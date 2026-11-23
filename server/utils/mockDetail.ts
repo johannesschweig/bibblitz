@@ -1,7 +1,7 @@
 // Dev-only fixtures for /api/detail, for working on the detail page while voebb.de is down.
 // Switched on with MOCK_VOEBB=1 in .env (see CLAUDE.md). Raw rows go through the same
 // filterAndEnrichBranches as scraped ones, so the status/name parsing is exercised too.
-import { filterAndEnrichBranches } from '../../utils/availability'
+import { filterAndEnrichBranches, summarizeDroppedBranches } from '../../utils/availability'
 import type { MediaItem, AvailabilityInfo } from '../../types/types'
 
 // "Fällig am: 27.10.2026" for today + n days, so the fixtures never go stale
@@ -12,8 +12,8 @@ function due(days: number): string {
   return `Fällig am: ${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`
 }
 
-type Raw = Pick<AvailabilityInfo, 'libraryName' | 'status' | 'shelfmark' | 'access'>
-type Fixture = Omit<MediaItem, 'id' | 'availability'> & { availability: Raw[] }
+type Raw = Pick<AvailabilityInfo, 'libraryName' | 'status' | 'shelfmark' | 'access' | 'order'>
+type Fixture = Omit<MediaItem, 'id' | 'availability' | 'nonPublicCopies'> & { availability: Raw[] }
 
 const fixtures: Record<string, Fixture> = {
   // Typical book: several branches, free and on loan, one with a short note
@@ -111,6 +111,26 @@ const fixtures: Record<string, Fixture> = {
     year: '2020',
     availability: []
   },
+  // Edge case: the only copy is in a school library without public access, VÖBB offers an order
+  // (rows of SAK35297029); the page says so instead of "Keine Exemplare gefunden."
+  '00000005': {
+    title: 'Ein Titel nur in der Schulbibliothek',
+    mediaType: 'DVD',
+    year: '2024',
+    availability: [
+      { libraryName: 'Spandau: Schulbibliothek Carlo Schmid (nicht oeffentlich)', status: 'Verfügbar', shelfmark: 'Spielfilm DVD 263', order: '2 Wochen - Bestellwunsch möglich' }
+    ]
+  },
+  // Same, but VÖBB says the copy cannot be ordered (rows of SAK00100325)
+  '00000006': {
+    title: 'Ein Titel nur in der geschlossenen Schule',
+    mediaType: 'Buch',
+    author: 'Erika Mustermann',
+    year: '1990',
+    availability: [
+      { libraryName: 'Humboldtschule (nicht öffentlich) - ist zurzeit geschlossen', status: 'Verfügbar', shelfmark: 'S 300 Esch', order: '4 Wochen / Nicht bestellbar - nicht bestellbar' }
+    ]
+  },
   // Edge case: very long title, no author, no ISBN, no shelf marks
   '00000002': {
     title: 'Handbuch der angewandten Bibliothekswissenschaft und Informationspraxis : eine umfassende Einführung in Katalogisierung, Erschließung, Bestandsaufbau und Benutzerberatung für Studierende, Praktiker und Quereinsteiger',
@@ -126,12 +146,14 @@ const fixtures: Record<string, Fixture> = {
 /** Fixture for the id, or the typical book for any other id so every /media/<id> link works. */
 export function getMockDetail(id: string) {
   const fixture = fixtures[id] ?? fixtures['34112359']
+  const { nonPublic } = summarizeDroppedBranches(fixture.availability as AvailabilityInfo[])
   return {
     success: true,
     data: {
       ...fixture,
       id,
-      availability: filterAndEnrichBranches(fixture.availability as AvailabilityInfo[])
+      availability: filterAndEnrichBranches(fixture.availability as AvailabilityInfo[]),
+      ...(nonPublic && { nonPublicCopies: nonPublic })
     } as MediaItem
   }
 }
