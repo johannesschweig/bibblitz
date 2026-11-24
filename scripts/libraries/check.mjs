@@ -5,6 +5,7 @@
 //   npm run libraries:check -- --only hansabibliothek,egon-erwin-kisch-bibliothek
 //   npm run libraries:check -- --cache <dir>        (keeps the fetched pages, a re-run reads them instead of berlin.de)
 //   npm run libraries:check -- --json <file>        (writes the full report as JSON, for the Pi job)
+//   npm run libraries:check -- --texts <file>       (writes the hours text of libraries with service-free times, input of service_extract.py)
 //   node check.mjs --data <libraries.json>          (other data file; the default is app/assets/libraries.json of this repo)
 //
 // berlin.de answers 429 on parallel requests, so the pages are fetched one by one with a pause.
@@ -15,9 +16,10 @@ import { createHash } from 'node:crypto'
 import { join } from 'node:path'
 import { parseArgs, promisify } from 'node:util'
 import { compareWeek, extractWeek, htmlToText } from './parseHours.mjs'
+import { hoursWindow } from './serviceHours.mjs'
 
 const { values: args } = parseArgs({
-  options: { only: { type: 'string' }, data: { type: 'string' }, cache: { type: 'string' }, json: { type: 'string' }, pause: { type: 'string', default: '900' } }
+  options: { only: { type: 'string' }, data: { type: 'string' }, cache: { type: 'string' }, json: { type: 'string' }, texts: { type: 'string' }, pause: { type: 'string', default: '900' } }
 })
 const libraries = JSON.parse(await readFile(args.data ?? new URL('../../app/assets/libraries.json', import.meta.url), 'utf8'))
 const only = args.only?.split(',')
@@ -75,6 +77,7 @@ async function fetchPage(url) {
 
 const strip = u => u.replace(/^http:/, 'https:').replace(/\/$/, '')
 const report = []
+const texts = {}
 for (const lib of libraries) {
   if (only && !only.includes(lib.id)) continue
   const row = { id: lib.id, district: lib.district, website: lib.website, link: 'none', hours: lib.opening_hours ? 'unread' : 'no stored hours', diffs: [], notes: [] }
@@ -86,6 +89,7 @@ for (const lib of libraries) {
       const source = SOURCES[lib.id]
       const text = htmlToText(source?.url ? (await fetchPage(source.url)).html : page.html)
       const week = extractWeek(text, source)
+      if (args.texts && (week.serviceFree || lib.service_hours)) texts[lib.id] = hoursWindow(text, source)
       if (week.found && !lib.opening_hours) {
         // Nothing stored but the page has hours: show them so they can be added
         row.hours = 'MISSING'
@@ -107,5 +111,6 @@ for (const lib of libraries) {
 
 const count = pred => report.filter(pred).length
 console.log(`\n${report.length} libraries: ${count(r => r.hours === 'ok')} hours ok, ${count(r => r.hours === 'DIFFERS')} differ, ${count(r => r.hours === 'unreadable')} unreadable, ${count(r => r.hours === 'MISSING')} with hours on the page but none stored, ${count(r => r.hours === 'no stored hours')} without stored hours; links: ${count(r => r.link === 'ok')} ok, ${count(r => r.link === 'moved')} moved (redirect), ${count(r => r.link.startsWith('dead'))} dead`)
+if (args.texts) await writeFile(args.texts, JSON.stringify(texts, null, 2))
 if (args.json) await writeFile(args.json, JSON.stringify({ checkedAt: new Date().toISOString(), report }, null, 2))
 process.exitCode = count(r => r.hours === 'DIFFERS' || r.hours === 'MISSING' || r.link.startsWith('dead')) ? 1 : 0

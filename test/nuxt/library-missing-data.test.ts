@@ -1,6 +1,6 @@
 // Libraries without published hours (bookmobiles etc.) must not show seven days of "Geschlossen",
 // and libraries without a website must not show a dead website button.
-import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import LibraryPage from '~/pages/library/[id].vue'
 import libraries from '~/assets/libraries.json'
@@ -69,5 +69,38 @@ describe('Library website button', () => {
     const wrapper = await mountLibrary(withHours.id)
 
     expect(wrapper.find(`a[href="${withHours.website}"]`).exists()).toBe(true)
+  })
+})
+
+describe('Library with closures', () => {
+  const adlershof = libraries.find(l => l.id === 'stadtteilbibliothek-adlershof-stefan-heym')!
+
+  afterEach(() => { vi.useRealTimers() })
+
+  // Only Date is faked: faking timers would stall mountSuspended
+  const at = (iso: string) => vi.useFakeTimers({ toFake: ['Date'], now: new Date(iso) })
+
+  it('says "Vorübergehend geschlossen" during a closure, with the dates and the reason', async () => {
+    at('2026-11-24T12:00:00Z') // Tuesday, inside the weekly hours but inside the move
+    const wrapper = await mountLibrary(adlershof.id)
+
+    expect(wrapper.text()).toContain('Vorübergehend geschlossen')
+    expect(wrapper.text()).not.toContain('Jetzt geöffnet')
+    expect(wrapper.text()).not.toMatch(/Heute\s+12:00/)
+    const closures = wrapper.find('[data-testid="closures"]').text()
+    expect(closures).toContain('09.11.–07.12.2026')
+    expect(closures).toContain('Umzug in neue Räume')
+    expect(closures).toContain('24.12.–01.01.2027')
+  })
+
+  it('is open again after the closure and shows no list when nothing is near', async () => {
+    at('2026-12-08T12:00:00Z') // Tuesday after the move; the Christmas closure is 16 days away, still listed
+    const wrapper = await mountLibrary(adlershof.id)
+    expect(wrapper.text()).toContain('Jetzt geöffnet')
+    expect(wrapper.find('[data-testid="closures"]').text()).not.toContain('09.11.')
+
+    at('2026-06-10T12:00:00Z')
+    const summer = await mountLibrary(adlershof.id)
+    expect(summer.find('[data-testid="closures"]').exists()).toBe(false)
   })
 })

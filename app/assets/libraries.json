@@ -49,7 +49,15 @@
       "saturday": "10:00-14:00",
       "sunday": "10:00-16:00"
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "13:00-19:30",
+      "tuesday": "12:00-18:00",
+      "wednesday": "12:00-18:00",
+      "thursday": "12:00-18:00",
+      "friday": "13:00-19:30",
+      "saturday": "10:00-14:00",
+      "sunday": null
+    }
   },
   {
     "id": "kurt-tucholsky-bibliothek-mitte",
@@ -167,7 +175,19 @@
       "wednesday": "11:00-19:00",
       "thursday": "11:00-19:00",
       "friday": "11:00-19:00"
-    }
+    },
+    "closures": [
+      {
+        "from": "2026-12-24",
+        "to": "2026-12-27",
+        "note": "Weihnachten und Neujahr"
+      },
+      {
+        "from": "2026-12-31",
+        "to": "2027-01-01",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "berlin-sammlungen",
@@ -220,7 +240,19 @@
       "wednesday": "11:00-19:00",
       "thursday": "11:00-19:00",
       "friday": "11:00-19:00"
-    }
+    },
+    "closures": [
+      {
+        "from": "2026-12-24",
+        "to": "2026-12-27",
+        "note": "Weihnachten und Neujahr"
+      },
+      {
+        "from": "2026-12-31",
+        "to": "2027-01-01",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "au-enmagazin",
@@ -302,7 +334,15 @@
       "saturday": "10:00-19:00",
       "sunday": "12:00-18:00"
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "12:00-19:00",
+      "tuesday": "12:00-19:00",
+      "wednesday": "12:00-19:00",
+      "thursday": "12:00-19:00",
+      "friday": "12:00-19:00",
+      "saturday": "10:00-16:00",
+      "sunday": null
+    }
   },
   {
     "id": "mittelpunktbibliothek-sch-neberg",
@@ -323,7 +363,14 @@
       "saturday": "10:00-19:00",
       "sunday": null
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "10:00-19:00",
+      "tuesday": "10:00-19:00",
+      "wednesday": "10:00-19:00",
+      "thursday": "13:00-19:00",
+      "friday": "10:00-19:00",
+      "saturday": "10:00-15:00"
+    }
   },
   {
     "id": "bibliothek-am-luisenbad",
@@ -401,7 +448,15 @@
       "saturday": "10:00-16:00",
       "sunday": "12:00-16:00"
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "12:00-19:00",
+      "tuesday": "12:00-19:00",
+      "wednesday": "12:00-19:00",
+      "thursday": "12:00-19:00",
+      "friday": "12:00-19:00",
+      "saturday": "10:00-16:00",
+      "sunday": null
+    }
   },
   {
     "id": "stadtteilbibliothek-friedrich-von-raumer",
@@ -422,7 +477,14 @@
       "saturday": "11:00-16:00",
       "sunday": null
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "13:00-19:00",
+      "tuesday": "13:00-19:00",
+      "wednesday": "11:00-17:00",
+      "thursday": "13:00-19:00",
+      "friday": "11:00-17:00",
+      "saturday": "11:00-16:00"
+    }
   },
   {
     "id": "bibliothek-am-sch-fersee-stadtteilbibliothek-reinickendorf-ost",
@@ -441,7 +503,13 @@
       "thursday": "12:00-18:00",
       "friday": "12:00-18:00"
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-12-14",
+        "note": "Energetische Sanierung, vorerst geschlossen"
+      }
+    ]
   },
   {
     "id": "mittelpunktbibliothek-wilhelm-liebknecht-namik-kemal",
@@ -462,7 +530,21 @@
       "saturday": "11:00-19:00",
       "sunday": null
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "11:00-19:00",
+      "tuesday": "11:00-19:00",
+      "wednesday": "11:00-19:00",
+      "thursday": "11:00-19:00",
+      "friday": "11:00-17:00",
+      "saturday": "11:00-16:00"
+    },
+    "closures": [
+      {
+        "from": "2026-12-10",
+        "to": "2026-12-10",
+        "note": "Interne Gründe"
+      }
+    ]
   },
   {
     "id": "bettina-von-arnim-bibliothek",
@@ -483,7 +565,19 @@
       "saturday": null,
       "sunday": null
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-12-24",
+        "to": "2026-12-27",
+        "note": "Weihnachten und Neujahr"
+      },
+      {
+        "from": "2026-12-31",
+        "to": "2027-01-03",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "stadtteilbibliothek-halemweg",
@@ -521,7 +615,13 @@
       "thursday": "12:00-18:00",
       "friday": "14:00-18:00"
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "14:00-18:00",
+      "tuesday": "14:00-18:00",
+      "wednesday": "14:00-18:00",
+      "thursday": "14:00-18:00",
+      "friday": "14:00-18:00"
+    }
   },
   {
     "id": "bibliothek-am-wasserturm",
@@ -548,7 +648,19 @@
       "wednesday": "13:00-18:00",
       "thursday": "13:00-18:00",
       "friday": "11:00-16:00"
-    }
+    },
+    "closures": [
+      {
+        "from": "2026-12-24",
+        "to": "2026-12-27",
+        "note": "Weihnachten und Neujahr"
+      },
+      {
+        "from": "2026-12-31",
+        "to": "2027-01-03",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "museum-pankow",
@@ -655,7 +767,27 @@
       "saturday": "10:00-19:00",
       "sunday": "10:00-19:00"
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "10:00-19:00",
+      "tuesday": "10:00-19:00",
+      "wednesday": "13:00-19:00",
+      "thursday": "10:00-19:00",
+      "friday": "10:00-19:00",
+      "saturday": "10:00-15:00",
+      "sunday": null
+    },
+    "closures": [
+      {
+        "from": "2026-12-24",
+        "to": "2026-12-27",
+        "note": "Weihnachten und Neujahr"
+      },
+      {
+        "from": "2026-12-31",
+        "to": "2027-01-03",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "bibl-reinickendorf-west",
@@ -733,7 +865,15 @@
       "saturday": "10:00-19:00",
       "sunday": "11:00-17:00"
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "10:00-19:00",
+      "tuesday": "10:00-19:00",
+      "wednesday": "10:00-19:00",
+      "thursday": "10:00-19:00",
+      "friday": "10:00-19:00",
+      "saturday": "10:00-15:00",
+      "sunday": null
+    }
   },
   {
     "id": "fahrbibliothek-tempelhof-sch-neberg",
@@ -812,7 +952,31 @@
       "saturday": "10:00-19:00",
       "sunday": "10:00-19:00"
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "13:00-19:00",
+      "tuesday": "10:00-19:00",
+      "wednesday": "13:00-19:00",
+      "thursday": "10:00-19:00",
+      "friday": "10:00-19:00",
+      "saturday": "10:00-15:00",
+      "sunday": null
+    },
+    "closures": [
+      {
+        "from": "2026-12-09",
+        "to": "2026-12-09"
+      },
+      {
+        "from": "2026-12-24",
+        "to": "2026-12-27",
+        "note": "Weihnachten und Neujahr"
+      },
+      {
+        "from": "2026-12-31",
+        "to": "2027-01-03",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "bezirkszentralbibliothek-pablo-neruda",
@@ -833,7 +997,15 @@
       "saturday": "10:00-19:00",
       "sunday": "10:00-19:00"
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "11:00-19:00",
+      "tuesday": "10:00-19:00",
+      "wednesday": "10:00-19:00",
+      "thursday": "10:00-19:00",
+      "friday": "10:00-17:00",
+      "saturday": "10:00-15:00",
+      "sunday": null
+    }
   },
   {
     "id": "bibobike-mobile-bibliotheksstation",
@@ -884,7 +1056,27 @@
       "saturday": "10:00-16:00",
       "sunday": "10:00-16:00"
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "10:00-19:00",
+      "tuesday": "10:00-17:00",
+      "wednesday": "13:00-19:00",
+      "thursday": "10:00-19:00",
+      "friday": "10:00-19:00",
+      "saturday": null,
+      "sunday": null
+    },
+    "closures": [
+      {
+        "from": "2026-12-24",
+        "to": "2026-12-27",
+        "note": "Weihnachten und Neujahr"
+      },
+      {
+        "from": "2026-12-31",
+        "to": "2027-01-03",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "stadtteilbibliothek-alt-treptow-manfred-bofinger",
@@ -903,7 +1095,14 @@
       "thursday": "13:00-19:00",
       "friday": "11:00-17:00"
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-12-24",
+        "to": "2027-01-01",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "ingeborg-drewitz-bibliothek",
@@ -954,7 +1153,15 @@
       "saturday": "09:00-19:00",
       "sunday": "09:00-19:00"
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "11:00-18:00",
+      "tuesday": "11:00-18:00",
+      "wednesday": null,
+      "thursday": "14:00-18:00",
+      "friday": "11:00-18:00",
+      "saturday": "09:00-13:00",
+      "sunday": null
+    }
   },
   {
     "id": "stadtteilbibliothek-haselhorst",
@@ -994,7 +1201,15 @@
       "saturday": "09:00-19:00",
       "sunday": "09:00-19:00"
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "11:00-19:00",
+      "tuesday": "11:00-19:00",
+      "wednesday": "13:00-19:00",
+      "thursday": "11:00-18:00",
+      "friday": "11:00-18:00",
+      "saturday": "09:00-13:00",
+      "sunday": null
+    }
   },
   {
     "id": "grosser-b-cherbus-reinickendorf",
@@ -1104,7 +1319,15 @@
       "saturday": "10:00-18:00",
       "sunday": "10:00-18:00"
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "11:00-19:00",
+      "tuesday": "11:00-19:00",
+      "wednesday": "11:00-19:00",
+      "thursday": "11:00-19:00",
+      "friday": "11:00-19:00",
+      "saturday": "10:00-15:00",
+      "sunday": null
+    }
   },
   {
     "id": "bibliothek-m-rkisches-viertel",
@@ -1234,7 +1457,15 @@
       "saturday": "09:00-19:00",
       "sunday": "09:00-19:00"
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "11:00-19:00",
+      "tuesday": "11:00-19:00",
+      "wednesday": "13:00-19:00",
+      "thursday": "11:00-18:00",
+      "friday": "11:00-18:00",
+      "saturday": "09:00-13:00",
+      "sunday": null
+    }
   },
   {
     "id": "anna-seghers-bibliothek",
@@ -1254,7 +1485,14 @@
       "friday": "09:00-18:00",
       "saturday": "09:00-19:00"
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "11:00-19:00",
+      "tuesday": "11:00-19:00",
+      "wednesday": "13:00-19:00",
+      "thursday": "11:00-18:00",
+      "friday": "11:00-18:00",
+      "saturday": "09:00-13:00"
+    }
   },
   {
     "id": "mittelpunktbibliothek-treptow-alte-feuerwache",
@@ -1275,7 +1513,19 @@
       "saturday": "10:00-14:00",
       "sunday": null
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-12-24",
+        "to": "2026-12-26",
+        "note": "Weihnachten und Neujahr"
+      },
+      {
+        "from": "2026-12-31",
+        "to": "2027-01-02",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "gertrud-junge-bibliothek",
@@ -1333,7 +1583,19 @@
       "thursday": "11:00-18:00",
       "friday": "09:00-13:00"
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-11-27",
+        "to": "2026-11-27",
+        "note": "Personalversammlung"
+      },
+      {
+        "from": "2026-12-24",
+        "to": "2027-01-01",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "bezirkszentralbibliothek-mark-twain",
@@ -1353,7 +1615,19 @@
       "friday": "10:00-19:30",
       "saturday": "10:00-14:00"
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-11-27",
+        "to": "2026-11-27",
+        "note": "Personalversammlung"
+      },
+      {
+        "from": "2026-12-24",
+        "to": "2027-01-02",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "musikbibliothek-in-der-mark-twain-bibliothek",
@@ -1373,7 +1647,19 @@
       "friday": "10:00-19:30",
       "saturday": "10:00-14:00"
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-11-27",
+        "to": "2026-11-27",
+        "note": "Personalversammlung"
+      },
+      {
+        "from": "2026-12-24",
+        "to": "2027-01-02",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "bibliothek-frohnau",
@@ -1463,12 +1749,24 @@
     "website": "https://www.berlin.de/stadtbibliothek-treptow-koepenick/bibliotheken/adlershof/",
     "opening_hours": {
       "monday": null,
-      "tuesday": "11:00-18:00",
+      "tuesday": "12:00-18:00",
       "wednesday": null,
-      "thursday": "11:00-18:00",
-      "friday": null
+      "thursday": "12:00-18:00",
+      "friday": "10:00-16:00"
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-11-09",
+        "to": "2026-12-07",
+        "note": "Umzug in neue Räume"
+      },
+      {
+        "from": "2026-12-24",
+        "to": "2027-01-01",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "mittelpunktbibliothek-ehm-welk",
@@ -1487,7 +1785,19 @@
       "thursday": "13:00-19:00",
       "friday": "11:00-15:00"
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-11-27",
+        "to": "2026-11-27",
+        "note": "Personalversammlung"
+      },
+      {
+        "from": "2026-12-24",
+        "to": "2027-01-01",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "bibliothek-karow",
@@ -1508,7 +1818,19 @@
       "saturday": "10:00-15:00",
       "sunday": null
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-12-24",
+        "to": "2026-12-27",
+        "note": "Weihnachten und Neujahr"
+      },
+      {
+        "from": "2026-12-31",
+        "to": "2027-01-03",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "stadtteilbibliothek-mahlsdorf",
@@ -1527,7 +1849,19 @@
       "thursday": "13:00-19:00",
       "friday": "10:00-14:00"
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-11-27",
+        "to": "2026-11-27",
+        "note": "Personalversammlung"
+      },
+      {
+        "from": "2026-12-24",
+        "to": "2027-01-01",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "stadtteilbibliothek-heinrich-von-kleist",
@@ -1546,7 +1880,19 @@
       "thursday": "13:00-19:00",
       "friday": "09:00-14:00"
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-11-27",
+        "to": "2026-11-27",
+        "note": "Personalversammlung"
+      },
+      {
+        "from": "2026-12-24",
+        "to": "2027-01-01",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "mittelpunktbibliothek-k-penick-alter-markt",
@@ -1567,7 +1913,27 @@
       "saturday": "10:00-19:00",
       "sunday": "11:00-17:00"
     },
-    "service_hours": null
+    "service_hours": {
+      "monday": "10:00-19:00",
+      "tuesday": "10:00-19:00",
+      "wednesday": "13:00-19:00",
+      "thursday": "10:00-19:00",
+      "friday": "10:00-19:00",
+      "saturday": "10:00-14:00",
+      "sunday": null
+    },
+    "closures": [
+      {
+        "from": "2026-12-24",
+        "to": "2026-12-26",
+        "note": "Weihnachten und Neujahr"
+      },
+      {
+        "from": "2026-12-31",
+        "to": "2027-01-02",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "bibliothek-buch",
@@ -1588,7 +1954,19 @@
       "saturday": "10:00-15:00",
       "sunday": null
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-12-24",
+        "to": "2026-12-27",
+        "note": "Weihnachten und Neujahr"
+      },
+      {
+        "from": "2026-12-31",
+        "to": "2027-01-03",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "stadtteilbibliothek-altglienicke",
@@ -1607,7 +1985,14 @@
       "thursday": "12:00-18:00",
       "friday": "10:00-16:00"
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-12-24",
+        "to": "2027-01-01",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "fahrbibliothek-treptow-k-penick",
@@ -1657,7 +2042,19 @@
       "thursday": "12:00-19:00",
       "friday": "09:00-13:00"
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-11-27",
+        "to": "2026-11-27",
+        "note": "Personalversammlung"
+      },
+      {
+        "from": "2026-12-24",
+        "to": "2027-01-01",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   },
   {
     "id": "stadtteilbibliothek-kladow",
@@ -1676,7 +2073,14 @@
       "thursday": "13:00-19:00",
       "friday": "09:00-15:00"
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-12-02",
+        "to": "2026-12-04",
+        "note": "Sanierungsarbeiten"
+      }
+    ]
   },
   {
     "id": "stadtteilbibliothek-friedrichshagen",
@@ -1695,6 +2099,13 @@
       "thursday": "14:00-19:00",
       "friday": null
     },
-    "service_hours": null
+    "service_hours": null,
+    "closures": [
+      {
+        "from": "2026-12-24",
+        "to": "2027-01-01",
+        "note": "Weihnachten und Neujahr"
+      }
+    ]
   }
 ]

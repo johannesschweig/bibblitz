@@ -54,4 +54,19 @@ describe('libraries.json', () => {
       }
     }
   })
+
+  it('stores closures as ISO dates, in order, with the end not before the start', () => {
+    for (const lib of libraries.filter(l => l.closures)) {
+      let previous = ''
+      for (const c of lib.closures!) {
+        expect(c.from, `${lib.name} from`).toMatch(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/)
+        if (c.to) {
+          expect(c.to, `${lib.name} to`).toMatch(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/)
+          expect(c.to >= c.from, `${lib.name}: end before start`).toBe(true)
+        }
+        expect(c.from > previous, `${lib.name}: closures out of order or overlapping`).toBe(true)
+        previous = c.to ?? '9999-12-31'
+      }
+    }
+  })
 })

@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import libraryData from '~/assets/libraries.json'
 import { calculateHaversineDistance, formatDistance } from '~~/utils/distance'
-import { berlinNow, getOpenStatus, type DayKey, type OpenStatus } from '~~/utils/openingHours'
+import { berlinNow, getOpenStatus, activeClosure, upcomingClosures, formatClosure, type DayKey, type OpenStatus } from '~~/utils/openingHours'
 import LibraryMap from '~/components/LibraryMap.vue'
 import StatusPill from '~/components/StatusPill.vue'
 import { calculateBranchStatus, parseStatus } from '~~/utils/availability'
@@ -40,7 +40,19 @@ const openStatus = computed<OpenStatus | null>(() => {
   const lib = library.value
   // Libraries without published hours (e.g. mobile libraries) get no status
   if (!lib?.opening_hours) return null
-  return getOpenStatus(lib.opening_hours, lib.service_hours, now.value)
+  return getOpenStatus(lib.opening_hours, lib.service_hours, now.value, lib.closures)
+})
+
+// Closures that are running or start soon, shown under the status so nobody travels to a closed library
+const closureLines = computed(() => {
+  if (!now.value) return []
+  const date = now.value.date
+  return upcomingClosures(library.value?.closures, date).map(c => ({
+    key: c.from,
+    range: formatClosure(c),
+    note: c.note,
+    active: activeClosure([c], date) !== null
+  }))
 })
 
 const statusPill = computed(() => {
@@ -49,6 +61,7 @@ const statusPill = computed(() => {
     case 'open-no-service': return { tone: 'wait', label: 'Jetzt geöffnet ohne Service' } as const
     case 'open': return { tone: 'near', label: 'Jetzt geöffnet' } as const
     case 'closed': return { tone: 'neutral', label: 'Jetzt geschlossen' } as const
+    case 'closed-temporarily': return { tone: 'neutral', label: 'Vorübergehend geschlossen' } as const
     default: return null
   }
 })
@@ -146,7 +159,16 @@ function outboundClicked(event: 'library-maps-click' | 'library-website-click') 
       </h1>
       <div v-if="statusPill" class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1">
         <StatusPill v-bind="statusPill" />
-        <span v-if="todayHours" class="text-sm text-gray-600">Heute {{ todayHours }}</span>
+        <span v-if="todayHours && openStatus !== 'closed-temporarily'" class="text-sm text-gray-600">Heute {{ todayHours }}</span>
+      </div>
+
+      <div v-if="closureLines.length" data-testid="closures" class="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-3">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-600">Schließtage</p>
+        <ul class="mt-1 space-y-1 text-sm text-gray-800">
+          <li v-for="line in closureLines" :key="line.key" :class="line.active ? 'font-semibold' : ''">
+            {{ line.range }}<template v-if="line.note"> · {{ line.note }}</template>
+          </li>
+        </ul>
       </div>
 
       <div v-if="selectedCopy" data-testid="selected-copy" class="mt-6 rounded-lg border border-gray-200 bg-white p-4">

@@ -49,6 +49,14 @@ export interface OpeningHours {
   sunday?: string | null
 }
 
+// A temporary closure (move, renovation, holidays). Dates are inclusive, "YYYY-MM-DD"; no `to` means open-ended.
+// The regular weekly schedule stays in `opening_hours`.
+export interface Closure {
+  from: string
+  to?: string | null
+  note?: string
+}
+
 export interface Library {
   id: string;
   name: string;
@@ -61,4 +69,5 @@ export interface Library {
   website: string
   opening_hours?: OpeningHours | null
   service_hours?: OpeningHours | null
+  closures?: Closure[]
 }
