@@ -33,18 +33,18 @@ function findMatchingLibrary(branch: string) {
   // A " - " can start a closure notice, but also be part of the name ("Reinickendorf - West"),
   // so try the full name first and only then the shortened one
   const candidates = [...new Set([rawBranchName, rawBranchName.split(' - ')[0]!.trim()])].filter(Boolean)
-  const libraries = libraryData.map(lib => ({ lib, name: normalize(lib.name) }))
+  // Exact names only, no "contains" fallback: it once sent V\u00d6BB's "Bibliothek Sch\u00f6neberg" to
+  // Stadtteilbibliothek Sch\u00f6neberg-Nord, because both names contain it and the longer one won
+  // (TODO I37). A library that V\u00d6BB names differently has `voebb_name` in libraries.json. A name
+  // that matches nothing is dropped and logged once in recordFetch.ts, so a new one gets noticed.
+  const libraries = libraryData.map(lib => ({
+    lib,
+    names: [normalize(lib.name), ...('voebb_name' in lib && typeof lib.voebb_name === 'string' ? [normalize(lib.voebb_name)] : [])]
+  }))
 
   for (const candidate of candidates) {
-    const exact = libraries.find(l => l.name === candidate)
+    const exact = libraries.find(l => l.names.includes(candidate))
     if (exact) return exact.lib
-  }
-  for (const candidate of candidates) {
-    // Several names can contain each other ("Reinickendorf"): the longest, most specific one wins
-    const fuzzy = libraries
-      .filter(l => candidate.includes(l.name) || l.name.includes(candidate))
-      .sort((a, b) => b.name.length - a.name.length)[0]
-    if (fuzzy) return fuzzy.lib
   }
   return undefined
 }

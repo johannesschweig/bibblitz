@@ -3,6 +3,14 @@ import libraries from '../../app/assets/libraries.json'
 
 // libraries.json is edited by hand, so keep its spelling consistent (the library list groups by district)
 describe('libraries.json', () => {
+  it('keeps voebb_name unique and different from every library name', () => {
+    const names = new Set(libraries.map(l => l.name.toLowerCase()))
+    const voebbNames = libraries.flatMap(l => ('voebb_name' in l ? [l.voebb_name as string] : []))
+    expect(voebbNames.length).toBeGreaterThan(0)
+    expect(new Set(voebbNames).size).toBe(voebbNames.length)
+    for (const name of voebbNames) expect(names.has(name.toLowerCase()), name).toBe(false)
+  })
+
   it('has unique ids and names', () => {
     expect(new Set(libraries.map(l => l.id)).size).toBe(libraries.length)
     expect(new Set(libraries.map(l => l.name)).size).toBe(libraries.length)

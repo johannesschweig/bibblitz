@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { calculateStatusInfo, calculateBranchStatus, filterAndEnrichBranches, summarizeDroppedBranches, nonPublicNote, parseStatus, splitLibraryName } from '../../utils/availability'
 import type { AvailabilityInfo } from '../../types/types'
 import libraries from '../../app/assets/libraries.json'
+import voebbLibraryList from './fixtures/voebbLibraryList.json'
 
 // Real library ids from libraries.json so the distance lookup works
 const CENTER = { lat: 52.52, lon: 13.405 } // ~5 km from the branch
@@ -153,6 +154,37 @@ describe('library matching', () => {
     for (const lib of libraries) {
       expect(match(`${lib.district}: ${lib.name}`), lib.name).toBe(lib.id)
     }
+  })
+
+  // TODO I37: VÖBB lists the Hauptstraße 40 library as "Bibliothek Schöneberg"; the old "contains"
+  // fallback sent it to Stadtteilbibliothek Schöneberg-Nord (read from 12 of 134 records on 25.11.2026,
+  // e.g. SAK34323481)
+  it('matches VÖBB\'s "Bibliothek Schöneberg" to the Mittelpunktbibliothek, not to Schöneberg-Nord', () => {
+    expect(match('Tempelhof-Schoeneberg: Bibliothek Schöneberg')).toBe('mittelpunktbibliothek-sch-neberg')
+  })
+
+  it('matches the libraries that VÖBB names differently through voebb_name', () => {
+    expect(match('Tempelhof-Schoeneberg: Bibliothek Tempelhof')).toBe('bezirkszentralbibliothek-tempelhof-sch-neberg')
+    expect(match('Tempelhof-Schoeneberg: Bibliothek Lichtenrade')).toBe('stadtteilbibliothek-lichtenrade')
+    expect(match('Tempelhof-Schoeneberg: Bibliothek Marienfelde')).toBe('stadtteilbibliothek-marienfelde')
+  })
+
+  it('does not match a name that only contains a known one, so a new library is noticed', () => {
+    const rows = [{ libraryName: 'Tempelhof-Schoeneberg: Stadtteilbibliothek Marienfelde Nord', status: 'Verfügbar' } as AvailabilityInfo]
+    expect(filterAndEnrichBranches(rows)).toEqual([])
+    expect(summarizeDroppedBranches(rows).unknown).toEqual(['Tempelhof-Schoeneberg: Stadtteilbibliothek Marienfelde Nord'])
+  })
+
+  // Snapshot of the library list on VÖBB's search form (25.11.2026). The two school libraries are
+  // dropped on purpose (non-public marker); the ZLB group entries have no ": " and are no branch
+  it('matches every library on the VÖBB list, except the non-public school libraries', () => {
+    const branches = voebbLibraryList.options.filter(name => name.includes(': '))
+    expect(branches.length).toBeGreaterThan(70)
+    const unmatched = branches.filter(name => !match(name))
+    expect(unmatched).toEqual([
+      'Friedrichshain-Kreuzberg: Schulbibliothek Blücherstr. (nicht öffentlich)',
+      'Spandau: Schulbibliothek Carlo Schmid (nicht oeffentlich)'
+    ])
   })
 })
 

@@ -347,6 +347,7 @@
   {
     "id": "mittelpunktbibliothek-sch-neberg",
     "name": "Mittelpunktbibliothek Schöneberg",
+    "voebb_name": "Bibliothek Schöneberg",
     "address": "Hauptstr. 40, 10827 Berlin",
     "lat": 52.4840679,
     "lon": 13.350545,
@@ -849,6 +850,7 @@
   {
     "id": "bezirkszentralbibliothek-tempelhof-sch-neberg",
     "name": "Bezirkszentralbibliothek Tempelhof-Schöneberg",
+    "voebb_name": "Bibliothek Tempelhof",
     "address": "Götzstr. 8/10/12, 12099 Berlin",
     "lat": 52.463717,
     "lon": 13.3878043,
@@ -1548,6 +1550,7 @@
   {
     "id": "stadtteilbibliothek-marienfelde",
     "name": "Stadtteilbibliothek Marienfelde",
+    "voebb_name": "Bibliothek Marienfelde",
     "address": "Marienfelder Allee 107, 12277 Berlin",
     "lat": 52.4168431,
     "lon": 13.3665881,
@@ -1721,6 +1724,7 @@
   {
     "id": "stadtteilbibliothek-lichtenrade",
     "name": "Stadtteilbibliothek Lichtenrade",
+    "voebb_name": "Bibliothek Lichtenrade",
     "address": "Steinstraße 41, 12307 Berlin",
     "lat": 52.3878917,
     "lon": 13.397116,
