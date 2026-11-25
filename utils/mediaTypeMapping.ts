@@ -38,9 +38,18 @@ export const MEDIA_TYPE_MAP: Record<string, MediaTypeConfig> = {
 
 const FALLBACK: MediaTypeConfig = { label: 'Sonstiges', icon: 'lucide:file-question-mark' }
 
+// Types already reported, so a new VÖBB type shows up in the logs once and not on every render
+const reportedTypes = new Set<string>()
+
 export function getMediaTypeConfig(raw: string): MediaTypeConfig {
   const key = raw.toLowerCase().trim()
   const result = MEDIA_TYPE_MAP[key]
-  if (!result) console.log(`No match: "${key}"`, JSON.stringify(key))
+  // An empty type is normal: rows render on the server before their record data has arrived (the
+  // showcase tiles on the home page), and it used to flood the Fly logs (TODO I32). Only a real,
+  // unknown VÖBB type is worth a line.
+  if (!result && key && !reportedTypes.has(key)) {
+    reportedTypes.add(key)
+    console.warn(`[mediaType] no mapping for "${key}", shown as "${FALLBACK.label}"`)
+  }
   return result ?? FALLBACK
 }
